@@ -471,7 +471,7 @@ if (signupForm) {
         */
 
         window.location.href =
-            "Pages/dashboard.html";
+            "route-planner.html";
 
     });
 
