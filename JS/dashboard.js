@@ -4,38 +4,25 @@
 
 
 /* =========================================================
-   GET CURRENT USER
+   STORAGE KEYS
 ========================================================= */
 
-const currentUserData =
-    localStorage.getItem("roadwiseCurrentUser");
-
-
-/*
-    If no user is logged in,
-    send them back to the landing page.
-*/
-
-if (!currentUserData) {
-
-    window.location.href = "../index.html";
-
-}
+const USERS_KEY = "roadwiseUsers";
+const CURRENT_USER_KEY = "roadwiseCurrentUser";
 
 
 /* =========================================================
-   CONVERT STORED USER DATA
+   GET CURRENT USER
 ========================================================= */
 
-let currentUser = null;
-
-
-if (currentUserData) {
+function getCurrentUser() {
 
     try {
 
-        currentUser =
-            JSON.parse(currentUserData);
+        const raw =
+            localStorage.getItem(CURRENT_USER_KEY);
+
+        return raw ? JSON.parse(raw) : null;
 
     } catch (error) {
 
@@ -44,17 +31,172 @@ if (currentUserData) {
             error
         );
 
-        localStorage.removeItem(
-            "roadwiseCurrentUser"
-        );
-
-        window.location.href =
-            "../index.html";
+        return null;
 
     }
 
 }
 
+
+/* =========================================================
+   GET ALL USERS
+========================================================= */
+
+function getUsers() {
+
+    try {
+
+        const raw =
+            localStorage.getItem(USERS_KEY);
+
+        return raw ? JSON.parse(raw) : [];
+
+    } catch (error) {
+
+        console.error(
+            "Unable to read users.",
+            error
+        );
+
+        return [];
+
+    }
+
+}
+
+
+/* =========================================================
+   SAVE CURRENT USER
+========================================================= */
+
+function saveCurrentUser(user) {
+
+    try {
+
+        localStorage.setItem(
+            CURRENT_USER_KEY,
+            JSON.stringify(user)
+        );
+
+        return true;
+
+    } catch (error) {
+
+        console.error(
+            "Unable to save current user.",
+            error
+        );
+
+        return false;
+
+    }
+
+}
+
+
+/* =========================================================
+   FETCH LATEST PROFILE
+========================================================= */
+
+/*
+    roadwiseCurrentUser tells us WHO is logged in.
+
+    roadwiseUsers contains the latest complete profile.
+
+    Therefore:
+        1. Read current session
+        2. Find matching account using email
+        3. Use latest account information
+        4. Update current session
+*/
+
+function loadLatestUser() {
+
+    const sessionUser = getCurrentUser();
+
+    if (!sessionUser) {
+
+        return null;
+
+    }
+
+
+    const users = getUsers();
+
+
+    const latestUser =
+        users.find(
+            user =>
+                user.email &&
+                sessionUser.email &&
+                user.email.toLowerCase() ===
+                sessionUser.email.toLowerCase()
+        );
+
+
+    if (!latestUser) {
+
+        /*
+            If the account cannot be found,
+            keep the session rather than breaking
+            the dashboard.
+        */
+
+        return sessionUser;
+
+    }
+
+
+    /*
+        Do NOT store the password in
+        roadwiseCurrentUser.
+    */
+
+    const updatedSession = {
+
+        name: latestUser.name || "",
+
+        email: latestUser.email || "",
+
+        username: latestUser.username || "",
+
+        phone: latestUser.phone || "",
+
+        bio: latestUser.bio || "",
+
+        profilePic: latestUser.profilePic || "",
+
+        joinedDate: latestUser.joinedDate || ""
+
+    };
+
+
+    saveCurrentUser(updatedSession);
+
+
+    return updatedSession;
+
+}
+
+
+/* =========================================================
+   LOAD USER
+========================================================= */
+
+let currentUser =
+    loadLatestUser();
+
+
+/*
+    If no user is logged in,
+    return to landing page.
+*/
+
+if (!currentUser) {
+
+    window.location.href = "../../index.html";
+
+}
 
 
 /* =========================================================
@@ -68,10 +210,80 @@ const userName =
 if (currentUser && userName) {
 
     userName.textContent =
-        currentUser.name;
+        currentUser.name || "User";
 
 }
 
+
+/* =========================================================
+   OPTIONAL PROFILE INFORMATION
+========================================================= */
+
+/*
+    If your dashboard later has elements with
+    these IDs, they will automatically display
+    the latest profile information.
+
+    You don't need to add them now.
+*/
+
+const dashboardUsername =
+    document.getElementById("dashboardUsername");
+
+const dashboardEmail =
+    document.getElementById("dashboardEmail");
+
+const dashboardBio =
+    document.getElementById("dashboardBio");
+
+const dashboardProfilePic =
+    document.getElementById("dashboardProfilePic");
+
+
+function renderOptionalProfileInfo(user) {
+
+    if (!user) return;
+
+    if (dashboardUsername) {
+
+        dashboardUsername.textContent =
+            user.username ||
+            user.name ||
+            "User";
+
+    }
+
+
+    if (dashboardEmail) {
+
+        dashboardEmail.textContent =
+            user.email || "";
+
+    }
+
+
+    if (dashboardBio) {
+
+        dashboardBio.textContent =
+            user.bio || "";
+
+    }
+
+
+    if (
+        dashboardProfilePic &&
+        user.profilePic
+    ) {
+
+        dashboardProfilePic.src =
+            user.profilePic;
+
+    }
+
+}
+
+
+renderOptionalProfileInfo(currentUser);
 
 
 /* =========================================================
@@ -82,20 +294,23 @@ const navbar =
     document.getElementById("navbar");
 
 
-window.addEventListener("scroll", () => {
+if (navbar) {
 
-    if (window.scrollY > 40) {
+    window.addEventListener("scroll", () => {
 
-        navbar.classList.add("scrolled");
+        if (window.scrollY > 40) {
 
-    } else {
+            navbar.classList.add("scrolled");
 
-        navbar.classList.remove("scrolled");
+        } else {
 
-    }
+            navbar.classList.remove("scrolled");
 
-});
+        }
 
+    });
+
+}
 
 
 /* =========================================================
@@ -140,7 +355,6 @@ if (mobileMenu && navLinks) {
 }
 
 
-
 /* =========================================================
    CLOSE MOBILE MENU
 ========================================================= */
@@ -164,8 +378,7 @@ document
 
                 if (mobileMenu) {
 
-                    mobileMenu.textContent =
-                        "☰";
+                    mobileMenu.textContent = "☰";
 
                 }
 
@@ -175,9 +388,20 @@ document
     });
 
 
-
 /* =========================================================
    LOGOUT
+
+   NOTE: this previously redirected to "../../index.html"
+   (up TWO folder levels) while every other path in this
+   file — CSS, images, the no-session redirect above — only
+   goes up ONE level ("../index.html"). That mismatch sent
+   the browser to a URL that doesn't exist, which is why
+   logout looked like it "did nothing." Fixed to match the
+   rest of the file. If dashboard.html genuinely lives two
+   folders below index.html in your project, flip this back
+   to "../../index.html" AND update the no-session redirect
+   above and the CSS/image paths to match — the key thing is
+   picking one consistent depth everywhere.
 ========================================================= */
 
 const logoutBtn =
@@ -192,23 +416,9 @@ if (logoutBtn) {
 
             event.preventDefault();
 
-
-            /*
-                Remove only the logged-in user.
-
-                We DO NOT remove roadwiseUsers
-                because that contains registered
-                accounts.
-            */
-
             localStorage.removeItem(
-                "roadwiseCurrentUser"
+                CURRENT_USER_KEY
             );
-
-
-            /*
-                Go back to landing page.
-            */
 
             window.location.href =
                 "../index.html";
@@ -219,19 +429,9 @@ if (logoutBtn) {
 }
 
 
-
 /* =========================================================
    DASHBOARD DATA
 ========================================================= */
-
-
-/*
-    These are temporary frontend values.
-
-    Later your route planner can update
-    these values when actual routes are created.
-*/
-
 
 const routeCount =
     localStorage.getItem(
@@ -249,7 +449,6 @@ const totalFuel =
     localStorage.getItem(
         "roadwiseTotalFuel"
     ) || "0";
-
 
 
 /* =========================================================
@@ -298,7 +497,6 @@ if (fuelCountElement) {
 }
 
 
-
 /* =========================================================
    OVERVIEW STATISTICS
 ========================================================= */
@@ -345,7 +543,6 @@ if (statFuel) {
 }
 
 
-
 /* =========================================================
    REVEAL ANIMATION
 ========================================================= */
@@ -356,49 +553,62 @@ const revealElements =
     );
 
 
-const observer =
-    new IntersectionObserver(
+if ("IntersectionObserver" in window) {
 
-        (entries) => {
+    const observer =
+        new IntersectionObserver(
 
-            entries.forEach(
-                (entry) => {
+            (entries) => {
 
-                    if (
-                        entry.isIntersecting
-                    ) {
+                entries.forEach(
+                    (entry) => {
 
-                        entry.target.classList.add(
-                            "show"
-                        );
+                        if (
+                            entry.isIntersecting
+                        ) {
+
+                            entry.target.classList.add(
+                                "show"
+                            );
 
 
-                        observer.unobserve(
-                            entry.target
-                        );
+                            observer.unobserve(
+                                entry.target
+                            );
+
+                        }
 
                     }
+                );
 
-                }
-            );
+            },
 
-        },
+            {
+                threshold: 0.12
+            }
 
-        {
-            threshold: 0.12
+        );
+
+
+    revealElements.forEach(
+        (element) => {
+
+            observer.observe(element);
+
         }
-
     );
 
+} else {
 
-revealElements.forEach(
-    (element) => {
+    revealElements.forEach(
+        element => {
 
-        observer.observe(element);
+            element.classList.add("show");
 
-    }
-);
+        }
+    );
 
+}
 
 
 /* =========================================================
@@ -459,12 +669,15 @@ document
 
     });
 
+
 /* =========================================================
-FOOTER LOGOUT
+   FOOTER LOGOUT
 ========================================================= */
 
 const footerLogout =
-    document.getElementById("footerLogout");
+    document.getElementById(
+        "footerLogout"
+    );
 
 
 if (footerLogout) {
@@ -476,7 +689,7 @@ if (footerLogout) {
             event.preventDefault();
 
             localStorage.removeItem(
-                "roadwiseCurrentUser"
+                CURRENT_USER_KEY
             );
 
             window.location.href =
@@ -486,3 +699,37 @@ if (footerLogout) {
     );
 
 }
+
+
+/* =========================================================
+   LIVE SYNC FROM OTHER TABS/PAGES
+
+   The browser fires a native "storage" event on every OTHER
+   open tab/page whenever localStorage changes (it never fires
+   in the tab that made the change). This lets Dashboard pick
+   up profile edits made on the Profile page in another tab
+   without requiring a reload.
+========================================================= */
+
+window.addEventListener("storage", (event) => {
+
+    if (event.key === USERS_KEY || event.key === CURRENT_USER_KEY) {
+
+        const refreshed = loadLatestUser();
+
+        if (!refreshed) return;
+
+        currentUser = refreshed;
+
+        if (userName) {
+
+            userName.textContent =
+                refreshed.name || "User";
+
+        }
+
+        renderOptionalProfileInfo(refreshed);
+
+    }
+
+});

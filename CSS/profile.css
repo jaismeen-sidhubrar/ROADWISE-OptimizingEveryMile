@@ -1,0 +1,530 @@
+/* =========================================================
+   EDIT PROFILE PAGE
+   Extends the tokens/variables defined in index.css
+   (--black, --cream, --green, --border, --heading, etc.)
+   This file only adds NEW classes — nothing in index.css
+   is overridden, so it's safe to load alongside it.
+========================================================= */
+
+.profile-page {
+    padding-top: 82px;
+    min-height: 100vh;
+    background: var(--cream);
+}
+
+
+/* =========================================================
+   PAGE HEADER
+========================================================= */
+
+.profile-header {
+    padding: 60px 0 0;
+}
+
+.profile-header .section-top {
+    margin-bottom: 30px;
+}
+
+.profile-crumb {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 10px;
+    font-weight: 700;
+    color: #8b8c84;
+}
+
+.profile-crumb a {
+    color: #8b8c84;
+    transition: 0.25s ease;
+}
+
+.profile-crumb a:hover {
+    color: var(--green-dark);
+}
+
+.profile-crumb span {
+    color: var(--green-dark);
+}
+
+.profile-title-row {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 30px;
+    margin-top: 20px;
+}
+
+.profile-title-row h1 {
+    font-family: var(--heading);
+    font-size: clamp(38px, 4vw, 54px);
+    line-height: 1;
+    letter-spacing: -3px;
+}
+
+.profile-title-row h1 span {
+    color: var(--green-dark);
+}
+
+.profile-title-row p {
+    max-width: 380px;
+    color: #777870;
+    font-size: 12px;
+    line-height: 1.7;
+}
+
+
+/* =========================================================
+   LAYOUT
+========================================================= */
+
+.profile-layout {
+    margin-top: 50px;
+    padding-bottom: 140px;
+    display: grid;
+    grid-template-columns: 0.85fr 1.4fr;
+    gap: 30px;
+    align-items: start;
+}
+
+
+/* =========================================================
+   SHARED CARD LOOK
+========================================================= */
+
+.profile-card {
+    background: white;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    border-radius: 16px;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.05);
+    padding: 35px;
+}
+
+
+/* =========================================================
+   AVATAR CARD
+========================================================= */
+
+.avatar-card {
+    text-align: center;
+    position: sticky;
+    top: 105px;
+}
+
+.avatar-frame {
+    position: relative;
+    width: 150px;
+    height: 150px;
+    margin: 0 auto;
+}
+
+.avatar-preview {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 6px solid var(--cream-2);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+    display: grid;
+    place-items: center;
+    background: var(--green-light);
+}
+
+.avatar-preview img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.avatar-initials {
+    font-family: var(--heading);
+    font-size: 46px;
+    font-weight: 800;
+    color: var(--green-dark);
+}
+
+.avatar-edit-btn {
+    position: absolute;
+    right: 2px;
+    bottom: 2px;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--black);
+    color: white;
+    display: grid;
+    place-items: center;
+    font-size: 15px;
+    border: 4px solid white;
+    cursor: pointer;
+    transition: 0.3s ease;
+}
+
+.avatar-edit-btn:hover {
+    background: var(--green-dark);
+}
+
+.avatar-card h3 {
+    margin-top: 22px;
+    font-family: var(--heading);
+    font-size: 17px;
+}
+
+.avatar-card .avatar-username {
+    margin-top: 4px;
+    color: #8b8c84;
+    font-size: 11px;
+}
+
+.avatar-actions {
+    margin-top: 22px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.avatar-hint {
+    margin-top: 16px;
+    font-size: 9px;
+    color: #999a92;
+    line-height: 1.6;
+}
+
+.avatar-meta {
+    margin-top: 28px;
+    padding-top: 22px;
+    border-top: 1px solid var(--border);
+    text-align: left;
+}
+
+.avatar-meta-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 0;
+    font-size: 10px;
+}
+
+.avatar-meta-row span:first-child {
+    color: #8b8c84;
+    letter-spacing: 0.5px;
+}
+
+.avatar-meta-row span:last-child {
+    font-weight: 700;
+    color: var(--black);
+}
+
+
+/* =========================================================
+   FORM CARD
+========================================================= */
+
+.profile-form-section + .profile-form-section {
+    margin-top: 34px;
+    padding-top: 34px;
+    border-top: 1px solid var(--border);
+}
+
+.form-section-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 22px;
+}
+
+.form-section-head h3 {
+    font-family: var(--heading);
+    font-size: 18px;
+}
+
+.form-section-head span {
+    font-size: 9px;
+    color: #999a92;
+    letter-spacing: 0.5px;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+}
+
+.form-group textarea {
+    width: 100%;
+    padding: 14px 15px;
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    outline: none;
+    background: white;
+    color: var(--black);
+    font-size: 12px;
+    line-height: 1.7;
+    resize: vertical;
+    min-height: 90px;
+    transition: 0.25s;
+}
+
+.form-group textarea:focus {
+    border-color: var(--green-dark);
+    box-shadow: 0 0 0 3px rgba(168, 201, 87, 0.18);
+}
+
+.form-group textarea::placeholder {
+    color: #b0b1aa;
+}
+
+.field-note {
+    margin-top: 7px;
+    font-size: 9px;
+    color: #999a92;
+}
+
+.field-error {
+    margin-top: 7px;
+    font-size: 9px;
+    color: #c65b4a;
+    display: none;
+}
+
+.form-group.has-error input,
+.form-group.has-error textarea {
+    border-color: #c65b4a;
+}
+
+.form-group.has-error .field-error {
+    display: block;
+}
+
+
+/* =========================================================
+   FORM ACTIONS
+========================================================= */
+
+.profile-form-actions {
+    margin-top: 36px;
+    padding-top: 26px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+.danger-link {
+    font-size: 10px;
+    font-weight: 700;
+    color: #c65b4a;
+    border-bottom: 1px solid rgba(198, 91, 74, 0.4);
+    padding-bottom: 3px;
+    transition: 0.25s ease;
+}
+
+.danger-link:hover {
+    color: #a4402f;
+    border-color: #a4402f;
+}
+
+.profile-actions-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.profile-actions-right button {
+    cursor: pointer;
+    border: none;
+}
+
+.btn-disabled {
+    opacity: 0.55;
+    pointer-events: none;
+}
+
+
+/* =========================================================
+   TOAST
+========================================================= */
+
+.profile-toast {
+    position: fixed;
+    left: 50%;
+    bottom: 34px;
+    transform: translate(-50%, 30px);
+    z-index: 3000;
+
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    padding: 15px 22px;
+    border-radius: 10px;
+    background: var(--black);
+    color: white;
+    font-size: 11px;
+    font-weight: 600;
+
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.25);
+
+    opacity: 0;
+    visibility: hidden;
+    transition: 0.35s ease;
+}
+
+.profile-toast.show {
+    opacity: 1;
+    visibility: visible;
+    transform: translate(-50%, 0);
+}
+
+.profile-toast .toast-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--green);
+    flex-shrink: 0;
+}
+
+.profile-toast.toast-error .toast-dot {
+    background: #e07a63;
+}
+
+
+/* =========================================================
+   DELETE CONFIRM MODAL (reuses .signup-overlay pattern)
+========================================================= */
+
+.confirm-modal {
+    width: min(400px, 100%);
+    padding: 38px;
+    border-radius: 20px;
+    background: var(--cream);
+    box-shadow: 0 40px 100px rgba(0, 0, 0, 0.3);
+    text-align: center;
+}
+
+.confirm-modal .confirm-icon {
+    width: 52px;
+    height: 52px;
+    margin: 0 auto 20px;
+    border-radius: 50%;
+    background: rgba(198, 91, 74, 0.12);
+    color: #c65b4a;
+    display: grid;
+    place-items: center;
+    font-size: 22px;
+    font-family: var(--heading);
+    font-weight: 800;
+}
+
+.confirm-modal h2 {
+    font-family: var(--heading);
+    font-size: 24px;
+    letter-spacing: -1px;
+}
+
+.confirm-modal p {
+    margin-top: 12px;
+    color: #777870;
+    font-size: 12px;
+    line-height: 1.7;
+}
+
+.confirm-modal-actions {
+    margin-top: 26px;
+    display: flex;
+    gap: 10px;
+}
+
+.confirm-modal-actions button,
+.confirm-modal-actions a {
+    flex: 1;
+    text-align: center;
+}
+
+.btn-danger {
+    background: #c65b4a;
+    color: white;
+}
+
+.btn-danger:hover {
+    background: #a4402f;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 1050px) {
+
+    .profile-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .avatar-card {
+        position: static;
+        max-width: 340px;
+        margin: 0 auto;
+    }
+}
+
+@media (max-width: 760px) {
+
+    .profile-header {
+        padding-top: 40px;
+    }
+
+    .profile-title-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 14px;
+    }
+
+    .profile-layout {
+        margin-top: 35px;
+        padding-bottom: 90px;
+    }
+
+    .profile-card {
+        padding: 26px;
+    }
+
+    .form-row {
+        grid-template-columns: 1fr;
+    }
+
+    .profile-form-actions {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 16px;
+    }
+
+    .profile-actions-right {
+        justify-content: stretch;
+    }
+
+    .profile-actions-right button {
+        flex: 1;
+    }
+
+    .danger-link {
+        text-align: center;
+    }
+}
+
+@media (max-width: 480px) {
+
+    .profile-toast {
+        width: calc(100% - 40px);
+        left: 20px;
+        right: 20px;
+        transform: translateY(30px);
+        bottom: 20px;
+    }
+
+    .profile-toast.show {
+        transform: translateY(0);
+    }
+}

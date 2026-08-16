@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>RoadWise — Profile</title>
+
+    <link rel="stylesheet" href="../CSS/index.css">
+    <link rel="stylesheet" href="../CSS/profile.css">
+
+    <!-- SAME FONTS AS LANDING PAGE -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+
+    <!-- =====================================================
+         NAVBAR (same structure as dashboard.html)
+    ====================================================== -->
+
+    <header class="navbar" id="navbar">
+
+        <div class="nav-container">
+
+            <a href="dashboard/dashboard.html" class="logo">
+
+                <div class="logo-mark">
+                    R
+                </div>
+
+                <div class="logo-text">
+                    ROAD<span>WISE</span>
+                </div>
+
+            </a>
+
+
+            <nav class="nav-links">
+
+                <a href="dashboard.html">
+                    Home
+                </a>
+
+                <a href="route-planner.html">
+                    Find Route
+                </a>
+
+                <a href="route-history.html">
+                    Route History
+                </a>
+
+                <a href="profile.html" class="active">
+                    Profile
+                </a>
+
+                <a href="#" id="logoutBtn">
+                    Log Out
+                </a>
+
+            </nav>
+
+
+            <button class="mobile-menu" id="mobileMenu">
+                ☰
+            </button>
+
+        </div>
+
+    </header>
+
+
+
+    <!-- =====================================================
+         PROFILE PAGE
+    ====================================================== -->
+
+    <main class="profile-page">
+
+        <div class="section-container profile-header">
+
+            <div class="profile-crumb">
+                <a href="dashboard/dashboard.html">Dashboard</a>
+                <span>/</span>
+                <a href="profile.html">Profile</a>
+            </div>
+
+            <div class="profile-title-row">
+
+                <div>
+                    <h1>Edit your <span>profile</span></h1>
+                    <p>
+                        Update your personal details, contact information
+                        and profile picture. Changes are saved to this
+                        browser only.
+                    </p>
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="section-container">
+
+            <form id="profileForm" novalidate>
+
+                <div class="profile-layout">
+
+
+                    <!-- =====================================
+                         AVATAR CARD
+                    ====================================== -->
+
+                    <div class="profile-card avatar-card">
+
+                        <div class="avatar-frame">
+
+                            <div class="avatar-preview" id="avatarPreview">
+                                <span class="avatar-initials" id="avatarInitials">RW</span>
+                                <img src="" alt="Profile picture" id="avatarImage" style="display:none;">
+                            </div>
+
+                            <label for="avatarInput" class="avatar-edit-btn" title="Change photo">
+                                ✎
+                            </label>
+
+                            <input type="file" id="avatarInput" accept="image/*" hidden>
+
+                        </div>
+
+                        <h3 id="avatarDisplayName">Your Name</h3>
+                        <div class="avatar-username" id="avatarDisplayEmail">you@example.com</div>
+
+                        <div class="avatar-actions">
+
+                            <label for="avatarInput" class="outline-btn" style="cursor:pointer;">
+                                Upload new photo
+                            </label>
+
+                            <button type="button" class="danger-link" id="removeAvatarBtn"
+                                style="background:none; border:none; cursor:pointer;">
+                                Remove photo
+                            </button>
+
+                        </div>
+
+                        <p class="avatar-hint">
+                            JPG or PNG, up to 2MB. Square images look best.
+                        </p>
+
+                        <div class="avatar-meta">
+
+                            <div class="avatar-meta-row">
+                                <span>Member since</span>
+                                <span id="metaJoined">—</span>
+                            </div>
+
+                            <div class="avatar-meta-row">
+                                <span>Account status</span>
+                                <span style="color:var(--green-dark);">Active</span>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <!-- =====================================
+                         FORM CARD
+                    ====================================== -->
+
+                    <div class="profile-card">
+
+
+                        <!-- PERSONAL INFO -->
+
+                        <div class="profile-form-section">
+
+                            <div class="form-section-head">
+                                <h3>Personal information</h3>
+                                <span>Visible on your account</span>
+                            </div>
+
+                            <div class="form-row">
+
+                                <div class="form-group" id="group-fullName">
+                                    <label for="fullName">FULL NAME</label>
+                                    <input type="text" id="fullName" placeholder="Enter your full name">
+                                    <div class="field-error">Please enter your name.</div>
+                                </div>
+
+                                <div class="form-group" id="group-username">
+                                    <label for="username">USERNAME</label>
+                                    <input type="text" id="username" placeholder="yourusername">
+                                    <div class="field-error">Username must be at least 3 characters.</div>
+                                </div>
+
+                            </div>
+
+                            <div class="form-row">
+
+                                <div class="form-group" id="group-email">
+                                    <label for="email">EMAIL</label>
+                                    <input type="email" id="email" placeholder="you@example.com">
+                                    <div class="field-error">Please enter a valid email address.</div>
+                                </div>
+
+                                <div class="form-group" id="group-phone">
+                                    <label for="phone">PHONE NUMBER</label>
+                                    <input type="tel" id="phone" placeholder="+91 98765 43210">
+                                    <div class="field-note">Optional</div>
+                                </div>
+
+                            </div>
+
+                            <div class="form-group">
+                                <label for="bio">BIO</label>
+                                <textarea id="bio" placeholder="A short line about you or how you use RoadWise"
+                                    maxlength="160"></textarea>
+                                <div class="field-note"><span id="bioCount">0</span>/160</div>
+                            </div>
+
+                        </div>
+
+
+
+                        <!-- PASSWORD -->
+
+                        <div class="profile-form-section">
+
+                            <div class="form-section-head">
+                                <h3>Change password</h3>
+                                <span>Leave blank to keep current password</span>
+                            </div>
+
+                            <div class="form-group" id="group-currentPassword">
+                                <label for="currentPassword">CURRENT PASSWORD</label>
+                                <input type="password" id="currentPassword" placeholder="Enter current password">
+                                <div class="field-error">Current password is incorrect.</div>
+                            </div>
+
+                            <div class="form-row">
+
+                                <div class="form-group" id="group-newPassword">
+                                    <label for="newPassword">NEW PASSWORD</label>
+                                    <input type="password" id="newPassword" placeholder="Create a new password">
+                                    <div class="field-error">Password must be at least 6 characters.</div>
+                                </div>
+
+                                <div class="form-group" id="group-confirmPassword">
+                                    <label for="confirmPassword">CONFIRM NEW PASSWORD</label>
+                                    <input type="password" id="confirmPassword" placeholder="Repeat new password">
+                                    <div class="field-error">Passwords do not match.</div>
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+
+                        <!-- ACTIONS -->
+
+                        <div class="profile-form-actions">
+
+                            <a href="#" class="danger-link" id="deleteAccountBtn">
+                                Delete account
+                            </a>
+
+                            <div class="profile-actions-right">
+
+                                <a href="dashboard/dashboard.html" class="outline-btn">
+                                    Cancel
+                                </a>
+
+                                <button type="submit" class="primary-btn">
+                                    Save changes
+                                    <span>→</span>
+                                </button>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </main>
+
+
+
+    <!-- =====================================================
+         DELETE ACCOUNT CONFIRM MODAL
+    ====================================================== -->
+
+    <div class="signup-overlay" id="deleteModal">
+
+        <div class="confirm-modal">
+
+            <div class="confirm-icon">!</div>
+
+            <h2>Delete your account?</h2>
+
+            <p>
+                This removes your account from this browser
+                and cannot be undone.
+            </p>
+
+            <div class="confirm-modal-actions">
+
+                <button type="button" class="outline-btn" id="cancelDeleteBtn">
+                    Cancel
+                </button>
+
+                <button type="button" class="primary-btn btn-danger" id="confirmDeleteBtn">
+                    Delete
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- =====================================================
+         TOAST
+    ====================================================== -->
+
+    <div class="profile-toast" id="profileToast">
+        <span class="toast-dot"></span>
+        <span id="profileToastText">Profile updated successfully.</span>
+    </div>
+
+
+
+    <!-- =====================================================
+         FOOTER (same structure as dashboard.html)
+    ====================================================== -->
+
+    <footer class="footer">
+
+        <div class="footer-container">
+
+            <div class="footer-main">
+
+                <a href="dashboard/dashboard.html" class="logo footer-logo">
+
+                    <div class="logo-mark">
+                        R
+                    </div>
+
+                    <div class="logo-text">
+                        ROAD<span>WISE</span>
+                    </div>
+
+                </a>
+
+                <p>
+                    Vehicle route and fuel cost optimization
+                    designed to help every journey make more sense.
+                </p>
+
+                <div class="footer-socials">
+                    <a href="#">in</a>
+                    <a href="#">X</a>
+                    <a href="#">G</a>
+                </div>
+
+            </div>
+
+
+            <div class="footer-column">
+
+                <span>PRODUCT</span>
+
+                <a href="route-planner.html">Find Route</a>
+                <a href="route-history.html">Route History</a>
+                <a href="dashboard/dashboard.html">Dashboard</a>
+
+            </div>
+
+
+            <div class="footer-column">
+
+                <span>ACCOUNT</span>
+
+                <a href="profile.html">Profile</a>
+                <a href="route-history.html">My Routes</a>
+                <a href="../index.html" id="footerLogout">Log Out</a>
+
+            </div>
+
+
+            <div class="footer-column">
+
+                <span>ROADWISE</span>
+
+                <a href="dashboard/dashboard.html">Home</a>
+                <a href="index.html">Landing Page</a>
+                <a href="route-planner.html">Start Planning</a>
+
+            </div>
+
+        </div>
+
+
+        <div class="footer-bottom">
+
+            <span>© 2026 RoadWise. All rights reserved.</span>
+            <span>Built for smarter journeys.</span>
+
+        </div>
+
+    </footer>
+
+
+    <script src="../JS/profile.js"></script>
+
+</body>
+
+</html>

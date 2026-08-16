@@ -1,15 +1,26 @@
 /* =========================================================
+   ROADWISE LANDING PAGE JAVASCRIPT
+========================================================= */
+
+
+/* =========================================================
    NAVBAR SCROLL EFFECT
 ========================================================= */
 
 const navbar = document.getElementById("navbar");
 
 window.addEventListener("scroll", () => {
+
     if (window.scrollY > 40) {
+
         navbar.classList.add("scrolled");
+
     } else {
+
         navbar.classList.remove("scrolled");
+
     }
+
 });
 
 
@@ -21,25 +32,38 @@ const mobileMenu = document.getElementById("mobileMenu");
 const navLinks = document.querySelector(".nav-links");
 
 if (mobileMenu && navLinks) {
+
     mobileMenu.addEventListener("click", () => {
+
         navLinks.classList.toggle("mobile-active");
 
         if (navLinks.classList.contains("mobile-active")) {
+
             mobileMenu.textContent = "✕";
+
         } else {
+
             mobileMenu.textContent = "☰";
+
         }
+
     });
+
 }
 
 
 /* Close menu after clicking a link */
 
 document.querySelectorAll(".nav-links a").forEach(link => {
+
     link.addEventListener("click", () => {
+
         navLinks.classList.remove("mobile-active");
+
         mobileMenu.textContent = "☰";
+
     });
+
 });
 
 
@@ -47,24 +71,39 @@ document.querySelectorAll(".nav-links a").forEach(link => {
    SCROLL REVEAL ANIMATION
 ========================================================= */
 
-const revealElements = document.querySelectorAll(".reveal");
+const revealElements =
+    document.querySelectorAll(".reveal");
 
-const observer = new IntersectionObserver(
-    (entries) => {
-        entries.forEach((entry) => {
-            if (entry.isIntersecting) {
-                entry.target.classList.add("show");
-                observer.unobserve(entry.target);
-            }
-        });
-    },
-    {
-        threshold: 0.12
-    }
-);
+const observer =
+    new IntersectionObserver(
+
+        (entries) => {
+
+            entries.forEach((entry) => {
+
+                if (entry.isIntersecting) {
+
+                    entry.target.classList.add("show");
+
+                    observer.unobserve(entry.target);
+
+                }
+
+            });
+
+        },
+
+        {
+            threshold: 0.12
+        }
+
+    );
+
 
 revealElements.forEach((element) => {
+
     observer.observe(element);
+
 });
 
 
@@ -72,35 +111,56 @@ revealElements.forEach((element) => {
    ACTIVE NAVIGATION LINK
 ========================================================= */
 
-const sections = document.querySelectorAll("section[id]");
-const navigationLinks = document.querySelectorAll(".nav-links a");
+const sections =
+    document.querySelectorAll("section[id]");
+
+const navigationLinks =
+    document.querySelectorAll(".nav-links a");
+
 
 window.addEventListener("scroll", () => {
 
     let currentSection = "";
 
+
     sections.forEach(section => {
 
-        const sectionTop = section.offsetTop - 150;
-        const sectionHeight = section.offsetHeight;
+        const sectionTop =
+            section.offsetTop - 150;
+
+        const sectionHeight =
+            section.offsetHeight;
+
 
         if (
             window.scrollY >= sectionTop &&
             window.scrollY < sectionTop + sectionHeight
         ) {
-            currentSection = section.getAttribute("id");
+
+            currentSection =
+                section.getAttribute("id");
+
         }
 
     });
+
 
     navigationLinks.forEach(link => {
 
         link.classList.remove("active");
 
-        const linkTarget = link.getAttribute("href");
 
-        if (linkTarget === `#${currentSection}`) {
+        const linkTarget =
+            link.getAttribute("href");
+
+
+        if (
+            linkTarget ===
+            `#${currentSection}`
+        ) {
+
             link.classList.add("active");
+
         }
 
     });
@@ -112,33 +172,49 @@ window.addEventListener("scroll", () => {
    HERO CARD MOUSE MOVEMENT
 ========================================================= */
 
-const heroImage = document.querySelector(".hero-image-area");
-const floatingCard = document.querySelector(".hero-floating-card");
+const heroImage =
+    document.querySelector(".hero-image-area");
+
+const floatingCard =
+    document.querySelector(".hero-floating-card");
+
 
 if (heroImage && floatingCard) {
 
-    heroImage.addEventListener("mousemove", (event) => {
+    heroImage.addEventListener(
+        "mousemove",
+        (event) => {
 
-        const rect = heroImage.getBoundingClientRect();
-
-        const x =
-            (event.clientX - rect.left) / rect.width - 0.5;
-
-        const y =
-            (event.clientY - rect.top) / rect.height - 0.5;
-
-        floatingCard.style.transform =
-            `translate(${x * 12}px, ${y * 12}px)`;
-
-    });
+            const rect =
+                heroImage.getBoundingClientRect();
 
 
-    heroImage.addEventListener("mouseleave", () => {
+            const x =
+                (event.clientX - rect.left) /
+                rect.width - 0.5;
 
-        floatingCard.style.transform =
-            "translate(0, 0)";
 
-    });
+            const y =
+                (event.clientY - rect.top) /
+                rect.height - 0.5;
+
+
+            floatingCard.style.transform =
+                `translate(${x * 12}px, ${y * 12}px)`;
+
+        }
+    );
+
+
+    heroImage.addEventListener(
+        "mouseleave",
+        () => {
+
+            floatingCard.style.transform =
+                "translate(0, 0)";
+
+        }
+    );
 
 }
 
@@ -147,28 +223,38 @@ if (heroImage && floatingCard) {
    NUMBER COUNTER
 ========================================================= */
 
-function animateNumber(element, target, duration = 1200) {
+function animateNumber(
+    element,
+    target,
+    duration = 1200
+) {
 
     let start = 0;
 
-    const increment = target / (duration / 16);
+    const increment =
+        target / (duration / 16);
 
-    const timer = setInterval(() => {
 
-        start += increment;
+    const timer =
+        setInterval(() => {
 
-        if (start >= target) {
+            start += increment;
 
-            start = target;
 
-            clearInterval(timer);
+            if (start >= target) {
 
-        }
+                start = target;
 
-        element.textContent =
-            Math.floor(start).toLocaleString();
+                clearInterval(timer);
 
-    }, 16);
+            }
+
+
+            element.textContent =
+                Math.floor(start)
+                    .toLocaleString();
+
+        }, 16);
 
 }
 
@@ -177,30 +263,43 @@ function animateNumber(element, target, duration = 1200) {
    SMOOTH ANCHOR SCROLL
 ========================================================= */
 
-document.querySelectorAll('a[href^="#"]').forEach(link => {
+document
+    .querySelectorAll('a[href^="#"]')
+    .forEach(link => {
 
-    link.addEventListener("click", function (event) {
+        link.addEventListener(
+            "click",
+            function (event) {
 
-        const targetId =
-            this.getAttribute("href");
+                const targetId =
+                    this.getAttribute("href");
 
-        if (targetId === "#") return;
 
-        const target =
-            document.querySelector(targetId);
+                if (targetId === "#") return;
 
-        if (!target) return;
 
-        event.preventDefault();
+                const target =
+                    document.querySelector(targetId);
 
-        target.scrollIntoView({
-            behavior: "smooth",
-            block: "start"
-        });
+
+                if (!target) return;
+
+
+                event.preventDefault();
+
+
+                target.scrollIntoView({
+
+                    behavior: "smooth",
+
+                    block: "start"
+
+                });
+
+            }
+        );
 
     });
-
-});
 
 
 /* =========================================================
@@ -210,31 +309,55 @@ document.querySelectorAll('a[href^="#"]').forEach(link => {
 const signupModal =
     document.getElementById("signupModal");
 
+
 const modalClose =
     document.getElementById("modalClose");
+
 
 const signupTriggers =
     document.querySelectorAll(".open-signup");
 
 
+/* =========================================================
+   OPEN SIGN IN MODAL
+========================================================= */
+
 function openSignupModal(event) {
 
     if (event) {
+
         event.preventDefault();
+
     }
 
+
     if (!signupModal) return;
+
 
     signupModal.classList.add("active");
 
     document.body.classList.add("modal-open");
 
+
+    /*
+        IMPORTANT:
+        Every Sign In / Start Planning / Route Planner
+        link opens the SIGN IN form directly.
+    */
+
+    showLoginForm();
+
 }
 
+
+/* =========================================================
+   CLOSE MODAL
+========================================================= */
 
 function closeSignupModal() {
 
     if (!signupModal) return;
+
 
     signupModal.classList.remove("active");
 
@@ -243,16 +366,23 @@ function closeSignupModal() {
 }
 
 
-/* Open popup */
+/* =========================================================
+   OPEN SIGN IN BUTTONS
+========================================================= */
 
 signupTriggers.forEach(button => {
 
-    button.addEventListener("click", openSignupModal);
+    button.addEventListener(
+        "click",
+        openSignupModal
+    );
 
 });
 
 
-/* Close using X */
+/* =========================================================
+   CLOSE USING X
+========================================================= */
 
 if (modalClose) {
 
@@ -264,30 +394,44 @@ if (modalClose) {
 }
 
 
-/* Close when clicking outside modal */
+/* =========================================================
+   CLOSE WHEN CLICKING OUTSIDE MODAL
+========================================================= */
 
 if (signupModal) {
 
-    signupModal.addEventListener("click", (event) => {
+    signupModal.addEventListener(
+        "click",
+        (event) => {
 
-        if (event.target === signupModal) {
-            closeSignupModal();
+            if (event.target === signupModal) {
+
+                closeSignupModal();
+
+            }
+
         }
-
-    });
+    );
 
 }
 
 
-/* Close with ESC */
+/* =========================================================
+   CLOSE WITH ESC
+========================================================= */
 
-document.addEventListener("keydown", (event) => {
+document.addEventListener(
+    "keydown",
+    (event) => {
 
-    if (event.key === "Escape") {
-        closeSignupModal();
+        if (event.key === "Escape") {
+
+            closeSignupModal();
+
+        }
+
     }
-
-});
+);
 
 
 /* =========================================================
@@ -298,26 +442,26 @@ const signupForm =
     document.getElementById("signupForm");
 
 
-/*
-    Get existing users from localStorage.
-
-    If there are no users yet,
-    create an empty array.
-*/
+/* =========================================================
+   GET USERS
+========================================================= */
 
 function getUsers() {
 
     const users =
         localStorage.getItem("roadwiseUsers");
 
-    return users ? JSON.parse(users) : [];
+
+    return users
+        ? JSON.parse(users)
+        : [];
 
 }
 
 
-/*
-    Save users array to localStorage
-*/
+/* =========================================================
+   SAVE USERS
+========================================================= */
 
 function saveUsers(users) {
 
@@ -335,145 +479,10 @@ function saveUsers(users) {
 
 if (signupForm) {
 
-    signupForm.addEventListener("submit", (event) => {
-
-        event.preventDefault();
-
-
-        const name =
-            document.getElementById("fullName").value.trim();
-
-        const email =
-            document.getElementById("email").value.trim();
-
-        const password =
-            document.getElementById("password").value.trim();
-
-
-        /* Check empty fields */
-
-        if (!name || !email || !password) {
-
-            alert("Please fill in all the fields.");
-
-            return;
-
-        }
-
-
-        /* Get existing users */
-
-        const users = getUsers();
-
-
-        /*
-            Check whether this email
-            is already registered.
-        */
-
-        const existingUser =
-            users.find(
-                user =>
-                    user.email.toLowerCase() ===
-                    email.toLowerCase()
-            );
-
-
-        if (existingUser) {
-
-            alert(
-                "An account with this email already exists. Please sign in."
-            );
-
-            return;
-
-        }
-
-
-        /*
-            Create new user object
-        */
-
-        const newUser = {
-
-            name: name,
-
-            email: email,
-
-            password: password
-
-        };
-
-
-        /*
-            Add new user to users array
-        */
-
-        users.push(newUser);
-
-
-        /*
-            Save updated users array
-            to localStorage
-        */
-
-        saveUsers(users);
-
-
-        /*
-            Store the currently logged-in user
-
-            We don't need to store the password
-            here because the next page only
-            needs the user's information.
-        */
-
-        const currentUser = {
-
-            name: name,
-
-            email: email
-
-        };
-
-
-        localStorage.setItem(
-            "roadwiseCurrentUser",
-            JSON.stringify(currentUser)
-        );
-
-
-        /*
-            Show success message
-        */
-
-        alert(
-            `Welcome to RoadWise, ${name}!`
-        );
-
-
-        /*
-            Clear the form
-        */
-
-        signupForm.reset();
-
-
-        /*
-            Close modal
-        */
-
-        closeSignupModal();
-
-
-        /*
-            Go to route planner
-        */
-
-        window.location.href =
-            "route-planner.html";
-
-    });
+    signupForm.addEventListener(
+        "submit",
+        handleSignup
+    );
 
 }
 
@@ -488,18 +497,16 @@ const switchToLogin =
 
 if (switchToLogin) {
 
-    switchToLogin.addEventListener("click", (event) => {
+    switchToLogin.addEventListener(
+        "click",
+        (event) => {
 
-        event.preventDefault();
+            event.preventDefault();
 
-        /*
-            For now, create a simple login form
-            using the existing modal.
-        */
+            showLoginForm();
 
-        showLoginForm();
-
-    });
+        }
+    );
 
 }
 
@@ -517,16 +524,12 @@ function showLoginForm() {
         signupModal.querySelector(".signup-modal");
 
 
-    /*
-        Replace the existing signup form
-        with the login form.
-    */
-
     modal.innerHTML = `
 
         <button class="modal-close" id="modalClose">
             ×
         </button>
+
 
         <div class="modal-logo">
 
@@ -547,14 +550,19 @@ function showLoginForm() {
 
 
         <h2>
+
             Sign in.
             <br>
+
             <span>Keep moving.</span>
+
         </h2>
 
 
         <p class="modal-description">
+
             Sign in to continue planning smarter journeys.
+
         </p>
 
 
@@ -596,8 +604,11 @@ function showLoginForm() {
                 type="submit"
                 class="modal-submit"
             >
+
                 Sign In
+
                 <span>→</span>
+
             </button>
 
         </form>
@@ -616,9 +627,7 @@ function showLoginForm() {
     `;
 
 
-    /*
-        Close button
-    */
+    /* Close button */
 
     const newCloseButton =
         document.getElementById("modalClose");
@@ -634,9 +643,7 @@ function showLoginForm() {
     }
 
 
-    /*
-        Login form
-    */
+    /* Login form */
 
     const loginForm =
         document.getElementById("loginForm");
@@ -652,9 +659,7 @@ function showLoginForm() {
     }
 
 
-    /*
-        Switch back to signup
-    */
+    /* Switch to signup */
 
     const switchToSignup =
         document.getElementById("switchToSignup");
@@ -686,13 +691,11 @@ function handleLogin(event) {
 
     event.preventDefault();
 
-
     const email =
         document
             .getElementById("loginEmail")
             .value
             .trim();
-
 
     const password =
         document
@@ -700,15 +703,7 @@ function handleLogin(event) {
             .value
             .trim();
 
-
-    /* Get users */
-
     const users = getUsers();
-
-
-    /*
-        Find matching user
-    */
 
     const user =
         users.find(
@@ -718,25 +713,12 @@ function handleLogin(event) {
                 user.password === password
         );
 
-
-    /*
-        Wrong email/password
-    */
-
     if (!user) {
 
-        alert(
-            "Invalid email or password."
-        );
+        alert("Invalid email or password.");
 
         return;
-
     }
-
-
-    /*
-        Store logged-in user
-    */
 
     const currentUser = {
 
@@ -746,29 +728,19 @@ function handleLogin(event) {
 
     };
 
-
     localStorage.setItem(
         "roadwiseCurrentUser",
         JSON.stringify(currentUser)
     );
 
-
-    /*
-        Login successful
-    */
-
     alert(
         `Welcome back, ${user.name}!`
     );
 
-
-    /*
-        Go to route planner
-    */
+    /* Go to Dashboard */
 
     window.location.href =
-        "route-planner.html";
-
+        "Pages/dashboard.html";
 }
 
 
@@ -811,15 +783,20 @@ function showSignupForm() {
 
 
         <h2>
+
             Plan smarter.
             <br>
+
             <span>Move better.</span>
+
         </h2>
 
 
         <p class="modal-description">
+
             Create your RoadWise account and start planning
             more efficient journeys.
+
         </p>
 
 
@@ -877,8 +854,11 @@ function showSignupForm() {
                 type="submit"
                 class="modal-submit"
             >
+
                 Create Account
+
                 <span>→</span>
+
             </button>
 
         </form>
@@ -897,9 +877,7 @@ function showSignupForm() {
     `;
 
 
-    /*
-        Close button
-    */
+    /* Close button */
 
     const newCloseButton =
         document.getElementById("modalClose");
@@ -915,9 +893,7 @@ function showSignupForm() {
     }
 
 
-    /*
-        Signup form
-    */
+    /* Signup form */
 
     const newSignupForm =
         document.getElementById("signupForm");
@@ -933,9 +909,7 @@ function showSignupForm() {
     }
 
 
-    /*
-        Switch to login
-    */
+    /* Switch to login */
 
     const newSwitchToLogin =
         document.getElementById("switchToLogin");
@@ -967,13 +941,11 @@ function handleSignup(event) {
 
     event.preventDefault();
 
-
     const name =
         document
             .getElementById("fullName")
             .value
             .trim();
-
 
     const email =
         document
@@ -981,17 +953,11 @@ function handleSignup(event) {
             .value
             .trim();
 
-
     const password =
         document
             .getElementById("password")
             .value
             .trim();
-
-
-    /*
-        Check empty fields
-    */
 
     if (!name || !email || !password) {
 
@@ -1000,20 +966,9 @@ function handleSignup(event) {
         );
 
         return;
-
     }
 
-
-    /*
-        Get existing users
-    */
-
     const users = getUsers();
-
-
-    /*
-        Check if email already exists
-    */
 
     const existingUser =
         users.find(
@@ -1022,7 +977,6 @@ function handleSignup(event) {
                 email.toLowerCase()
         );
 
-
     if (existingUser) {
 
         alert(
@@ -1030,13 +984,7 @@ function handleSignup(event) {
         );
 
         return;
-
     }
-
-
-    /*
-        Create new user
-    */
 
     const newUser = {
 
@@ -1048,24 +996,9 @@ function handleSignup(event) {
 
     };
 
-
-    /*
-        Add user
-    */
-
     users.push(newUser);
 
-
-    /*
-        Save users
-    */
-
     saveUsers(users);
-
-
-    /*
-        Save current user
-    */
 
     const currentUser = {
 
@@ -1075,30 +1008,56 @@ function handleSignup(event) {
 
     };
 
-
     localStorage.setItem(
         "roadwiseCurrentUser",
         JSON.stringify(currentUser)
     );
 
-
-    /*
-        Success
-    */
-
     alert(
         `Welcome to RoadWise, ${name}!`
     );
 
-
-    /*
-        Go to route planner
-    */
+    /* Go to Dashboard */
 
     window.location.href =
-        "route-planner.html";
-
+        "Pages/dashboard.html";
 }
+
+
+/* =========================================================
+   PROTECTED ROUTE / PLANNING LINKS
+========================================================= */
+
+/*
+    ONLY these types of links require Sign In:
+
+    1. route-planner.html
+    2. "Plan your first route" (.about-link)
+
+    About / Partners / Users / How It Works
+    are NOT affected.
+*/
+
+const protectedLinks =
+    document.querySelectorAll(
+        'a[href="route-planner.html"], a.about-link'
+    );
+
+
+protectedLinks.forEach(link => {
+
+    link.addEventListener(
+        "click",
+        (event) => {
+
+            event.preventDefault();
+
+            openSignupModal(event);
+
+        }
+    );
+
+});
 
 
 /* =========================================================
@@ -1106,24 +1065,40 @@ function handleSignup(event) {
 ========================================================= */
 
 const testimonialSlider =
-    document.getElementById("testimonialSlider");
+    document.getElementById(
+        "testimonialSlider"
+    );
+
 
 const reviewPrev =
-    document.getElementById("reviewPrev");
+    document.getElementById(
+        "reviewPrev"
+    );
+
 
 const reviewNext =
-    document.getElementById("reviewNext");
+    document.getElementById(
+        "reviewNext"
+    );
+
 
 const reviewDots =
-    document.querySelectorAll(".review-dot");
+    document.querySelectorAll(
+        ".review-dot"
+    );
 
 
 let currentReview = 0;
 
 
+/* =========================================================
+   GET REVIEW CARDS
+========================================================= */
+
 function getReviewCards() {
 
     if (!testimonialSlider) return [];
+
 
     return testimonialSlider.querySelectorAll(
         ".testimonial-card"
@@ -1132,19 +1107,31 @@ function getReviewCards() {
 }
 
 
+/* =========================================================
+   GET REVIEW STEP
+========================================================= */
+
 function getReviewStep() {
 
-    const cards = getReviewCards();
+    const cards =
+        getReviewCards();
+
 
     if (!cards.length) return 0;
 
+
     const cardWidth =
         cards[0].getBoundingClientRect().width;
+
 
     return cardWidth + 22;
 
 }
 
+
+/* =========================================================
+   UPDATE REVIEW DOTS
+========================================================= */
 
 function updateReviewDots(index) {
 
@@ -1160,93 +1147,136 @@ function updateReviewDots(index) {
 }
 
 
-/* Next */
+/* =========================================================
+   NEXT REVIEW
+========================================================= */
 
 if (reviewNext) {
 
-    reviewNext.addEventListener("click", () => {
+    reviewNext.addEventListener(
+        "click",
+        () => {
 
-        const cards = getReviewCards();
+            const cards =
+                getReviewCards();
 
-        if (!cards.length) return;
 
-        currentReview++;
+            if (!cards.length) return;
 
-        if (currentReview >= cards.length) {
-            currentReview = 0;
+
+            currentReview++;
+
+
+            if (
+                currentReview >=
+                cards.length
+            ) {
+
+                currentReview = 0;
+
+            }
+
+
+            testimonialSlider.scrollTo({
+
+                left:
+                    currentReview *
+                    getReviewStep(),
+
+                behavior: "smooth"
+
+            });
+
+
+            updateReviewDots(
+                currentReview
+            );
+
         }
-
-        testimonialSlider.scrollTo({
-
-            left:
-                currentReview * getReviewStep(),
-
-            behavior: "smooth"
-
-        });
-
-        updateReviewDots(currentReview);
-
-    });
+    );
 
 }
 
 
-/* Previous */
+/* =========================================================
+   PREVIOUS REVIEW
+========================================================= */
 
 if (reviewPrev) {
 
-    reviewPrev.addEventListener("click", () => {
+    reviewPrev.addEventListener(
+        "click",
+        () => {
 
-        const cards = getReviewCards();
+            const cards =
+                getReviewCards();
 
-        if (!cards.length) return;
 
-        currentReview--;
+            if (!cards.length) return;
 
-        if (currentReview < 0) {
 
-            currentReview =
-                cards.length - 1;
+            currentReview--;
+
+
+            if (currentReview < 0) {
+
+                currentReview =
+                    cards.length - 1;
+
+            }
+
+
+            testimonialSlider.scrollTo({
+
+                left:
+                    currentReview *
+                    getReviewStep(),
+
+                behavior: "smooth"
+
+            });
+
+
+            updateReviewDots(
+                currentReview
+            );
 
         }
-
-        testimonialSlider.scrollTo({
-
-            left:
-                currentReview * getReviewStep(),
-
-            behavior: "smooth"
-
-        });
-
-        updateReviewDots(currentReview);
-
-    });
+    );
 
 }
 
 
-/* Dots */
+/* =========================================================
+   REVIEW DOTS
+========================================================= */
 
 reviewDots.forEach((dot, index) => {
 
-    dot.addEventListener("click", () => {
+    dot.addEventListener(
+        "click",
+        () => {
 
-        currentReview = index;
+            currentReview = index;
 
-        testimonialSlider.scrollTo({
 
-            left:
-                currentReview * getReviewStep(),
+            testimonialSlider.scrollTo({
 
-            behavior: "smooth"
+                left:
+                    currentReview *
+                    getReviewStep(),
 
-        });
+                behavior: "smooth"
 
-        updateReviewDots(currentReview);
+            });
 
-    });
+
+            updateReviewDots(
+                currentReview
+            );
+
+        }
+    );
 
 });
 
@@ -1260,38 +1290,59 @@ let reviewAutoSlide =
 
         if (!testimonialSlider) return;
 
-        const cards = getReviewCards();
+
+        const cards =
+            getReviewCards();
+
 
         if (!cards.length) return;
 
+
         currentReview++;
 
-        if (currentReview >= cards.length) {
+
+        if (
+            currentReview >=
+            cards.length
+        ) {
+
             currentReview = 0;
+
         }
+
 
         testimonialSlider.scrollTo({
 
             left:
-                currentReview * getReviewStep(),
+                currentReview *
+                getReviewStep(),
 
             behavior: "smooth"
 
         });
 
-        updateReviewDots(currentReview);
+
+        updateReviewDots(
+            currentReview
+        );
 
     }, 5000);
 
 
-/* Stop automatic movement while user interacts */
+/* =========================================================
+   STOP AUTO SLIDE ON HOVER
+========================================================= */
 
 if (testimonialSlider) {
 
     testimonialSlider.addEventListener(
         "mouseenter",
         () => {
-            clearInterval(reviewAutoSlide);
+
+            clearInterval(
+                reviewAutoSlide
+            );
+
         }
     );
 
@@ -1306,16 +1357,22 @@ if (testimonialSlider) {
                     const cards =
                         getReviewCards();
 
+
                     if (!cards.length) return;
 
+
                     currentReview++;
+
 
                     if (
                         currentReview >=
                         cards.length
                     ) {
+
                         currentReview = 0;
+
                     }
+
 
                     testimonialSlider.scrollTo({
 
@@ -1326,6 +1383,7 @@ if (testimonialSlider) {
                         behavior: "smooth"
 
                     });
+
 
                     updateReviewDots(
                         currentReview
