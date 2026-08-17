@@ -1,0 +1,855 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>RoadWise — Find Route</title>
+
+
+    <!-- SAME ROADWISE CSS -->
+
+    <link
+        rel="stylesheet"
+        href="../CSS/index.css"
+    >
+
+
+    <!-- SAME FONTS -->
+
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+    >
+
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    >
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet"
+    >
+
+</head>
+
+
+<body>
+
+
+    <!-- =====================================================
+         NAVBAR
+    ====================================================== -->
+
+    <header
+        class="navbar"
+        id="navbar"
+    >
+
+        <div class="nav-container">
+
+
+            <!-- LOGO -->
+
+            <a
+                href="dashboard.html"
+                class="logo"
+            >
+
+                <div class="logo-mark">
+                    R
+                </div>
+
+                <div class="logo-text">
+                    ROAD<span>WISE</span>
+                </div>
+
+            </a>
+
+
+            <!-- NAVIGATION -->
+
+            <nav class="nav-links">
+
+                <a
+                    href="dashboard.html"
+                >
+                    Home
+                </a>
+
+
+                <a
+                    href="#route"
+                    class="active"
+                >
+                    Find Route
+                </a>
+
+
+                <a
+                    href="route-history.html"
+                >
+                    Route History
+                </a>
+
+
+                <a
+                    href="profile.html"
+                >
+                    Profile
+                </a>
+
+
+                <a
+                    href="#"
+                    id="logoutBtn"
+                >
+                    Log Out
+                </a>
+
+            </nav>
+
+
+            <!-- MOBILE MENU -->
+
+            <button
+                class="mobile-menu"
+                id="mobileMenu"
+            >
+                ☰
+            </button>
+
+        </div>
+
+    </header>
+
+
+
+    <!-- =====================================================
+         MAIN CONTENT
+    ====================================================== -->
+
+    <main>
+
+
+        <!-- =================================================
+             PAGE INTRO
+        ================================================== -->
+
+        <section
+            class="hero"
+            id="route"
+        >
+
+            <div
+                class="hero-container"
+                style="display:block;"
+            >
+
+
+                <div
+                    class="hero-content reveal"
+                    style="max-width:850px;"
+                >
+
+                    <div class="eyebrow">
+
+                        <span class="eyebrow-dot"></span>
+
+                        SMART ROUTE PLANNER
+
+                    </div>
+
+
+                    <h1>
+
+                        Find your
+                        <br>
+
+                        <span>best route.</span>
+
+                    </h1>
+
+
+                    <p class="hero-description">
+
+                        Add your destinations and RoadWise will
+                        arrange them using the Nearest Neighbour
+                        approach, estimate your journey time,
+                        fuel requirement and travel cost.
+
+                    </p>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =================================================
+             ROUTE INPUT SECTION
+        ================================================== -->
+
+        <section
+            class="about-section"
+            id="route-input"
+        >
+
+            <div class="section-container">
+
+
+                <div class="section-top reveal">
+
+                    <div class="section-number">
+
+                        01 / YOUR JOURNEY
+
+                    </div>
+
+
+                    <div class="section-line"></div>
+
+
+                    <div class="section-small-text">
+
+                        Add your stops
+
+                    </div>
+
+                </div>
+
+
+
+                <div class="about-main">
+
+
+                    <!-- =====================================
+                         ADDRESS INPUTS
+                    ====================================== -->
+
+                    <div class="about-description reveal">
+
+
+                        <p class="about-large">
+
+                            Where are you going?
+
+                        </p>
+
+
+                        <p>
+
+                            Enter at least two addresses.
+                            The first address will be treated
+                            as your starting point.
+
+                        </p>
+
+
+
+                        <!-- ADDRESS CONTAINER -->
+
+                        <div
+                            id="addressContainer"
+                        >
+
+
+                            <!-- ADDRESS 1 -->
+
+                            <div class="form-group">
+
+                                <label>
+                                    STARTING ADDRESS
+                                </label>
+
+                                <input
+                                    type="text"
+                                    class="address-input"
+                                    placeholder="Enter starting address"
+                                    required
+                                >
+
+                            </div>
+
+
+                            <!-- ADDRESS 2 -->
+
+                            <div class="form-group">
+
+                                <label>
+                                    DESTINATION 02
+                                </label>
+
+                                <input
+                                    type="text"
+                                    class="address-input"
+                                    placeholder="Enter destination address"
+                                    required
+                                >
+
+                            </div>
+
+
+                        </div>
+
+
+
+                        <!-- ADD ADDRESS -->
+
+                        <button
+                            type="button"
+                            class="outline-btn"
+                            id="addAddressBtn"
+                            style="margin-top:20px;"
+                        >
+
+                            + Add Address
+
+                        </button>
+
+
+                    </div>
+
+
+
+                    <!-- =====================================
+                         TRIP SETTINGS
+                    ====================================== -->
+
+                    <div class="about-description reveal">
+
+
+                        <p class="about-large">
+
+                            Trip details
+
+                        </p>
+
+
+                        <p>
+
+                            These values are used to estimate
+                            your fuel consumption and journey time.
+
+                        </p>
+
+
+
+                        <!-- FUEL PRICE -->
+
+                        <div class="form-group">
+
+                            <label for="fuelPrice">
+
+                                FUEL PRICE / LITRE
+
+                            </label>
+
+                            <input
+                                type="number"
+                                id="fuelPrice"
+                                placeholder="Example: 95"
+                                min="0"
+                                step="0.01"
+                                required
+                            >
+
+                        </div>
+
+
+
+                        <!-- VEHICLE MILEAGE -->
+
+                        <div class="form-group">
+
+                            <label for="fuelEfficiency">
+
+                                VEHICLE MILEAGE (KM/L)
+
+                            </label>
+
+                            <input
+                                type="number"
+                                id="fuelEfficiency"
+                                placeholder="Example: 15"
+                                min="0.1"
+                                step="0.1"
+                                value="15"
+                                required
+                            >
+
+                        </div>
+
+
+
+                        <!-- AVERAGE SPEED -->
+
+                        <div class="form-group">
+
+                            <label for="averageSpeed">
+
+                                AVERAGE SPEED (KM/H)
+
+                            </label>
+
+                            <input
+                                type="number"
+                                id="averageSpeed"
+                                placeholder="Example: 40"
+                                min="1"
+                                step="1"
+                                value="40"
+                                required
+                            >
+
+                        </div>
+
+
+
+                        <!-- FIND ROUTE -->
+
+                        <button
+                            type="button"
+                            class="modal-submit"
+                            id="findRouteBtn"
+                        >
+
+                            Find Optimized Route
+
+                            <span>→</span>
+
+                        </button>
+
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =================================================
+             LOADING SECTION
+        ================================================== -->
+
+        <section
+            class="about-section"
+            id="loadingSection"
+            style="display:none;"
+        >
+
+            <div class="section-container">
+
+                <div class="about-description">
+
+                    <p class="about-large">
+
+                        Finding your route...
+
+                    </p>
+
+                    <p id="loadingMessage">
+
+                        Converting addresses into coordinates.
+
+                    </p>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =================================================
+             ROUTE RESULT
+        ================================================== -->
+
+        <section
+            class="about-section"
+            id="resultSection"
+            style="display:none;"
+        >
+
+            <div class="section-container">
+
+
+                <div class="section-top">
+
+                    <div class="section-number">
+
+                        02 / OPTIMIZED JOURNEY
+
+                    </div>
+
+
+                    <div class="section-line"></div>
+
+
+                    <div class="section-small-text">
+
+                        Nearest Neighbour Result
+
+                    </div>
+
+                </div>
+
+
+
+                <div class="about-main">
+
+
+                    <!-- ROUTE ORDER -->
+
+                    <div class="about-title">
+
+                        <h2>
+
+                            Your
+                            <br>
+
+                            <span>route.</span>
+
+                        </h2>
+
+                    </div>
+
+
+                    <div class="about-description">
+
+                        <p class="about-large">
+
+                            Recommended stop sequence
+
+                        </p>
+
+
+                        <div id="routeOrder"></div>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- =================================================
+                     JOURNEY SUMMARY
+                ================================================== -->
+
+                <div
+                    class="about-stats"
+                    style="margin-top:70px;"
+                >
+
+
+                    <div class="about-stat">
+
+                        <strong id="totalDistance">
+                            0
+                        </strong>
+
+                        <span>
+
+                            Total
+                            <br>
+                            Distance
+
+                        </span>
+
+                    </div>
+
+
+                    <div class="about-stat">
+
+                        <strong id="totalTime">
+                            0
+                        </strong>
+
+                        <span>
+
+                            Estimated
+                            <br>
+                            Time
+
+                        </span>
+
+                    </div>
+
+
+                    <div class="about-stat">
+
+                        <strong id="fuelRequired">
+                            0
+                        </strong>
+
+                        <span>
+
+                            Fuel
+                            <br>
+                            Required
+
+                        </span>
+
+                    </div>
+
+
+                    <div class="about-stat">
+
+                        <strong id="fuelCost">
+                            0
+                        </strong>
+
+                        <span>
+
+                            Estimated
+                            <br>
+                            Cost
+
+                        </span>
+
+                    </div>
+
+
+                </div>
+
+
+
+                <!-- =================================================
+                     LEG DETAILS
+                ================================================== -->
+
+                <div
+                    class="about-main"
+                    style="margin-top:70px;"
+                >
+
+                    <div class="about-title">
+
+                        <h2>
+
+                            Journey
+                            <br>
+
+                            <span>details.</span>
+
+                        </h2>
+
+                    </div>
+
+
+                    <div class="about-description">
+
+                        <div id="legDetails"></div>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- SAVE BUTTON -->
+
+                <div
+                    style="
+                        margin-top:60px;
+                        display:flex;
+                        justify-content:center;
+                    "
+                >
+
+                    <button
+                        type="button"
+                        class="primary-btn"
+                        id="saveRouteBtn"
+                    >
+
+                        Save This Travel
+
+                        <span>✓</span>
+
+                    </button>
+
+                </div>
+
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =================================================
+             FOOTER
+        ================================================== -->
+
+        <footer class="footer">
+
+            <div class="footer-container">
+
+
+                <div class="footer-main">
+
+                    <a
+                        href="dashboard.html"
+                        class="logo footer-logo"
+                    >
+
+                        <div class="logo-mark">
+                            R
+                        </div>
+
+                        <div class="logo-text">
+                            ROAD<span>WISE</span>
+                        </div>
+
+                    </a>
+
+
+                    <p>
+
+                        Vehicle route and fuel cost optimization
+                        designed to help every journey make more sense.
+
+                    </p>
+
+
+                    <div class="footer-socials">
+
+                        <a href="#">
+                            in
+                        </a>
+
+                        <a href="#">
+                            X
+                        </a>
+
+                        <a href="#">
+                            G
+                        </a>
+
+                    </div>
+
+                </div>
+
+
+
+                <div class="footer-column">
+
+                    <span>
+                        PRODUCT
+                    </span>
+
+
+                    <a href="#route">
+                        Find Route
+                    </a>
+
+
+                    <a href="route-history.html">
+                        Route History
+                    </a>
+
+
+                    <a href="dashboard.html">
+                        Dashboard
+                    </a>
+
+                </div>
+
+
+
+                <div class="footer-column">
+
+                    <span>
+                        ACCOUNT
+                    </span>
+
+
+                    <a href="profile.html">
+                        Profile
+                    </a>
+
+
+                    <a href="route-history.html">
+                        My Routes
+                    </a>
+
+
+                    <a
+                        href="#"
+                        id="footerLogout"
+                    >
+                        Log Out
+                    </a>
+
+                </div>
+
+
+
+                <div class="footer-column">
+
+                    <span>
+                        ROADWISE
+                    </span>
+
+
+                    <a href="index.html">
+                        Landing Page
+                    </a>
+
+
+                    <a href="#route">
+                        Find Route
+                    </a>
+
+
+                    <a href="dashboard.html">
+                        Dashboard
+                    </a>
+
+                </div>
+
+            </div>
+
+
+
+            <div class="footer-bottom">
+
+                <span>
+                    © 2026 RoadWise. All rights reserved.
+                </span>
+
+
+                <span>
+                    Built to optimize every mile.
+                </span>
+
+            </div>
+
+        </footer>
+
+    </main>
+
+
+
+    <!-- JAVASCRIPT -->
+
+    <script src="../JS/route-planner.js"></script>
+
+</body>
+
+</html>
