@@ -39,6 +39,16 @@
         rel="stylesheet"
     >
 
+
+    <!-- LEAFLET (MAP) -->
+
+    <link
+        rel="stylesheet"
+        href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+        crossorigin=""
+    >
+
 </head>
 
 
@@ -476,6 +486,89 @@
 
 
         <!-- =================================================
+             ROUTE MAP
+        ================================================== -->
+
+        <section
+            class="about-section"
+            id="mapSection"
+            style="display:none;"
+        >
+
+            <div class="section-container">
+
+
+                <div class="section-top">
+
+                    <div class="section-number">
+
+                        02 / ROUTE MAP
+
+                    </div>
+
+
+                    <div class="section-line"></div>
+
+
+                    <div class="section-small-text">
+
+                        Visual Overview
+
+                    </div>
+
+                </div>
+
+
+
+                <div class="about-main">
+
+
+                    <div class="about-title">
+
+                        <h2>
+
+                            Your
+                            <br>
+
+                            <span>map.</span>
+
+                        </h2>
+
+                    </div>
+
+
+                    <!-- MAP — sits in the right-hand column, aligned
+                         with "Your map." on the left, the same way
+                         the stop sequence aligns with "Your route."
+                         below. Sized back up close to the original. -->
+
+                    <div class="about-description">
+
+
+                        <div
+                            id="routeMap"
+                            style="
+                                height:420px;
+                                width:100%;
+                                margin-top:20px;
+                                border-radius:16px;
+                                overflow:hidden;
+                                border:1px solid var(--border);
+                                box-shadow:0 12px 34px rgba(15, 23, 42, 0.10);
+                            "
+                        ></div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =================================================
              ROUTE RESULT
         ================================================== -->
 
@@ -492,7 +585,7 @@
 
                     <div class="section-number">
 
-                        02 / OPTIMIZED JOURNEY
+                        03 / OPTIMIZED JOURNEY
 
                     </div>
 
@@ -844,6 +937,15 @@
 
     </main>
 
+
+
+    <!-- LEAFLET (MAP) -->
+
+    <script
+        src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+        crossorigin=""
+    ></script>
 
 
     <!-- JAVASCRIPT -->

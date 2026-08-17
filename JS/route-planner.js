@@ -84,6 +84,12 @@ const loadingMessage =
     );
 
 
+const mapSection =
+    document.getElementById(
+        "mapSection"
+    );
+
+
 const resultSection =
     document.getElementById(
         "resultSection"
@@ -882,6 +888,196 @@ function displayLegDetails(
 
 
 /* =========================================================
+   SHOW ROUTE MAP
+
+   Renders numbered pins for every stop
+   in visiting order, plus a dashed line
+   tracing the Nearest Neighbour route.
+
+   Uses Leaflet + OpenStreetMap tiles.
+========================================================= */
+
+let routeMapInstance = null;
+
+
+function displayRouteMap(
+    route
+) {
+
+    /*
+        Destroy any previous map instance
+        before creating a new one — Leaflet
+        does not allow re-initializing the
+        same container.
+    */
+
+    if (routeMapInstance) {
+
+        routeMapInstance.remove();
+
+        routeMapInstance = null;
+
+    }
+
+
+    routeMapInstance =
+        L.map("routeMap");
+
+
+    L.tileLayer(
+        "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+        {
+            maxZoom: 19,
+            attribution:
+                "&copy; OpenStreetMap contributors"
+        }
+    ).addTo(
+        routeMapInstance
+    );
+
+
+    const latLngs =
+        route.map(location => [
+
+            location.latitude,
+
+            location.longitude
+
+        ]);
+
+
+
+    /*
+        Numbered pin markers,
+        in visiting order.
+    */
+
+    route.forEach(
+        (location, index) => {
+
+            const stopNumber =
+                index + 1;
+
+
+            const isStart =
+                index === 0;
+
+
+            const icon =
+                L.divIcon({
+
+                    className:
+                        "route-map-marker",
+
+                    html: `
+
+                        <div style="
+                            display:flex;
+                            align-items:center;
+                            justify-content:center;
+                            width:30px;
+                            height:30px;
+                            border-radius:50%;
+                            background:${isStart ? "#1f4d2b" : "var(--green-dark, #2f6b3f)"};
+                            color:#fff;
+                            font-family:sans-serif;
+                            font-weight:700;
+                            font-size:12px;
+                            border:2px solid #fff;
+                            box-shadow:0 2px 6px rgba(0,0,0,0.35);
+                        ">
+                            ${stopNumber}
+                        </div>
+
+                    `,
+
+                    iconSize: [30, 30],
+
+                    iconAnchor: [15, 15]
+
+                });
+
+
+            L.marker(
+                [
+                    location.latitude,
+                    location.longitude
+                ],
+                { icon }
+            )
+                .addTo(routeMapInstance)
+                .bindPopup(
+                    `<strong>${stopNumber}. ${location.address}</strong>${isStart ? "<br>Starting point" : ""}`
+                );
+
+        }
+    );
+
+
+
+    /*
+        Dashed line tracing the
+        optimized route order.
+    */
+
+    L.polyline(
+        latLngs,
+        {
+            color: "#2f6b3f",
+            weight: 3,
+            opacity: 0.8,
+            dashArray: "8,8"
+        }
+    ).addTo(
+        routeMapInstance
+    );
+
+
+
+    /*
+        Fit the map to show
+        every stop comfortably.
+    */
+
+    routeMapInstance.fitBounds(
+        latLngs,
+        { padding: [40, 40] }
+    );
+
+
+
+    /*
+        The map container was hidden
+        (display:none) while it was
+        being built, so Leaflet may
+        have measured it as 0×0.
+        Force a resize once it is
+        actually visible.
+    */
+
+    setTimeout(
+        () => {
+
+            if (routeMapInstance) {
+
+                routeMapInstance.invalidateSize();
+
+                routeMapInstance.fitBounds(
+                    latLngs,
+                    { padding: [40, 40] }
+                );
+
+            }
+
+        },
+        150
+    );
+
+}
+
+
+
+/* =========================================================
    FIND ROUTE
 ========================================================= */
 
@@ -961,6 +1157,10 @@ findRouteBtn.addEventListener(
 
         loadingSection.style.display =
             "block";
+
+
+        mapSection.style.display =
+            "none";
 
 
         resultSection.style.display =
@@ -1152,18 +1352,27 @@ findRouteBtn.addEventListener(
 
 
             /* =====================================
-               SHOW RESULT
+               SHOW RESULT + MAP
             ====================================== */
 
             loadingSection.style.display =
                 "none";
 
 
+            mapSection.style.display =
+                "block";
+
+
             resultSection.style.display =
                 "block";
 
 
-            resultSection.scrollIntoView({
+            displayRouteMap(
+                optimizedRoute
+            );
+
+
+            mapSection.scrollIntoView({
                 behavior: "smooth"
             });
 
