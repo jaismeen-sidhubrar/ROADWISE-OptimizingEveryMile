@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Route History | RoadWise</title>
+
+
+    <!-- Google Fonts -->
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    >
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap"
+        rel="stylesheet"
+    >
+
+
+    <!-- Main Website CSS -->
+
+    <link
+        rel="stylesheet"
+        href="../CSS/index.css"
+    >
+
+
+    <!-- Leaflet -->
+
+    <link
+        rel="stylesheet"
+        href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    >
+
+</head>
+
+
+<body>
+
+
+    <!-- =====================================================
+         NAVBAR
+    ====================================================== -->
+
+    <nav
+        class="navbar"
+        id="navbar"
+    >
+
+        <div class="nav-container">
+
+
+            <!-- LOGO -->
+
+            <a
+                href="../index.html"
+                class="logo"
+            >
+
+                <div class="logo-mark">
+                    R
+                </div>
+
+                <div class="logo-text">
+                    ROAD<span>WISE</span>
+                </div>
+
+            </a>
+
+
+            <!-- NAV LINKS -->
+
+            <div class="nav-links">
+
+                <a href="../index.html">
+                    Home
+                </a>
+
+                <a href="route-planner.html">
+                    Find Route
+                </a>
+
+                <a
+                    href="route_history.html"
+                    class="active"
+                >
+                    Route History
+                </a>
+
+                <a href="profile.html">
+                    Profile
+                </a>
+
+                <a
+                    href="#"
+                    id="logoutBtn"
+                >
+                    Log Out
+                </a>
+
+            </div>
+
+
+            <!-- MOBILE MENU -->
+
+            <button
+                class="mobile-menu"
+                id="mobileMenu"
+            >
+                ☰
+            </button>
+
+        </div>
+
+    </nav>
+
+
+
+    <!-- =====================================================
+         ROUTE HISTORY
+    ====================================================== -->
+
+    <section
+        class="about-section"
+        style="padding-top: 160px; min-height: 100vh;"
+    >
+
+        <div class="section-container">
+
+
+            <!-- SECTION TOP -->
+
+            <div class="section-top">
+
+                <span class="section-number">
+                    03
+                </span>
+
+                <div class="section-line"></div>
+
+                <span class="section-small-text">
+                    YOUR JOURNEYS
+                </span>
+
+            </div>
+
+
+
+            <!-- HEADING -->
+
+            <div class="users-heading">
+
+                <div>
+
+                    <div class="eyebrow">
+
+                        <span class="eyebrow-dot"></span>
+
+                        SAVED ROUTES
+
+                    </div>
+
+
+                    <h2>
+
+                        Route
+                        <span>History</span>
+
+                    </h2>
+
+                </div>
+
+
+                <p id="historyDescription">
+
+                    Your previously saved journeys
+                    and optimized routes.
+
+                </p>
+
+            </div>
+
+
+
+            <!-- =================================================
+                 EMPTY STATE
+            ================================================== -->
+
+            <div
+                id="emptyHistory"
+                style="
+                    display:none;
+                    margin-top:60px;
+                    padding:60px;
+                    background:white;
+                    border:1px solid var(--border);
+                    text-align:center;
+                "
+            >
+
+                <h3
+                    style="
+                        font-family:var(--heading);
+                        font-size:28px;
+                    "
+                >
+                    No saved routes yet.
+                </h3>
+
+                <p
+                    style="
+                        margin-top:15px;
+                        color:#777870;
+                        font-size:12px;
+                    "
+                >
+                    Find a route and add it to your
+                    history to see it here.
+                </p>
+
+                <a
+                    href="route-planner.html"
+                    class="primary-btn"
+                    style="margin-top:25px;"
+                >
+
+                    Find a Route
+
+                    <span>→</span>
+
+                </a>
+
+            </div>
+
+
+
+            <!-- =================================================
+                 ROUTE HISTORY CONTAINER
+            ================================================== -->
+
+            <div
+                id="routeHistoryContainer"
+                style="
+                    margin-top:65px;
+                    display:grid;
+                    gap:35px;
+                "
+            >
+
+            </div>
+
+
+        </div>
+
+    </section>
+
+
+
+    <!-- =====================================================
+         FOOTER
+    ====================================================== -->
+
+    <footer class="footer">
+
+        <div class="footer-container">
+
+
+            <div class="footer-main">
+
+                <a
+                    href="../index.html"
+                    class="logo"
+                >
+
+                    <div class="logo-mark">
+                        R
+                    </div>
+
+                    <div class="logo-text">
+                        ROAD<span>WISE</span>
+                    </div>
+
+                </a>
+
+                <p>
+                    Smarter routes. Lower costs.
+                    Better journeys.
+                </p>
+
+            </div>
+
+
+            <div class="footer-column">
+
+                <span>
+                    NAVIGATION
+                </span>
+
+                <a href="../index.html">
+                    Home
+                </a>
+
+                <a href="route-planner.html">
+                    Find Route
+                </a>
+
+                <a href="route_history.html">
+                    Route History
+                </a>
+
+            </div>
+
+
+            <div class="footer-column">
+
+                <span>
+                    ACCOUNT
+                </span>
+
+                <a href="profile.html">
+                    Profile
+                </a>
+
+                <a
+                    href="#"
+                    id="footerLogout"
+                >
+                    Log Out
+                </a>
+
+            </div>
+
+
+            <div class="footer-column">
+
+                <span>
+                    ROADWISE
+                </span>
+
+                <a href="../index.html#about">
+                    About
+                </a>
+
+                <a href="../index.html#how">
+                    How It Works
+                </a>
+
+            </div>
+
+
+        </div>
+
+
+        <div class="footer-bottom">
+
+            <span>
+                © 2026 RoadWise. All rights reserved.
+            </span>
+
+            <span>
+                ROUTE SMARTER
+            </span>
+
+        </div>
+
+    </footer>
+
+
+
+    <!-- Leaflet JS -->
+
+    <script
+        src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    ></script>
+
+
+    <!-- Route History JS -->
+
+    <script
+        src="../JS/route_history.js"
+    ></script>
+
+</body>
+
+</html>
