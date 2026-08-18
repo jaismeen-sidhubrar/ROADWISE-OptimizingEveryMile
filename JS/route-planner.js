@@ -552,6 +552,135 @@ function nearestNeighbour(
 }
 
 
+/* =========================================================
+   2-OPT HEURISTIC
+
+   Starts with the Nearest Neighbour route and repeatedly
+   reverses sections of the route whenever doing so produces
+   a shorter total distance.
+
+   The first location remains the starting point.
+========================================================= */
+
+function calculateTotalRouteDistance(route) {
+
+    let totalDistance = 0;
+
+    for (let i = 0; i < route.length - 1; i++) {
+
+        totalDistance += calculateDistance(
+            route[i],
+            route[i + 1]
+        );
+
+    }
+
+    return totalDistance;
+
+}
+
+
+function reverseRouteSegment(route, start, end) {
+
+    const newRoute = [...route];
+
+    while (start < end) {
+
+        const temp = newRoute[start];
+
+        newRoute[start] = newRoute[end];
+
+        newRoute[end] = temp;
+
+        start++;
+        end--;
+
+    }
+
+    return newRoute;
+
+}
+
+
+function twoOpt(route) {
+
+    let bestRoute = [...route];
+
+    let improved = true;
+
+    while (improved) {
+
+        improved = false;
+
+        const currentDistance =
+            calculateTotalRouteDistance(bestRoute);
+
+
+        /*
+            Keep the first location fixed because it is
+            the user's starting point.
+        */
+
+        for (
+            let i = 1;
+            i < bestRoute.length - 1;
+            i++
+        ) {
+
+            for (
+                let j = i + 1;
+                j < bestRoute.length;
+                j++
+            ) {
+
+                const candidateRoute =
+                    reverseRouteSegment(
+                        bestRoute,
+                        i,
+                        j
+                    );
+
+
+                const candidateDistance =
+                    calculateTotalRouteDistance(
+                        candidateRoute
+                    );
+
+
+                /*
+                    If reversing this section makes
+                    the route shorter, keep it.
+                */
+
+                if (
+                    candidateDistance <
+                    currentDistance
+                ) {
+
+                    bestRoute =
+                        candidateRoute;
+
+                    improved = true;
+
+                    break;
+
+                }
+
+            }
+
+            if (improved) {
+                break;
+            }
+
+        }
+
+    }
+
+    return bestRoute;
+
+}
+
+
 
 /* =========================================================
    BUILD ROUTE DETAILS
@@ -776,7 +905,7 @@ function displayRouteOrder(
                         "
                     >
                         ${String(index + 1)
-                            .padStart(2, "0")}
+                    .padStart(2, "0")}
                     </strong>
 
                     <span>
@@ -882,6 +1011,452 @@ function displayLegDetails(
 
         }
     );
+
+}
+
+
+
+/* =========================================================
+   DISPLAY TWO ROUTE OPTIONS
+
+   Option 1 = Nearest Neighbour
+   Option 2 = 2-Opt
+========================================================= */
+
+function displayRouteOptions(
+    nearestRoute,
+    nearestJourney,
+    twoOptRoute,
+    twoOptJourney
+) {
+
+    /*
+        Remove an old comparison section if the user
+        calculates another route.
+    */
+
+    const oldSection =
+        document.getElementById(
+            "routeOptionsSection"
+        );
+
+    if (oldSection) {
+        oldSection.remove();
+    }
+
+
+    /*
+        Create main comparison section.
+    */
+
+    const section =
+        document.createElement("section");
+
+    section.id =
+        "routeOptionsSection";
+
+    section.style.marginTop =
+        "40px";
+
+
+    /*
+        Heading.
+    */
+
+    const heading =
+        document.createElement("h2");
+
+    heading.textContent =
+        "Choose Your Route";
+
+    heading.style.fontFamily =
+        "var(--heading)";
+
+    heading.style.marginBottom =
+        "25px";
+
+
+    section.appendChild(heading);
+
+
+    /*
+        Container for both options.
+    */
+
+    const optionsContainer =
+        document.createElement("div");
+
+    optionsContainer.style.display =
+        "grid";
+
+    optionsContainer.style.gridTemplateColumns =
+        "repeat(auto-fit, minmax(320px, 1fr))";
+
+    optionsContainer.style.gap =
+        "25px";
+
+
+    /*
+        Create Option 1.
+    */
+
+    const option1 =
+        createRouteOptionCard(
+            1,
+            "Nearest Neighbour",
+            nearestRoute,
+            nearestJourney
+        );
+
+
+    /*
+        Create Option 2.
+    */
+
+    const option2 =
+        createRouteOptionCard(
+            2,
+            "2-Opt Heuristic",
+            twoOptRoute,
+            twoOptJourney
+        );
+
+
+    optionsContainer.appendChild(
+        option1
+    );
+
+    optionsContainer.appendChild(
+        option2
+    );
+
+
+    section.appendChild(
+        optionsContainer
+    );
+
+
+    /*
+        Insert the comparison section before
+        the existing result section.
+    */
+
+    resultSection.parentNode.insertBefore(
+        section,
+        resultSection
+    );
+
+
+    /*
+        Hide the old single-route save button
+        because each option now has its own ADD
+        button.
+    */
+
+    if (saveRouteBtn) {
+
+        saveRouteBtn.style.display =
+            "none";
+
+    }
+
+}
+
+
+
+/* =========================================================
+   CREATE ROUTE OPTION CARD
+========================================================= */
+
+function createRouteOptionCard(
+    optionNumber,
+    algorithmName,
+    route,
+    journey
+) {
+
+    const card =
+        document.createElement("div");
+
+    card.style.position =
+        "relative";
+
+    card.style.border =
+        "1px solid var(--border)";
+
+    card.style.borderRadius =
+        "12px";
+
+    card.style.padding =
+        "25px";
+
+    card.style.background =
+        "#fff";
+
+    card.style.boxShadow =
+        "0 4px 15px rgba(0,0,0,0.08)";
+
+
+    /*
+        OPTION label
+    */
+
+    const optionLabel =
+        document.createElement("div");
+
+    optionLabel.textContent =
+        `OPTION ${optionNumber}`;
+
+    optionLabel.style.position =
+        "absolute";
+
+    optionLabel.style.top =
+        "15px";
+
+    optionLabel.style.left =
+        "15px";
+
+    optionLabel.style.fontSize =
+        "11px";
+
+    optionLabel.style.fontWeight =
+        "700";
+
+    optionLabel.style.letterSpacing =
+        "1px";
+
+    optionLabel.style.color =
+        "var(--green-dark, #2f6b3f)";
+
+
+    card.appendChild(
+        optionLabel
+    );
+
+
+    /*
+        Algorithm name
+    */
+
+    const title =
+        document.createElement("h3");
+
+    title.textContent =
+        algorithmName;
+
+    title.style.marginTop =
+        "30px";
+
+    title.style.marginBottom =
+        "20px";
+
+    title.style.fontFamily =
+        "var(--heading)";
+
+
+    card.appendChild(
+        title
+    );
+
+
+    /*
+        Route order
+    */
+
+    const routeContainer =
+        document.createElement("div");
+
+    routeContainer.style.marginBottom =
+        "25px";
+
+
+    route.forEach(
+        (location, index) => {
+
+            const stop =
+                document.createElement("div");
+
+            stop.style.padding =
+                "10px 0";
+
+            stop.style.borderBottom =
+                "1px solid var(--border)";
+
+
+            stop.innerHTML = `
+                <strong>
+                    ${String(index + 1).padStart(2, "0")}
+                </strong>
+                &nbsp;
+                ${location.address}
+            `;
+
+
+            routeContainer.appendChild(
+                stop
+            );
+
+        }
+    );
+
+
+    card.appendChild(
+        routeContainer
+    );
+
+
+    /*
+        Statistics
+    */
+
+    const stats =
+        document.createElement("div");
+
+    stats.style.lineHeight =
+        "2";
+
+    stats.style.fontSize =
+        "13px";
+
+
+    stats.innerHTML = `
+        <div>
+            <strong>Distance:</strong>
+            ${journey.totalDistance.toFixed(2)} km
+        </div>
+
+        <div>
+            <strong>Estimated Time:</strong>
+            ${formatTime(journey.totalTime)}
+        </div>
+
+        <div>
+            <strong>Fuel:</strong>
+            ${journey.totalFuel.toFixed(2)} L
+        </div>
+
+        <div>
+            <strong>Estimated Cost:</strong>
+            ${formatCurrency(journey.totalCost)}
+        </div>
+    `;
+
+
+    card.appendChild(
+        stats
+    );
+
+
+    /*
+        Map
+    */
+
+    const mapId =
+        `routeOptionMap${optionNumber}`;
+
+    const mapContainer =
+        document.createElement("div");
+
+    mapContainer.id =
+        mapId;
+
+    mapContainer.style.height =
+        "280px";
+
+    mapContainer.style.width =
+        "100%";
+
+    mapContainer.style.marginTop =
+        "20px";
+
+    mapContainer.style.borderRadius =
+        "8px";
+
+    mapContainer.style.overflow =
+        "hidden";
+
+
+    card.appendChild(
+        mapContainer
+    );
+
+
+    /*
+        ADD button
+    */
+
+    const addButton =
+        document.createElement("button");
+
+    addButton.textContent =
+        "ADD";
+
+    addButton.style.marginTop =
+        "20px";
+
+    addButton.style.width =
+        "100%";
+
+    addButton.style.padding =
+        "13px";
+
+    addButton.style.border =
+        "none";
+
+    addButton.style.borderRadius =
+        "6px";
+
+    addButton.style.cursor =
+        "pointer";
+
+    addButton.style.fontWeight =
+        "700";
+
+    addButton.style.background =
+        "var(--green-dark, #2f6b3f)";
+
+    addButton.style.color =
+        "#fff";
+
+
+    addButton.addEventListener(
+        "click",
+        () => {
+
+            saveSelectedRoute(
+                algorithmName,
+                route,
+                journey
+            );
+
+        }
+    );
+
+
+    card.appendChild(
+        addButton
+    );
+
+
+    /*
+        Draw the map after the card has been
+        inserted into the DOM.
+    */
+
+    setTimeout(
+        () => {
+
+            displayOptionMap(
+                route,
+                mapId
+            );
+
+        },
+        50
+    );
+
+
+    return card;
 
 }
 
@@ -1077,6 +1652,206 @@ function displayRouteMap(
 
 
 
+
+/* =========================================================
+   DISPLAY MAP FOR A ROUTE OPTION
+========================================================= */
+
+function displayOptionMap(
+    route,
+    mapId
+) {
+
+    const mapElement =
+        document.getElementById(
+            mapId
+        );
+
+    if (!mapElement) {
+        return;
+    }
+
+
+    const map =
+        L.map(mapElement);
+
+
+    L.tileLayer(
+        "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+        {
+            maxZoom: 19,
+            attribution:
+                "&copy; OpenStreetMap contributors"
+        }
+    ).addTo(map);
+
+
+    const latLngs =
+        route.map(
+            location => [
+                location.latitude,
+                location.longitude
+            ]
+        );
+
+
+    /*
+        Numbered markers.
+    */
+
+    route.forEach(
+        (location, index) => {
+
+            const marker =
+                L.marker([
+                    location.latitude,
+                    location.longitude
+                ])
+                    .addTo(map);
+
+
+            marker.bindPopup(
+                `<strong>
+                    ${index + 1}. ${location.address}
+                </strong>`
+            );
+
+        }
+    );
+
+
+    /*
+        Route line.
+    */
+
+    L.polyline(
+        latLngs,
+        {
+            color: "#2f6b3f",
+            weight: 3,
+            opacity: 0.8
+        }
+    ).addTo(map);
+
+
+    /*
+        Fit map to all locations.
+    */
+
+    map.fitBounds(
+        latLngs,
+        {
+            padding: [30, 30]
+        }
+    );
+
+
+    setTimeout(
+        () => {
+
+            map.invalidateSize();
+
+        },
+        100
+    );
+
+}
+
+
+
+/* =========================================================
+   SAVE SELECTED ROUTE
+
+   Saves the route selected by the user to localStorage.
+========================================================= */
+
+function saveSelectedRoute(
+    algorithmName,
+    route,
+    journey
+) {
+
+    const savedRoutes =
+        JSON.parse(
+            localStorage.getItem(
+                "roadwiseSavedRoutes"
+            )
+        ) || [];
+
+
+    const savedRoute = {
+
+        userEmail:
+            currentUser.email,
+
+        userName:
+            currentUser.name,
+
+        algorithm:
+            algorithmName,
+
+        createdAt:
+            new Date().toISOString(),
+
+        originalAddresses:
+            getAddresses(),
+
+        optimizedRoute:
+            route,
+
+        legs:
+            journey.legs,
+
+        totalDistance:
+            journey.totalDistance,
+
+        totalTime:
+            journey.totalTime,
+
+        totalFuel:
+            journey.totalFuel,
+
+        totalCost:
+            journey.totalCost,
+
+        fuelPrice:
+            document.getElementById(
+                "fuelPrice"
+            ).value,
+
+        fuelEfficiency:
+            document.getElementById(
+                "fuelEfficiency"
+            ).value,
+
+        averageSpeed:
+            document.getElementById(
+                "averageSpeed"
+            ).value
+
+    };
+
+
+    savedRoutes.push(
+        savedRoute
+    );
+
+
+    localStorage.setItem(
+        "roadwiseSavedRoutes",
+        JSON.stringify(
+            savedRoutes
+        )
+    );
+
+
+    alert(
+        `${algorithmName} route has been added to your dashboard/history!`
+    );
+
+}
+
+
 /* =========================================================
    FIND ROUTE
 ========================================================= */
@@ -1231,12 +2006,11 @@ findRouteBtn.addEventListener(
 
 
             /* =====================================
-               NEAREST NEIGHBOUR
-            ====================================== */
+   OPTION 1 — NEAREST NEIGHBOUR
+====================================== */
 
             loadingMessage.textContent =
-                "Calculating the most practical stop order...";
-
+                "Calculating the route using Nearest Neighbour...";
 
             const optimizedRoute =
                 nearestNeighbour(
@@ -1244,12 +2018,7 @@ findRouteBtn.addEventListener(
                 );
 
 
-
-            /* =====================================
-               CALCULATE JOURNEY
-            ====================================== */
-
-            const journey =
+            const nearestNeighbourJourney =
                 buildRouteDetails(
                     optimizedRoute,
                     fuelEfficiency,
@@ -1258,123 +2027,82 @@ findRouteBtn.addEventListener(
                 );
 
 
-
             /* =====================================
-               STORE RESULT
+               OPTION 2 — 2-OPT
             ====================================== */
 
-            latestRouteData = {
+            loadingMessage.textContent =
+                "Improving the route using 2-Opt heuristic...";
 
-                userEmail:
-                    currentUser.email,
+            const twoOptRoute =
+                twoOpt(
+                    optimizedRoute
+                );
 
-                userName:
-                    currentUser.name,
 
-                createdAt:
-                    new Date().toISOString(),
-
-                originalAddresses:
-                    addresses,
-
-                optimizedRoute:
-                    optimizedRoute,
-
-                legs:
-                    journey.legs,
-
-                totalDistance:
-                    journey.totalDistance,
-
-                totalTime:
-                    journey.totalTime,
-
-                totalFuel:
-                    journey.totalFuel,
-
-                totalCost:
-                    journey.totalCost,
-
-                fuelPrice:
-                    fuelPrice,
-
-                fuelEfficiency:
+            const twoOptJourney =
+                buildRouteDetails(
+                    twoOptRoute,
                     fuelEfficiency,
-
-                averageSpeed:
+                    fuelPrice,
                     averageSpeed
-
-            };
-
-
-
-            /* =====================================
-               DISPLAY RESULT
-            ====================================== */
-
-            displayRouteOrder(
-                optimizedRoute
-            );
-
-
-            displayLegDetails(
-                journey.legs
-            );
-
-
-            document.getElementById(
-                "totalDistance"
-            ).textContent =
-                `${journey.totalDistance.toFixed(2)} km`;
-
-
-            document.getElementById(
-                "totalTime"
-            ).textContent =
-                formatTime(
-                    journey.totalTime
-                );
-
-
-            document.getElementById(
-                "fuelRequired"
-            ).textContent =
-                `${journey.totalFuel.toFixed(2)} L`;
-
-
-            document.getElementById(
-                "fuelCost"
-            ).textContent =
-                formatCurrency(
-                    journey.totalCost
                 );
 
 
 
+            
+
+
+
             /* =====================================
-               SHOW RESULT + MAP
-            ====================================== */
+                DISPLAY BOTH ROUTE OPTIONS
+              ====================================== */
+
+            displayRouteOptions(
+                optimizedRoute,
+                nearestNeighbourJourney,
+                twoOptRoute,
+                twoOptJourney
+            );
+
+
+
+
+
+            
+
+            /* =====================================
+   SHOW TWO ROUTE OPTIONS
+====================================== */
 
             loadingSection.style.display =
                 "none";
 
+            /*
+                Hide the old single-route display.
+                The two new route cards contain their
+                own maps and statistics.
+            */
 
             mapSection.style.display =
-                "block";
-
+                "none";
 
             resultSection.style.display =
-                "block";
+                "none";
 
 
-            displayRouteMap(
-                optimizedRoute
-            );
+            const routeOptionsSection =
+                document.getElementById(
+                    "routeOptionsSection"
+                );
 
+            if (routeOptionsSection) {
 
-            mapSection.scrollIntoView({
-                behavior: "smooth"
-            });
+                routeOptionsSection.scrollIntoView({
+                    behavior: "smooth"
+                });
+
+            }
 
 
         } catch (error) {
