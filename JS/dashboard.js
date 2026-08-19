@@ -1,14 +1,10 @@
 /* =========================================================
-   ROADWISE PERSONALIZED DASHBOARD
-========================================================= */
-
-
-/* =========================================================
    STORAGE KEYS
 ========================================================= */
 
 const USERS_KEY = "roadwiseUsers";
 const CURRENT_USER_KEY = "roadwiseCurrentUser";
+const SAVED_ROUTES_KEY = "roadwiseSavedRoutes";
 
 
 /* =========================================================
@@ -95,24 +91,14 @@ function saveCurrentUser(user) {
 
 
 /* =========================================================
-   FETCH LATEST PROFILE
+   FETCH LATEST USER INFORMATION
 ========================================================= */
-
-/*
-    roadwiseCurrentUser tells us WHO is logged in.
-
-    roadwiseUsers contains the latest complete profile.
-
-    Therefore:
-        1. Read current session
-        2. Find matching account using email
-        3. Use latest account information
-        4. Update current session
-*/
 
 function loadLatestUser() {
 
-    const sessionUser = getCurrentUser();
+    const sessionUser =
+        getCurrentUser();
+
 
     if (!sessionUser) {
 
@@ -121,7 +107,8 @@ function loadLatestUser() {
     }
 
 
-    const users = getUsers();
+    const users =
+        getUsers();
 
 
     const latestUser =
@@ -134,13 +121,12 @@ function loadLatestUser() {
         );
 
 
-    if (!latestUser) {
+    /*
+        If the user cannot be found in
+        roadwiseUsers, keep the current session.
+    */
 
-        /*
-            If the account cannot be found,
-            keep the session rather than breaking
-            the dashboard.
-        */
+    if (!latestUser) {
 
         return sessionUser;
 
@@ -148,30 +134,39 @@ function loadLatestUser() {
 
 
     /*
-        Do NOT store the password in
-        roadwiseCurrentUser.
+        Keep only the information needed
+        by the dashboard session.
     */
 
     const updatedSession = {
 
-        name: latestUser.name || "",
+        name:
+            latestUser.name || "",
 
-        email: latestUser.email || "",
+        email:
+            latestUser.email || "",
 
-        username: latestUser.username || "",
+        username:
+            latestUser.username || "",
 
-        phone: latestUser.phone || "",
+        phone:
+            latestUser.phone || "",
 
-        bio: latestUser.bio || "",
+        bio:
+            latestUser.bio || "",
 
-        profilePic: latestUser.profilePic || "",
+        profilePic:
+            latestUser.profilePic || "",
 
-        joinedDate: latestUser.joinedDate || ""
+        joinedDate:
+            latestUser.joinedDate || ""
 
     };
 
 
-    saveCurrentUser(updatedSession);
+    saveCurrentUser(
+        updatedSession
+    );
 
 
     return updatedSession;
@@ -180,7 +175,7 @@ function loadLatestUser() {
 
 
 /* =========================================================
-   LOAD USER
+   LOAD CURRENT USER
 ========================================================= */
 
 let currentUser =
@@ -188,61 +183,76 @@ let currentUser =
 
 
 /*
-    If no user is logged in,
+    If nobody is logged in,
     return to landing page.
 */
 
 if (!currentUser) {
 
-    window.location.href = "../../index.html";
+    window.location.href =
+        "../index.html";
 
 }
 
 
 /* =========================================================
-   DISPLAY USER NAME
+   USER NAME
 ========================================================= */
 
 const userName =
-    document.getElementById("userName");
+    document.getElementById(
+        "userName"
+    );
 
 
-if (currentUser && userName) {
+if (
+    currentUser &&
+    userName
+) {
 
     userName.textContent =
-        currentUser.name || "User";
+        currentUser.name ||
+        "User";
 
 }
 
 
 /* =========================================================
-   OPTIONAL PROFILE INFORMATION
+   OPTIONAL PROFILE ELEMENTS
 ========================================================= */
 
-/*
-    If your dashboard later has elements with
-    these IDs, they will automatically display
-    the latest profile information.
-
-    You don't need to add them now.
-*/
-
 const dashboardUsername =
-    document.getElementById("dashboardUsername");
+    document.getElementById(
+        "dashboardUsername"
+    );
+
 
 const dashboardEmail =
-    document.getElementById("dashboardEmail");
+    document.getElementById(
+        "dashboardEmail"
+    );
+
 
 const dashboardBio =
-    document.getElementById("dashboardBio");
+    document.getElementById(
+        "dashboardBio"
+    );
+
 
 const dashboardProfilePic =
-    document.getElementById("dashboardProfilePic");
+    document.getElementById(
+        "dashboardProfilePic"
+    );
 
 
 function renderOptionalProfileInfo(user) {
 
-    if (!user) return;
+    if (!user) {
+
+        return;
+
+    }
+
 
     if (dashboardUsername) {
 
@@ -283,7 +293,9 @@ function renderOptionalProfileInfo(user) {
 }
 
 
-renderOptionalProfileInfo(currentUser);
+renderOptionalProfileInfo(
+    currentUser
+);
 
 
 /* =========================================================
@@ -291,40 +303,57 @@ renderOptionalProfileInfo(currentUser);
 ========================================================= */
 
 const navbar =
-    document.getElementById("navbar");
+    document.getElementById(
+        "navbar"
+    );
 
 
 if (navbar) {
 
-    window.addEventListener("scroll", () => {
+    window.addEventListener(
+        "scroll",
+        () => {
 
-        if (window.scrollY > 40) {
+            if (window.scrollY > 40) {
 
-            navbar.classList.add("scrolled");
+                navbar.classList.add(
+                    "scrolled"
+                );
 
-        } else {
+            } else {
 
-            navbar.classList.remove("scrolled");
+                navbar.classList.remove(
+                    "scrolled"
+                );
+
+            }
 
         }
-
-    });
+    );
 
 }
 
 
 /* =========================================================
-   MOBILE NAVIGATION
+   MOBILE MENU
 ========================================================= */
 
 const mobileMenu =
-    document.getElementById("mobileMenu");
+    document.getElementById(
+        "mobileMenu"
+    );
+
 
 const navLinks =
-    document.querySelector(".nav-links");
+    document.querySelector(
+        ".nav-links"
+    );
 
 
-if (mobileMenu && navLinks) {
+if (
+    mobileMenu &&
+    navLinks
+) {
 
     mobileMenu.addEventListener(
         "click",
@@ -341,11 +370,13 @@ if (mobileMenu && navLinks) {
                 )
             ) {
 
-                mobileMenu.textContent = "✕";
+                mobileMenu.textContent =
+                    "✕";
 
             } else {
 
-                mobileMenu.textContent = "☰";
+                mobileMenu.textContent =
+                    "☰";
 
             }
 
@@ -360,68 +391,71 @@ if (mobileMenu && navLinks) {
 ========================================================= */
 
 document
-    .querySelectorAll(".nav-links a")
-    .forEach(link => {
+    .querySelectorAll(
+        ".nav-links a"
+    )
+    .forEach(
+        link => {
 
-        link.addEventListener(
-            "click",
-            () => {
+            link.addEventListener(
+                "click",
+                () => {
 
-                if (navLinks) {
+                    if (navLinks) {
 
-                    navLinks.classList.remove(
-                        "mobile-active"
-                    );
+                        navLinks.classList.remove(
+                            "mobile-active"
+                        );
+
+                    }
+
+
+                    if (mobileMenu) {
+
+                        mobileMenu.textContent =
+                            "☰";
+
+                    }
 
                 }
+            );
 
-
-                if (mobileMenu) {
-
-                    mobileMenu.textContent = "☰";
-
-                }
-
-            }
-        );
-
-    });
+        }
+    );
 
 
 /* =========================================================
    LOGOUT
-
-   NOTE: this previously redirected to "../../index.html"
-   (up TWO folder levels) while every other path in this
-   file — CSS, images, the no-session redirect above — only
-   goes up ONE level ("../index.html"). That mismatch sent
-   the browser to a URL that doesn't exist, which is why
-   logout looked like it "did nothing." Fixed to match the
-   rest of the file. If dashboard.html genuinely lives two
-   folders below index.html in your project, flip this back
-   to "../../index.html" AND update the no-session redirect
-   above and the CSS/image paths to match — the key thing is
-   picking one consistent depth everywhere.
 ========================================================= */
 
+function logout() {
+
+    localStorage.removeItem(
+        CURRENT_USER_KEY
+    );
+
+
+    window.location.href =
+        "../index.html";
+
+}
+
+
 const logoutBtn =
-    document.getElementById("logoutBtn");
+    document.getElementById(
+        "logoutBtn"
+    );
 
 
 if (logoutBtn) {
 
     logoutBtn.addEventListener(
         "click",
-        (event) => {
+        event => {
 
             event.preventDefault();
 
-            localStorage.removeItem(
-                CURRENT_USER_KEY
-            );
-
-            window.location.href =
-                "../index.html";
+            logout();
 
         }
     );
@@ -430,117 +464,375 @@ if (logoutBtn) {
 
 
 /* =========================================================
-   DASHBOARD DATA
+   FOOTER LOGOUT
 ========================================================= */
 
-const routeCount =
-    localStorage.getItem(
-        "roadwiseRouteCount"
-    ) || "0";
-
-
-const totalDistance =
-    localStorage.getItem(
-        "roadwiseTotalDistance"
-    ) || "0";
-
-
-const totalFuel =
-    localStorage.getItem(
-        "roadwiseTotalFuel"
-    ) || "0";
-
-
-/* =========================================================
-   HERO STATISTICS
-========================================================= */
-
-const routeCountElement =
+const footerLogout =
     document.getElementById(
-        "routeCount"
+        "footerLogout"
     );
 
 
-const distanceCountElement =
-    document.getElementById(
-        "distanceCount"
+if (footerLogout) {
+
+    footerLogout.addEventListener(
+        "click",
+        event => {
+
+            event.preventDefault();
+
+            logout();
+
+        }
     );
-
-
-const fuelCountElement =
-    document.getElementById(
-        "fuelCount"
-    );
-
-
-if (routeCountElement) {
-
-    routeCountElement.textContent =
-        routeCount;
-
-}
-
-
-if (distanceCountElement) {
-
-    distanceCountElement.textContent =
-        totalDistance + " km";
-
-}
-
-
-if (fuelCountElement) {
-
-    fuelCountElement.textContent =
-        totalFuel + " L";
 
 }
 
 
 /* =========================================================
-   OVERVIEW STATISTICS
+   GET USER'S SAVED ROUTES
 ========================================================= */
 
-const statRoutes =
-    document.getElementById(
-        "statRoutes"
-    );
+/*
+    IMPORTANT:
+
+    Route History stores all saved routes inside:
+
+        roadwiseSavedRoutes
+
+    Each route contains:
+
+        userEmail
+        totalDistance
+        totalFuel
+        totalCost
+        totalTime
+        optimizedRoute
+        etc.
+
+    We use the exact same source of data
+    for the Dashboard.
+*/
+
+function getUserRoutes() {
+
+    try {
+
+        const savedRoutes =
+            JSON.parse(
+                localStorage.getItem(
+                    SAVED_ROUTES_KEY
+                )
+            ) || [];
 
 
-const statDistance =
-    document.getElementById(
-        "statDistance"
-    );
+        if (
+            !currentUser ||
+            !currentUser.email
+        ) {
+
+            return [];
+
+        }
 
 
-const statFuel =
-    document.getElementById(
-        "statFuel"
-    );
+        const currentUserEmail =
+            currentUser.email;
 
 
-if (statRoutes) {
+        return savedRoutes.filter(
+            route =>
+                route.userEmail ===
+                currentUserEmail
+        );
 
-    statRoutes.textContent =
-        routeCount;
+    } catch (error) {
+
+        console.error(
+            "Unable to load saved routes.",
+            error
+        );
+
+        return [];
+
+    }
 
 }
 
 
-if (statDistance) {
+/* =========================================================
+   CALCULATE DASHBOARD DATA
+========================================================= */
 
-    statDistance.textContent =
-        totalDistance + " km";
+function getDashboardData() {
+
+    const routes =
+        getUserRoutes();
+
+
+    /*
+        Number of saved routes
+    */
+
+    const routeCount =
+        routes.length;
+
+
+    /*
+        Total distance
+    */
+
+    const totalDistance =
+        routes.reduce(
+            (
+                total,
+                route
+            ) => {
+
+                return (
+                    total +
+                    (
+                        parseFloat(
+                            route.totalDistance
+                        ) || 0
+                    )
+                );
+
+            },
+            0
+        );
+
+
+    /*
+        Total fuel
+    */
+
+    const totalFuel =
+        routes.reduce(
+            (
+                total,
+                route
+            ) => {
+
+                return (
+                    total +
+                    (
+                        parseFloat(
+                            route.totalFuel
+                        ) || 0
+                    )
+                );
+
+            },
+            0
+        );
+
+
+    return {
+
+        routeCount,
+
+        totalDistance,
+
+        totalFuel
+
+    };
 
 }
 
 
-if (statFuel) {
+/* =========================================================
+   UPDATE DASHBOARD STATISTICS
+========================================================= */
 
-    statFuel.textContent =
-        totalFuel + " L";
+function updateDashboardStats() {
+
+    const data =
+        getDashboardData();
+
+
+    /* =====================================================
+       HERO STATISTICS
+    ===================================================== */
+
+    const routeCountElement =
+        document.getElementById(
+            "routeCount"
+        );
+
+
+    const distanceCountElement =
+        document.getElementById(
+            "distanceCount"
+        );
+
+
+    const fuelCountElement =
+        document.getElementById(
+            "fuelCount"
+        );
+
+
+    if (routeCountElement) {
+
+        routeCountElement.textContent =
+            data.routeCount;
+
+    }
+
+
+    if (distanceCountElement) {
+
+        distanceCountElement.textContent =
+            data.totalDistance.toFixed(2) +
+            " km";
+
+    }
+
+
+    if (fuelCountElement) {
+
+        fuelCountElement.textContent =
+            data.totalFuel.toFixed(2) +
+            " L";
+
+    }
+
+
+    /* =====================================================
+       OVERVIEW STATISTICS
+    ===================================================== */
+
+    const statRoutes =
+        document.getElementById(
+            "statRoutes"
+        );
+
+
+    const statDistance =
+        document.getElementById(
+            "statDistance"
+        );
+
+
+    const statFuel =
+        document.getElementById(
+            "statFuel"
+        );
+
+
+    if (statRoutes) {
+
+        statRoutes.textContent =
+            data.routeCount;
+
+    }
+
+
+    if (statDistance) {
+
+        statDistance.textContent =
+            data.totalDistance.toFixed(2) +
+            " km";
+
+    }
+
+
+    if (statFuel) {
+
+        statFuel.textContent =
+            data.totalFuel.toFixed(2) +
+            " L";
+
+    }
+
+
+    /*
+        Useful for debugging.
+        Open browser console to see
+        exactly what Dashboard is calculating.
+    */
+
+    console.log(
+        "RoadWise Dashboard Data:",
+        data
+    );
 
 }
+
+
+/* =========================================================
+   INITIAL DASHBOARD LOAD
+========================================================= */
+
+updateDashboardStats();
+
+
+/* =========================================================
+   REFRESH WHEN RETURNING TO DASHBOARD
+========================================================= */
+
+window.addEventListener(
+    "focus",
+    () => {
+
+        /*
+            Re-read localStorage every time
+            the dashboard gets focus.
+        */
+
+        updateDashboardStats();
+
+    }
+);
+
+
+/* =========================================================
+   REFRESH WHEN PAGE BECOMES VISIBLE
+========================================================= */
+
+document.addEventListener(
+    "visibilitychange",
+    () => {
+
+        if (
+            document.visibilityState ===
+            "visible"
+        ) {
+
+            updateDashboardStats();
+
+        }
+
+    }
+);
+
+
+/* =========================================================
+   CROSS-TAB LOCAL STORAGE UPDATE
+========================================================= */
+
+/*
+    If Route History / Route Planner is open
+    in another browser tab and changes
+    roadwiseSavedRoutes, refresh dashboard.
+*/
+
+window.addEventListener(
+    "storage",
+    event => {
+
+        if (
+            event.key ===
+            SAVED_ROUTES_KEY
+        ) {
+
+            updateDashboardStats();
+
+        }
+
+    }
+);
 
 
 /* =========================================================
@@ -553,15 +845,17 @@ const revealElements =
     );
 
 
-if ("IntersectionObserver" in window) {
+if (
+    "IntersectionObserver" in window
+) {
 
     const observer =
         new IntersectionObserver(
 
-            (entries) => {
+            entries => {
 
                 entries.forEach(
-                    (entry) => {
+                    entry => {
 
                         if (
                             entry.isIntersecting
@@ -591,19 +885,24 @@ if ("IntersectionObserver" in window) {
 
 
     revealElements.forEach(
-        (element) => {
+        element => {
 
-            observer.observe(element);
+            observer.observe(
+                element
+            );
 
         }
     );
+
 
 } else {
 
     revealElements.forEach(
         element => {
 
-            element.classList.add("show");
+            element.classList.add(
+                "show"
+            );
 
         }
     );
@@ -619,117 +918,163 @@ document
     .querySelectorAll(
         'a[href^="#"]'
     )
-    .forEach(link => {
+    .forEach(
+        link => {
 
-        link.addEventListener(
-            "click",
-            function (event) {
+            link.addEventListener(
+                "click",
+                function (event) {
 
-                const targetId =
-                    this.getAttribute(
-                        "href"
-                    );
+                    const targetId =
+                        this.getAttribute(
+                            "href"
+                        );
 
 
-                if (
-                    targetId === "#"
-                ) {
+                    if (
+                        targetId === "#"
+                    ) {
 
-                    return;
+                        return;
+
+                    }
+
+
+                    const target =
+                        document.querySelector(
+                            targetId
+                        );
+
+
+                    if (!target) {
+
+                        return;
+
+                    }
+
+
+                    event.preventDefault();
+
+
+                    target.scrollIntoView({
+
+                        behavior:
+                            "smooth",
+
+                        block:
+                            "start"
+
+                    });
 
                 }
-
-
-                const target =
-                    document.querySelector(
-                        targetId
-                    );
-
-
-                if (!target) {
-
-                    return;
-
-                }
-
-
-                event.preventDefault();
-
-
-                target.scrollIntoView({
-
-                    behavior: "smooth",
-
-                    block: "start"
-
-                });
-
-            }
-        );
-
-    });
-
-
-/* =========================================================
-   FOOTER LOGOUT
-========================================================= */
-
-const footerLogout =
-    document.getElementById(
-        "footerLogout"
-    );
-
-
-if (footerLogout) {
-
-    footerLogout.addEventListener(
-        "click",
-        (event) => {
-
-            event.preventDefault();
-
-            localStorage.removeItem(
-                CURRENT_USER_KEY
             );
 
-            window.location.href =
-                "../index.html";
-
         }
     );
 
-}
-
 
 /* =========================================================
-   LIVE SYNC FROM OTHER TABS/PAGES
-
-   The browser fires a native "storage" event on every OTHER
-   open tab/page whenever localStorage changes (it never fires
-   in the tab that made the change). This lets Dashboard pick
-   up profile edits made on the Profile page in another tab
-   without requiring a reload.
+   LIVE PROFILE SYNC
 ========================================================= */
 
-window.addEventListener("storage", (event) => {
+window.addEventListener(
+    "storage",
+    event => {
 
-    if (event.key === USERS_KEY || event.key === CURRENT_USER_KEY) {
+        if (
+            event.key === USERS_KEY ||
+            event.key === CURRENT_USER_KEY
+        ) {
 
-        const refreshed = loadLatestUser();
+            const refreshedUser =
+                loadLatestUser();
 
-        if (!refreshed) return;
 
-        currentUser = refreshed;
+            if (!refreshedUser) {
 
-        if (userName) {
+                return;
 
-            userName.textContent =
-                refreshed.name || "User";
+            }
+
+
+            currentUser =
+                refreshedUser;
+
+
+            if (userName) {
+
+                userName.textContent =
+                    refreshedUser.name ||
+                    "User";
+
+            }
+
+
+            renderOptionalProfileInfo(
+                refreshedUser
+            );
+
+
+            /*
+                Recalculate routes as well,
+                because the current user's email
+                may have changed.
+            */
+
+            updateDashboardStats();
 
         }
 
-        renderOptionalProfileInfo(refreshed);
-
     }
+);
 
-});
+
+/* =========================================================
+   DEBUG HELPER
+========================================================= */
+
+/*
+    You can run this in the browser console:
+
+        showDashboardData()
+
+    It will show the routes being used
+    and the calculated totals.
+*/
+
+function showDashboardData() {
+
+    const routes =
+        getUserRoutes();
+
+    const data =
+        getDashboardData();
+
+
+    console.log(
+        "Current User:",
+        currentUser
+    );
+
+
+    console.log(
+        "User Saved Routes:",
+        routes
+    );
+
+
+    console.log(
+        "Dashboard Statistics:",
+        data
+    );
+
+
+    return {
+
+        routes,
+
+        data
+
+    };
+
+}
