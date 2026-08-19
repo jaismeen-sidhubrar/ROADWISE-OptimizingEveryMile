@@ -5,376 +5,23 @@
 
     <meta charset="UTF-8">
 
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>RoadWise — Find Route</title>
 
+    <link rel="stylesheet" href="../CSS/index.css">
+    <link rel="stylesheet" href="../CSS/route_planner.css">
 
-    <!-- SAME ROADWISE CSS -->
-
-    <link
-        rel="stylesheet"
-        href="../CSS/index.css"
-    >
-
-
-    <!-- SAME FONTS -->
-
-    <link
-        rel="preconnect"
-        href="https://fonts.googleapis.com"
-    >
-
-    <link
-        rel="preconnect"
-        href="https://fonts.gstatic.com"
-        crossorigin
-    >
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
     <link
         href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap"
-        rel="stylesheet"
-    >
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
 
 
-    <!-- LEAFLET (MAP) -->
-
-    <link
-        rel="stylesheet"
-        href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
-        crossorigin=""
-    >
-
-
-    <style>
-        /* =====================================================
-           ROADWISE ROUTE RESULT CARDS
-           Uses the same visual language as index.css.
-        ====================================================== */
-
-        .route-options-section {
-            padding-top: 35px;
-        }
-
-        .route-options-heading {
-            display: grid;
-            grid-template-columns: 1.05fr .95fr;
-            gap: 70px;
-            align-items: end;
-            margin: 55px 0 45px;
-        }
-
-        .route-options-heading h2 {
-            margin: 16px 0 0;
-            font-family: var(--heading);
-            font-size: clamp(42px, 5vw, 70px);
-            line-height: .98;
-            letter-spacing: -2px;
-        }
-
-        .route-options-heading h2 span {
-            color: var(--green-dark);
-        }
-
-        .route-options-heading > p {
-            max-width: 470px;
-            margin: 0;
-            color: #777870;
-            font-size: 15px;
-            line-height: 1.8;
-        }
-
-        .route-options-grid {
-            display: grid;
-            grid-template-columns: repeat(2, minmax(0, 1fr));
-            gap: 28px;
-            align-items: stretch;
-        }
-
-        .route-option-card {
-            position: relative;
-            overflow: hidden;
-            background: #fff;
-            border: 1px solid var(--border);
-            border-radius: 22px;
-            padding: 30px;
-            box-shadow: 0 16px 45px rgba(15, 23, 42, .08);
-            transition: transform .25s ease, box-shadow .25s ease;
-        }
-
-        .route-option-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 22px 55px rgba(15, 23, 42, .12);
-        }
-
-        .route-option-card.recommended {
-            border: 2px solid var(--green-dark);
-            box-shadow: 0 20px 60px rgba(47, 107, 63, .15);
-        }
-
-        .route-option-card.recommended::before {
-            content: "";
-            position: absolute;
-            inset: 0;
-            pointer-events: none;
-            background: linear-gradient(
-                135deg,
-                rgba(47, 107, 63, .06),
-                transparent 38%
-            );
-        }
-
-        .recommended-badge {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            display: inline-flex;
-            align-items: center;
-            gap: 7px;
-            padding: 8px 13px;
-            border-radius: 999px;
-            background: var(--green-dark);
-            color: #fff;
-            font-family: var(--heading);
-            font-size: 11px;
-            font-weight: 800;
-            letter-spacing: .5px;
-            text-transform: uppercase;
-            box-shadow: 0 8px 22px rgba(47, 107, 63, .2);
-        }
-
-        .recommended-badge span {
-            font-size: 13px;
-        }
-
-        .route-card-top {
-            position: relative;
-            z-index: 1;
-            display: flex;
-            align-items: center;
-            gap: 16px;
-            margin-bottom: 28px;
-        }
-
-        .route-card-number {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 44px;
-            height: 44px;
-            flex: 0 0 44px;
-            border-radius: 50%;
-            background: #f1f4ec;
-            color: var(--green-dark);
-            font-family: var(--heading);
-            font-size: 13px;
-            font-weight: 800;
-        }
-
-        .recommended .route-card-number {
-            background: var(--green-dark);
-            color: #fff;
-        }
-
-        .route-card-label {
-            margin-bottom: 5px;
-            color: #8a8b84;
-            font-size: 10px;
-            font-weight: 800;
-            letter-spacing: 1.3px;
-        }
-
-        .route-card-top h3 {
-            margin: 0;
-            font-family: var(--heading);
-            font-size: 25px;
-            letter-spacing: -.6px;
-        }
-
-        .route-card-stats {
-            position: relative;
-            z-index: 1;
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            border-top: 1px solid var(--border);
-            border-bottom: 1px solid var(--border);
-            margin-bottom: 25px;
-        }
-
-        .route-card-stat {
-            padding: 17px 12px 17px 0;
-            border-bottom: 1px solid var(--border);
-        }
-
-        .route-card-stat:nth-child(odd) {
-            border-right: 1px solid var(--border);
-            padding-right: 18px;
-        }
-
-        .route-card-stat:nth-child(even) {
-            padding-left: 18px;
-        }
-
-        .route-card-stat:nth-child(3),
-        .route-card-stat:nth-child(4) {
-            border-bottom: 0;
-        }
-
-        .route-card-stat span {
-            display: block;
-            margin-bottom: 5px;
-            color: #8a8b84;
-            font-size: 10px;
-            font-weight: 700;
-            letter-spacing: .8px;
-            text-transform: uppercase;
-        }
-
-        .route-card-stat strong {
-            color: var(--text, #20231f);
-            font-family: var(--heading);
-            font-size: 20px;
-        }
-
-        .route-card-stat small {
-            font-size: 12px;
-            font-weight: 600;
-        }
-
-        .route-card-route {
-            position: relative;
-            z-index: 1;
-            margin-bottom: 22px;
-        }
-
-        .route-card-route-title {
-            margin-bottom: 10px;
-            font-family: var(--heading);
-            font-size: 13px;
-            font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: .7px;
-        }
-
-        .route-stop-list {
-            max-height: 205px;
-            overflow-y: auto;
-            padding-right: 5px;
-        }
-
-        .route-stop {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 10px 0;
-            border-bottom: 1px solid rgba(0,0,0,.06);
-            font-size: 13px;
-        }
-
-        .route-stop-number {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 27px;
-            height: 27px;
-            flex: 0 0 27px;
-            border-radius: 50%;
-            background: #f1f4ec;
-            color: var(--green-dark);
-            font-size: 10px;
-            font-weight: 800;
-        }
-
-        .route-stop-address {
-            line-height: 1.45;
-        }
-
-        .route-option-map {
-            position: relative;
-            z-index: 1;
-            width: 100%;
-            height: 285px;
-            margin-top: 20px;
-            overflow: hidden;
-            border: 1px solid var(--border);
-            border-radius: 15px;
-            box-shadow: 0 10px 28px rgba(15, 23, 42, .08);
-        }
-
-        .route-save-btn {
-            position: relative;
-            z-index: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            width: 100%;
-            margin-top: 22px;
-            padding: 14px 20px;
-            border: 0;
-            border-radius: 999px;
-            background: var(--green-dark);
-            color: #fff;
-            cursor: pointer;
-            font-family: var(--heading);
-            font-size: 13px;
-            font-weight: 800;
-            transition: transform .2s ease, box-shadow .2s ease;
-        }
-
-        .route-save-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(47, 107, 63, .2);
-        }
-
-        @media (max-width: 850px) {
-            .route-options-heading {
-                grid-template-columns: 1fr;
-                gap: 25px;
-            }
-
-            .route-options-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        @media (max-width: 520px) {
-            .route-option-card {
-                padding: 22px;
-                border-radius: 18px;
-            }
-
-            .recommended-badge {
-                position: static;
-                width: fit-content;
-                margin-bottom: 18px;
-            }
-
-            .route-card-stats {
-                grid-template-columns: 1fr;
-            }
-
-            .route-card-stat,
-            .route-card-stat:nth-child(odd),
-            .route-card-stat:nth-child(even) {
-                border-right: 0;
-                border-bottom: 1px solid var(--border);
-                padding: 13px 0;
-            }
-
-            .route-card-stat:last-child {
-                border-bottom: 0;
-            }
-
-            .route-option-map {
-                height: 235px;
-            }
-        }
-    </style>
 
 </head>
 
@@ -386,20 +33,14 @@
          NAVBAR
     ====================================================== -->
 
-    <header
-        class="navbar"
-        id="navbar"
-    >
+    <header class="navbar" id="navbar">
 
         <div class="nav-container">
 
 
             <!-- LOGO -->
 
-            <a
-                href="dashboard.html"
-                class="logo"
-            >
+            <a href="dashboard.html" class="logo">
 
                 <div class="logo-mark">
                     R
@@ -416,39 +57,27 @@
 
             <nav class="nav-links">
 
-                <a
-                    href="dashboard.html"
-                >
+                <a href="dashboard.html">
                     Home
                 </a>
 
 
-                <a
-                    href="#route"
-                    class="active"
-                >
+                <a href="#route" class="active">
                     Find Route
                 </a>
 
 
-                <a
-                    href="route_history.html"
-                >
+                <a href="route_history.html">
                     Route History
                 </a>
 
 
-                <a
-                    href="profile.html"
-                >
+                <a href="profile.html">
                     Profile
                 </a>
 
 
-                <a
-                    href="#"
-                    id="logoutBtn"
-                >
+                <a href="#" id="logoutBtn">
                     Log Out
                 </a>
 
@@ -457,10 +86,7 @@
 
             <!-- MOBILE MENU -->
 
-            <button
-                class="mobile-menu"
-                id="mobileMenu"
-            >
+            <button class="mobile-menu" id="mobileMenu">
                 ☰
             </button>
 
@@ -481,21 +107,12 @@
              PAGE INTRO
         ================================================== -->
 
-        <section
-            class="hero"
-            id="route"
-        >
+        <section class="hero" id="route">
 
-            <div
-                class="hero-container"
-                style="display:block;"
-            >
+            <div class="hero-container" >
 
 
-                <div
-                    class="hero-content reveal"
-                    style="max-width:850px;"
-                >
+                <div class="hero-content reveal" style="max-width:850px;">
 
                     <div class="eyebrow">
 
@@ -526,6 +143,16 @@
 
                 </div>
 
+                <div class="hero-image-area reveal">
+
+                    <div class="image-placeholder">
+
+                        <img src="../Assets/Images/Road.png" alt="RoadWise Route Optimization" class="hero-main-image">
+
+                    </div>
+
+                </div>
+
             </div>
 
         </section>
@@ -536,10 +163,7 @@
              ROUTE INPUT SECTION
         ================================================== -->
 
-        <section
-            class="about-section"
-            id="route-input"
-        >
+        <section class="about-section" id="route-input">
 
             <div class="section-container">
 
@@ -595,9 +219,7 @@
 
                         <!-- ADDRESS CONTAINER -->
 
-                        <div
-                            id="addressContainer"
-                        >
+                        <div id="addressContainer">
 
 
                             <!-- ADDRESS 1 -->
@@ -608,12 +230,7 @@
                                     STARTING ADDRESS
                                 </label>
 
-                                <input
-                                    type="text"
-                                    class="address-input"
-                                    placeholder="Enter starting address"
-                                    required
-                                >
+                                <input type="text" class="address-input" placeholder="Enter starting address" required>
 
                             </div>
 
@@ -626,12 +243,8 @@
                                     DESTINATION 02
                                 </label>
 
-                                <input
-                                    type="text"
-                                    class="address-input"
-                                    placeholder="Enter destination address"
-                                    required
-                                >
+                                <input type="text" class="address-input" placeholder="Enter destination address"
+                                    required>
 
                             </div>
 
@@ -642,12 +255,7 @@
 
                         <!-- ADD ADDRESS -->
 
-                        <button
-                            type="button"
-                            class="outline-btn"
-                            id="addAddressBtn"
-                            style="margin-top:20px;"
-                        >
+                        <button type="button" class="outline-btn" id="addAddressBtn" style="margin-top:20px;">
 
                             + Add Address
 
@@ -691,14 +299,7 @@
 
                             </label>
 
-                            <input
-                                type="number"
-                                id="fuelPrice"
-                                placeholder="Example: 95"
-                                min="0"
-                                step="0.01"
-                                required
-                            >
+                            <input type="number" id="fuelPrice" placeholder="Example: 95" min="0" step="0.01" required>
 
                         </div>
 
@@ -714,15 +315,8 @@
 
                             </label>
 
-                            <input
-                                type="number"
-                                id="fuelEfficiency"
-                                placeholder="Example: 15"
-                                min="0.1"
-                                step="0.1"
-                                value="15"
-                                required
-                            >
+                            <input type="number" id="fuelEfficiency" placeholder="Example: 15" min="0.1" step="0.1"
+                                value="15" required>
 
                         </div>
 
@@ -738,15 +332,8 @@
 
                             </label>
 
-                            <input
-                                type="number"
-                                id="averageSpeed"
-                                placeholder="Example: 40"
-                                min="1"
-                                step="1"
-                                value="40"
-                                required
-                            >
+                            <input type="number" id="averageSpeed" placeholder="Example: 40" min="1" step="1" value="40"
+                                required>
 
                         </div>
 
@@ -754,11 +341,7 @@
 
                         <!-- FIND ROUTE -->
 
-                        <button
-                            type="button"
-                            class="modal-submit"
-                            id="findRouteBtn"
-                        >
+                        <button type="button" class="modal-submit" id="findRouteBtn">
 
                             Find Optimized Route
 
@@ -781,11 +364,7 @@
              LOADING SECTION
         ================================================== -->
 
-        <section
-            class="about-section"
-            id="loadingSection"
-            style="display:none;"
-        >
+        <section class="about-section" id="loadingSection" style="display:none;">
 
             <div class="section-container">
 
@@ -815,11 +394,7 @@
              ROUTE MAP
         ================================================== -->
 
-        <section
-            class="about-section"
-            id="mapSection"
-            style="display:none;"
-        >
+        <section class="about-section" id="mapSection" style="display:none;">
 
             <div class="section-container">
 
@@ -871,9 +446,7 @@
                     <div class="about-description">
 
 
-                        <div
-                            id="routeMap"
-                            style="
+                        <div id="routeMap" style="
                                 height:420px;
                                 width:100%;
                                 margin-top:20px;
@@ -881,8 +454,7 @@
                                 overflow:hidden;
                                 border:1px solid var(--border);
                                 box-shadow:0 12px 34px rgba(15, 23, 42, 0.10);
-                            "
-                        ></div>
+                            "></div>
 
                     </div>
 
@@ -898,11 +470,7 @@
              ROUTE RESULT
         ================================================== -->
 
-        <section
-            class="about-section"
-            id="resultSection"
-            style="display:none;"
-        >
+        <section class="about-section" id="resultSection" style="display:none;">
 
             <div class="section-container">
 
@@ -969,10 +537,7 @@
                      JOURNEY SUMMARY
                 ================================================== -->
 
-                <div
-                    class="about-stats"
-                    style="margin-top:70px;"
-                >
+                <div class="about-stats" style="margin-top:70px;">
 
 
                     <div class="about-stat">
@@ -1051,10 +616,7 @@
                      LEG DETAILS
                 ================================================== -->
 
-                <div
-                    class="about-main"
-                    style="margin-top:70px;"
-                >
+                <div class="about-main" style="margin-top:70px;">
 
                     <div class="about-title">
 
@@ -1082,19 +644,13 @@
 
                 <!-- SAVE BUTTON -->
 
-                <div
-                    style="
+                <div style="
                         margin-top:60px;
                         display:flex;
                         justify-content:center;
-                    "
-                >
+                    ">
 
-                    <button
-                        type="button"
-                        class="primary-btn"
-                        id="saveRouteBtn"
-                    >
+                    <button type="button" class="primary-btn" id="saveRouteBtn">
 
                         Save This Travel
 
@@ -1122,10 +678,7 @@
 
                 <div class="footer-main">
 
-                    <a
-                        href="dashboard.html"
-                        class="logo footer-logo"
-                    >
+                    <a href="dashboard.html" class="logo footer-logo">
 
                         <div class="logo-mark">
                             R
@@ -1208,10 +761,7 @@
                     </a>
 
 
-                    <a
-                        href="#"
-                        id="footerLogout"
-                    >
+                    <a href="#" id="footerLogout">
                         Log Out
                     </a>
 
@@ -1226,7 +776,7 @@
                     </span>
 
 
-                    <a href="index.html">
+                    <a href="../index.html">
                         Landing Page
                     </a>
 
@@ -1267,11 +817,8 @@
 
     <!-- LEAFLET (MAP) -->
 
-    <script
-        src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
-        crossorigin=""
-    ></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 
 
     <!-- JAVASCRIPT -->
