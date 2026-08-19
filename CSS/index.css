@@ -579,74 +579,6 @@ input {
     justify-content: center;
 }
 
-.image-placeholder::before {
-
-    content: "";
-
-    position: absolute;
-
-    width: 300px;
-    height: 300px;
-
-    border-radius: 50%;
-
-    background: rgba(255,255,255,0.25);
-
-    top: 60px;
-    right: -80px;
-}
-
-.image-placeholder-content {
-
-    position: relative;
-
-    z-index: 2;
-
-    text-align: center;
-
-    color: #85877e;
-}
-
-.image-icon {
-
-    width: 65px;
-    height: 65px;
-
-    display: grid;
-
-    place-items: center;
-
-    margin: auto;
-
-    border-radius: 50%;
-
-    background: rgba(255,255,255,0.4);
-
-    font-size: 24px;
-}
-
-.image-placeholder-content span {
-
-    display: block;
-
-    margin-top: 20px;
-
-    font-size: 10px;
-
-    letter-spacing: 2px;
-
-    font-weight: 700;
-}
-
-.image-placeholder-content p {
-
-    margin-top: 7px;
-
-    font-size: 10px;
-
-    line-height: 1.5;
-}
-
 
 /* MAIN HERO IMAGE */
 
@@ -677,7 +609,7 @@ input {
 
     overflow: hidden;
 
-    border: 8px solid var(--cream);
+    border: 2px solid var(--cream);
 
     background: white;
 
