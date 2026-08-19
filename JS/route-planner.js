@@ -341,9 +341,6 @@ function getAddresses() {
 
 /* =========================================================
    GEOCODING
-   ADDRESS → LATITUDE + LONGITUDE
-
-   Uses OpenStreetMap Nominatim.
 ========================================================= */
 
 async function geocodeAddress(
@@ -401,8 +398,6 @@ async function geocodeAddress(
 
 /* =========================================================
    HAVERSINE DISTANCE
-
-   Returns distance in kilometres.
 ========================================================= */
 
 function calculateDistance(
@@ -458,15 +453,7 @@ function calculateDistance(
 
 
 /* =========================================================
-   NEAREST NEIGHBOUR ALGORITHM
-
-   First address = starting point.
-
-   From the current location:
-   choose the nearest unvisited location.
-
-   Repeat until every destination
-   has been visited.
+   NEAREST NEIGHBOUR
 ========================================================= */
 
 function nearestNeighbour(
@@ -479,11 +466,6 @@ function nearestNeighbour(
 
     const route = [];
 
-
-    /*
-        First location is always
-        the starting point.
-    */
 
     let current =
         unvisited.shift();
@@ -552,26 +534,26 @@ function nearestNeighbour(
 }
 
 
+
 /* =========================================================
    2-OPT HEURISTIC
-
-   Starts with the Nearest Neighbour route and repeatedly
-   reverses sections of the route whenever doing so produces
-   a shorter total distance.
-
-   The first location remains the starting point.
 ========================================================= */
 
 function calculateTotalRouteDistance(route) {
 
     let totalDistance = 0;
 
-    for (let i = 0; i < route.length - 1; i++) {
+    for (
+        let i = 0;
+        i < route.length - 1;
+        i++
+    ) {
 
-        totalDistance += calculateDistance(
-            route[i],
-            route[i + 1]
-        );
+        totalDistance +=
+            calculateDistance(
+                route[i],
+                route[i + 1]
+            );
 
     }
 
@@ -580,22 +562,38 @@ function calculateTotalRouteDistance(route) {
 }
 
 
-function reverseRouteSegment(route, start, end) {
+function reverseRouteSegment(
+    route,
+    start,
+    end
+) {
 
-    const newRoute = [...route];
+    const newRoute =
+        [...route];
 
-    while (start < end) {
 
-        const temp = newRoute[start];
+    while (
+        start < end
+    ) {
 
-        newRoute[start] = newRoute[end];
+        const temp =
+            newRoute[start];
 
-        newRoute[end] = temp;
+
+        newRoute[start] =
+            newRoute[end];
+
+
+        newRoute[end] =
+            temp;
+
 
         start++;
+
         end--;
 
     }
+
 
     return newRoute;
 
@@ -604,22 +602,23 @@ function reverseRouteSegment(route, start, end) {
 
 function twoOpt(route) {
 
-    let bestRoute = [...route];
+    let bestRoute =
+        [...route];
+
 
     let improved = true;
+
 
     while (improved) {
 
         improved = false;
 
+
         const currentDistance =
-            calculateTotalRouteDistance(bestRoute);
+            calculateTotalRouteDistance(
+                bestRoute
+            );
 
-
-        /*
-            Keep the first location fixed because it is
-            the user's starting point.
-        */
 
         for (
             let i = 1;
@@ -647,11 +646,6 @@ function twoOpt(route) {
                     );
 
 
-                /*
-                    If reversing this section makes
-                    the route shorter, keep it.
-                */
-
                 if (
                     candidateDistance <
                     currentDistance
@@ -660,7 +654,8 @@ function twoOpt(route) {
                     bestRoute =
                         candidateRoute;
 
-                    improved = true;
+                    improved =
+                        true;
 
                     break;
 
@@ -668,13 +663,17 @@ function twoOpt(route) {
 
             }
 
+
             if (improved) {
+
                 break;
+
             }
 
         }
 
     }
+
 
     return bestRoute;
 
@@ -1017,10 +1016,7 @@ function displayLegDetails(
 
 
 /* =========================================================
-   DISPLAY TWO ROUTE OPTIONS
-
-   Option 1 = Nearest Neighbour
-   Option 2 = 2-Opt
+   DISPLAY ROUTE OPTIONS
 ========================================================= */
 
 function displayRouteOptions(
@@ -1030,128 +1026,283 @@ function displayRouteOptions(
     twoOptJourney
 ) {
 
-    /*
-        Remove an old comparison section if the user
-        calculates another route.
-    */
-
     const oldSection =
         document.getElementById(
             "routeOptionsSection"
         );
 
+
     if (oldSection) {
+
         oldSection.remove();
+
     }
 
 
     /*
-        Create main comparison section.
+        Distance is the primary criterion.
+        Fuel is used as the tie-breaker.
+    */
+
+    const distanceDifference =
+        Math.abs(
+            nearestJourney.totalDistance -
+            twoOptJourney.totalDistance
+        );
+
+
+    /*
+        Treat extremely small floating-point
+        differences as equal.
+    */
+
+    const sameDistance =
+        distanceDifference < 0.001;
+
+
+    let bestOption;
+
+
+    if (sameDistance) {
+
+        bestOption =
+            nearestJourney.totalFuel <=
+            twoOptJourney.totalFuel
+
+                ? {
+
+                    route:
+                        nearestRoute,
+
+                    journey:
+                        nearestJourney,
+
+                    algorithm:
+                        "Nearest Neighbour"
+
+                }
+
+                : {
+
+                    route:
+                        twoOptRoute,
+
+                    journey:
+                        twoOptJourney,
+
+                    algorithm:
+                        "2-Opt Heuristic"
+
+                };
+
+    } else {
+
+        bestOption =
+            nearestJourney.totalDistance <
+            twoOptJourney.totalDistance
+
+                ? {
+
+                    route:
+                        nearestRoute,
+
+                    journey:
+                        nearestJourney,
+
+                    algorithm:
+                        "Nearest Neighbour"
+
+                }
+
+                : {
+
+                    route:
+                        twoOptRoute,
+
+                    journey:
+                        twoOptJourney,
+
+                    algorithm:
+                        "2-Opt Heuristic"
+
+                };
+
+    }
+
+
+    /*
+        Main section.
     */
 
     const section =
-        document.createElement("section");
+        document.createElement(
+            "section"
+        );
+
 
     section.id =
         "routeOptionsSection";
 
-    section.style.marginTop =
-        "40px";
+
+    section.className =
+        "about-section route-options-section";
 
 
-    /*
-        Heading.
-    */
-
-    const heading =
-        document.createElement("h2");
-
-    heading.textContent =
-        "Choose Your Route";
-
-    heading.style.fontFamily =
-        "var(--heading)";
-
-    heading.style.marginBottom =
-        "25px";
+    const container =
+        document.createElement(
+            "div"
+        );
 
 
-    section.appendChild(heading);
+    container.className =
+        "section-container";
 
 
-    /*
-        Container for both options.
-    */
+    container.innerHTML = `
 
-    const optionsContainer =
-        document.createElement("div");
+        <div class="section-top">
 
-    optionsContainer.style.display =
-        "grid";
+            <div class="section-number">
+                03 / ROUTE OPTIONS
+            </div>
 
-    optionsContainer.style.gridTemplateColumns =
-        "repeat(auto-fit, minmax(320px, 1fr))";
+            <div class="section-line"></div>
 
-    optionsContainer.style.gap =
-        "25px";
+            <div class="section-small-text">
+                Choose your journey
+            </div>
+
+        </div>
 
 
-    /*
-        Create Option 1.
-    */
+        <div class="route-options-heading">
 
-    const option1 =
-        createRouteOptionCard(
-            1,
-            "Nearest Neighbour",
-            nearestRoute,
-            nearestJourney
+            <div>
+
+                <div class="eyebrow">
+
+                    <span class="eyebrow-dot"></span>
+
+                    ROADWISE RECOMMENDATION
+
+                </div>
+
+
+                <h2>
+
+                    Your best
+                    <br>
+
+                    <span>route options.</span>
+
+                </h2>
+
+            </div>
+
+
+            <p>
+
+                We compare the calculated routes using
+                distance and fuel consumption so you can
+                choose confidently.
+
+            </p>
+
+        </div>
+
+
+        <div class="route-options-grid"></div>
+
+    `;
+
+
+    const optionsGrid =
+        container.querySelector(
+            ".route-options-grid"
         );
 
 
     /*
-        Create Option 2.
+        If distances are equal, show only one.
     */
 
-    const option2 =
-        createRouteOptionCard(
-            2,
-            "2-Opt Heuristic",
-            twoOptRoute,
-            twoOptJourney
+    if (sameDistance) {
+
+        optionsGrid.appendChild(
+
+            createRouteOptionCard(
+
+                1,
+
+                bestOption.route,
+
+                bestOption.journey,
+
+                true,
+
+                bestOption.algorithm
+
+            )
+
+        );
+
+    } else {
+
+        const nearestIsBest =
+            bestOption.route ===
+            nearestRoute;
+
+
+        optionsGrid.appendChild(
+
+            createRouteOptionCard(
+
+                1,
+
+                nearestRoute,
+
+                nearestJourney,
+
+                nearestIsBest,
+
+                "Nearest Neighbour"
+
+            )
+
         );
 
 
-    optionsContainer.appendChild(
-        option1
-    );
+        optionsGrid.appendChild(
 
-    optionsContainer.appendChild(
-        option2
-    );
+            createRouteOptionCard(
+
+                2,
+
+                twoOptRoute,
+
+                twoOptJourney,
+
+                !nearestIsBest,
+
+                "2-Opt Heuristic"
+
+            )
+
+        );
+
+    }
 
 
     section.appendChild(
-        optionsContainer
+        container
     );
 
-
-    /*
-        Insert the comparison section before
-        the existing result section.
-    */
 
     resultSection.parentNode.insertBefore(
         section,
         resultSection
     );
 
-
-    /*
-        Hide the old single-route save button
-        because each option now has its own ADD
-        button.
-    */
 
     if (saveRouteBtn) {
 
@@ -1170,129 +1321,247 @@ function displayRouteOptions(
 
 function createRouteOptionCard(
     optionNumber,
-    algorithmName,
     route,
-    journey
+    journey,
+    isRecommended,
+    algorithmName
 ) {
 
     const card =
-        document.createElement("div");
-
-    card.style.position =
-        "relative";
-
-    card.style.border =
-        "1px solid var(--border)";
-
-    card.style.borderRadius =
-        "12px";
-
-    card.style.padding =
-        "25px";
-
-    card.style.background =
-        "#fff";
-
-    card.style.boxShadow =
-        "0 4px 15px rgba(0,0,0,0.08)";
+        document.createElement(
+            "article"
+        );
 
 
-    /*
-        OPTION label
-    */
-
-    const optionLabel =
-        document.createElement("div");
-
-    optionLabel.textContent =
-        `OPTION ${optionNumber}`;
-
-    optionLabel.style.position =
-        "absolute";
-
-    optionLabel.style.top =
-        "15px";
-
-    optionLabel.style.left =
-        "15px";
-
-    optionLabel.style.fontSize =
-        "11px";
-
-    optionLabel.style.fontWeight =
-        "700";
-
-    optionLabel.style.letterSpacing =
-        "1px";
-
-    optionLabel.style.color =
-        "var(--green-dark, #2f6b3f)";
+    card.className =
+        `route-option-card${
+            isRecommended
+                ? " recommended"
+                : ""
+        }`;
 
 
-    card.appendChild(
-        optionLabel
-    );
+    card.innerHTML = `
+
+        ${
+            isRecommended
+
+                ? `
+
+                    <div class="recommended-badge">
+
+                        <span>✦</span>
+
+                        Recommended
+
+                    </div>
+
+                `
+
+                : ""
+        }
 
 
-    /*
-        Algorithm name
-    */
+        <div class="route-card-top">
 
-    const title =
-        document.createElement("h3");
+            <div class="route-card-number">
 
-    title.textContent =
-        algorithmName;
+                ${String(optionNumber)
+                    .padStart(2, "0")}
 
-    title.style.marginTop =
-        "30px";
-
-    title.style.marginBottom =
-        "20px";
-
-    title.style.fontFamily =
-        "var(--heading)";
+            </div>
 
 
-    card.appendChild(
-        title
-    );
+            <div>
+
+                <div class="route-card-label">
+
+                    ${
+                        isRecommended
+                            ? "BEST MATCH FOR THIS JOURNEY"
+                            : "ALTERNATIVE ROUTE"
+                    }
+
+                </div>
 
 
-    /*
-        Route order
-    */
+                <h3>
 
-    const routeContainer =
-        document.createElement("div");
+                    ${
+                        isRecommended
+                            ? "A smarter choice."
+                            : "Another way to go."
+                    }
 
-    routeContainer.style.marginBottom =
-        "25px";
+                </h3>
+
+            </div>
+
+        </div>
+
+
+        <div class="route-card-stats">
+
+
+            <div class="route-card-stat">
+
+                <span>
+                    Distance
+                </span>
+
+                <strong>
+
+                    ${
+                        journey.totalDistance
+                            .toFixed(2)
+                    }
+
+                    <small>
+                        km
+                    </small>
+
+                </strong>
+
+            </div>
+
+
+            <div class="route-card-stat">
+
+                <span>
+                    Fuel
+                </span>
+
+                <strong>
+
+                    ${
+                        journey.totalFuel
+                            .toFixed(2)
+                    }
+
+                    <small>
+                        L
+                    </small>
+
+                </strong>
+
+            </div>
+
+
+            <div class="route-card-stat">
+
+                <span>
+                    Est. time
+                </span>
+
+                <strong>
+
+                    ${
+                        formatTime(
+                            journey.totalTime
+                        )
+                    }
+
+                </strong>
+
+            </div>
+
+
+            <div class="route-card-stat">
+
+                <span>
+                    Est. cost
+                </span>
+
+                <strong>
+
+                    ${
+                        formatCurrency(
+                            journey.totalCost
+                        )
+                    }
+
+                </strong>
+
+            </div>
+
+
+        </div>
+
+
+        <div class="route-card-route">
+
+            <div class="route-card-route-title">
+
+                Stop sequence
+
+            </div>
+
+
+            <div class="route-stop-list"></div>
+
+        </div>
+
+
+        <div class="route-option-map"></div>
+
+
+        <button
+            class="route-save-btn"
+            type="button"
+        >
+
+            Use This Route
+
+            <span>
+                →
+            </span>
+
+        </button>
+
+    `;
+
+
+    const stopList =
+        card.querySelector(
+            ".route-stop-list"
+        );
 
 
     route.forEach(
         (location, index) => {
 
             const stop =
-                document.createElement("div");
+                document.createElement(
+                    "div"
+                );
 
-            stop.style.padding =
-                "10px 0";
 
-            stop.style.borderBottom =
-                "1px solid var(--border)";
+            stop.className =
+                "route-stop";
 
 
             stop.innerHTML = `
-                <strong>
-                    ${String(index + 1).padStart(2, "0")}
-                </strong>
-                &nbsp;
-                ${location.address}
+
+                <span class="route-stop-number">
+
+                    ${
+                        String(index + 1)
+                            .padStart(2, "0")
+                    }
+
+                </span>
+
+
+                <span class="route-stop-address">
+
+                    ${location.address}
+
+                </span>
+
             `;
 
 
-            routeContainer.appendChild(
+            stopList.appendChild(
                 stop
             );
 
@@ -1300,148 +1569,39 @@ function createRouteOptionCard(
     );
 
 
-    card.appendChild(
-        routeContainer
-    );
+    const mapContainer =
+        card.querySelector(
+            ".route-option-map"
+        );
 
-
-    /*
-        Statistics
-    */
-
-    const stats =
-        document.createElement("div");
-
-    stats.style.lineHeight =
-        "2";
-
-    stats.style.fontSize =
-        "13px";
-
-
-    stats.innerHTML = `
-        <div>
-            <strong>Distance:</strong>
-            ${journey.totalDistance.toFixed(2)} km
-        </div>
-
-        <div>
-            <strong>Estimated Time:</strong>
-            ${formatTime(journey.totalTime)}
-        </div>
-
-        <div>
-            <strong>Fuel:</strong>
-            ${journey.totalFuel.toFixed(2)} L
-        </div>
-
-        <div>
-            <strong>Estimated Cost:</strong>
-            ${formatCurrency(journey.totalCost)}
-        </div>
-    `;
-
-
-    card.appendChild(
-        stats
-    );
-
-
-    /*
-        Map
-    */
 
     const mapId =
-        `routeOptionMap${optionNumber}`;
+        `routeOptionMap${
+            Date.now()
+        }_${optionNumber}`;
 
-    const mapContainer =
-        document.createElement("div");
 
     mapContainer.id =
         mapId;
 
-    mapContainer.style.height =
-        "280px";
 
-    mapContainer.style.width =
-        "100%";
+    card
+        .querySelector(
+            ".route-save-btn"
+        )
+        .addEventListener(
+            "click",
+            () => {
 
-    mapContainer.style.marginTop =
-        "20px";
+                saveSelectedRoute(
+                    algorithmName,
+                    route,
+                    journey
+                );
 
-    mapContainer.style.borderRadius =
-        "8px";
+            }
+        );
 
-    mapContainer.style.overflow =
-        "hidden";
-
-
-    card.appendChild(
-        mapContainer
-    );
-
-
-    /*
-        ADD button
-    */
-
-    const addButton =
-        document.createElement("button");
-
-    addButton.textContent =
-        "ADD";
-
-    addButton.style.marginTop =
-        "20px";
-
-    addButton.style.width =
-        "100%";
-
-    addButton.style.padding =
-        "13px";
-
-    addButton.style.border =
-        "none";
-
-    addButton.style.borderRadius =
-        "6px";
-
-    addButton.style.cursor =
-        "pointer";
-
-    addButton.style.fontWeight =
-        "700";
-
-    addButton.style.background =
-        "var(--green-dark, #2f6b3f)";
-
-    addButton.style.color =
-        "#fff";
-
-
-    addButton.addEventListener(
-        "click",
-        () => {
-
-            saveSelectedRoute(
-                algorithmName,
-                route,
-                journey
-            );
-
-        }
-    );
-
-
-    card.appendChild(
-        addButton
-    );
-
-
-    /*
-        Draw the map after the card has been
-        inserted into the DOM.
-    */
 
     setTimeout(
         () => {
@@ -1464,68 +1624,59 @@ function createRouteOptionCard(
 
 /* =========================================================
    SHOW ROUTE MAP
-
-   Renders numbered pins for every stop
-   in visiting order, plus a dashed line
-   tracing the Nearest Neighbour route.
-
-   Uses Leaflet + OpenStreetMap tiles.
 ========================================================= */
 
-let routeMapInstance = null;
+let routeMapInstance =
+    null;
 
 
 function displayRouteMap(
     route
 ) {
 
-    /*
-        Destroy any previous map instance
-        before creating a new one — Leaflet
-        does not allow re-initializing the
-        same container.
-    */
-
     if (routeMapInstance) {
 
         routeMapInstance.remove();
 
-        routeMapInstance = null;
+        routeMapInstance =
+            null;
 
     }
 
 
     routeMapInstance =
-        L.map("routeMap");
+        L.map(
+            "routeMap"
+        );
 
 
     L.tileLayer(
         "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
         {
+
             maxZoom: 19,
+
             attribution:
                 "&copy; OpenStreetMap contributors"
+
         }
-    ).addTo(
-        routeMapInstance
-    );
+    )
+        .addTo(
+            routeMapInstance
+        );
 
 
     const latLngs =
-        route.map(location => [
+        route.map(
+            location => [
 
-            location.latitude,
+                location.latitude,
 
-            location.longitude
+                location.longitude
 
-        ]);
+            ]
+        );
 
-
-
-    /*
-        Numbered pin markers,
-        in visiting order.
-    */
 
     route.forEach(
         (location, index) => {
@@ -1547,28 +1698,52 @@ function displayRouteMap(
                     html: `
 
                         <div style="
+
                             display:flex;
+
                             align-items:center;
+
                             justify-content:center;
+
                             width:30px;
+
                             height:30px;
+
                             border-radius:50%;
-                            background:${isStart ? "#1f4d2b" : "var(--green-dark, #2f6b3f)"};
+
+                            background:${
+                                isStart
+                                    ? "#1f4d2b"
+                                    : "var(--green-dark, #2f6b3f)"
+                            };
+
                             color:#fff;
+
                             font-family:sans-serif;
+
                             font-weight:700;
+
                             font-size:12px;
+
                             border:2px solid #fff;
-                            box-shadow:0 2px 6px rgba(0,0,0,0.35);
+
+                            box-shadow:
+                                0 2px 6px
+                                rgba(0,0,0,0.35);
+
                         ">
+
                             ${stopNumber}
+
                         </div>
 
                     `,
 
-                    iconSize: [30, 30],
+                    iconSize:
+                        [30, 30],
 
-                    iconAnchor: [15, 15]
+                    iconAnchor:
+                        [15, 15]
 
                 });
 
@@ -1578,57 +1753,59 @@ function displayRouteMap(
                     location.latitude,
                     location.longitude
                 ],
-                { icon }
+                {
+                    icon
+                }
             )
-                .addTo(routeMapInstance)
+                .addTo(
+                    routeMapInstance
+                )
                 .bindPopup(
-                    `<strong>${stopNumber}. ${location.address}</strong>${isStart ? "<br>Starting point" : ""}`
+                    `<strong>
+                        ${stopNumber}.
+                        ${location.address}
+                    </strong>${
+                        isStart
+                            ? "<br>Starting point"
+                            : ""
+                    }`
                 );
 
         }
     );
 
 
-
-    /*
-        Dashed line tracing the
-        optimized route order.
-    */
-
     L.polyline(
         latLngs,
         {
-            color: "#2f6b3f",
-            weight: 3,
-            opacity: 0.8,
-            dashArray: "8,8"
+
+            color:
+                "#2f6b3f",
+
+            weight:
+                3,
+
+            opacity:
+                0.8,
+
+            dashArray:
+                "8,8"
+
         }
-    ).addTo(
-        routeMapInstance
-    );
+    )
+        .addTo(
+            routeMapInstance
+        );
 
-
-
-    /*
-        Fit the map to show
-        every stop comfortably.
-    */
 
     routeMapInstance.fitBounds(
         latLngs,
-        { padding: [40, 40] }
+        {
+            padding:
+                [40, 40]
+        }
     );
 
-
-
-    /*
-        The map container was hidden
-        (display:none) while it was
-        being built, so Leaflet may
-        have measured it as 0×0.
-        Force a resize once it is
-        actually visible.
-    */
 
     setTimeout(
         () => {
@@ -1637,9 +1814,13 @@ function displayRouteMap(
 
                 routeMapInstance.invalidateSize();
 
+
                 routeMapInstance.fitBounds(
                     latLngs,
-                    { padding: [40, 40] }
+                    {
+                        padding:
+                            [40, 40]
+                    }
                 );
 
             }
@@ -1649,7 +1830,6 @@ function displayRouteMap(
     );
 
 }
-
 
 
 
@@ -1667,52 +1847,70 @@ function displayOptionMap(
             mapId
         );
 
+
     if (!mapElement) {
+
         return;
+
     }
 
 
     const map =
-        L.map(mapElement);
+        L.map(
+            mapElement
+        );
 
 
     L.tileLayer(
         "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
         {
-            maxZoom: 19,
+
+            maxZoom:
+                19,
+
             attribution:
                 "&copy; OpenStreetMap contributors"
+
         }
-    ).addTo(map);
+    )
+        .addTo(
+            map
+        );
 
 
     const latLngs =
         route.map(
             location => [
+
                 location.latitude,
+
                 location.longitude
+
             ]
         );
 
-
-    /*
-        Numbered markers.
-    */
 
     route.forEach(
         (location, index) => {
 
             const marker =
-                L.marker([
-                    location.latitude,
-                    location.longitude
-                ])
-                    .addTo(map);
+                L.marker(
+                    [
+                        location.latitude,
+                        location.longitude
+                    ]
+                )
+                    .addTo(
+                        map
+                    );
 
 
             marker.bindPopup(
                 `<strong>
-                    ${index + 1}. ${location.address}
+
+                    ${index + 1}.
+                    ${location.address}
+
                 </strong>`
             );
 
@@ -1720,28 +1918,31 @@ function displayOptionMap(
     );
 
 
-    /*
-        Route line.
-    */
-
     L.polyline(
         latLngs,
         {
-            color: "#2f6b3f",
-            weight: 3,
-            opacity: 0.8
+
+            color:
+                "#2f6b3f",
+
+            weight:
+                3,
+
+            opacity:
+                0.8
+
         }
-    ).addTo(map);
+    )
+        .addTo(
+            map
+        );
 
-
-    /*
-        Fit map to all locations.
-    */
 
     map.fitBounds(
         latLngs,
         {
-            padding: [30, 30]
+            padding:
+                [30, 30]
         }
     );
 
@@ -1761,8 +1962,6 @@ function displayOptionMap(
 
 /* =========================================================
    SAVE SELECTED ROUTE
-
-   Saves the route selected by the user to localStorage.
 ========================================================= */
 
 function saveSelectedRoute(
@@ -1846,17 +2045,19 @@ function saveSelectedRoute(
 
 
     alert(
-        `${algorithmName} route has been added to your dashboard/history!`
+        "This route has been added to your dashboard/history!"
     );
 
 }
+
 
 
 /* =========================================================
    FIND ROUTE
 ========================================================= */
 
-let latestRouteData = null;
+let latestRouteData =
+    null;
 
 
 findRouteBtn.addEventListener(
@@ -1958,7 +2159,8 @@ findRouteBtn.addEventListener(
                GEOCODE ALL ADDRESSES
             ====================================== */
 
-            const locations = [];
+            const locations =
+                [];
 
 
             for (
@@ -1968,7 +2170,11 @@ findRouteBtn.addEventListener(
             ) {
 
                 loadingMessage.textContent =
-                    `Finding location ${i + 1} of ${addresses.length}...`;
+                    `Finding location ${
+                        i + 1
+                    } of ${
+                        addresses.length
+                    }...`;
 
 
                 const location =
@@ -1981,10 +2187,6 @@ findRouteBtn.addEventListener(
                     location
                 );
 
-
-                /*
-                    Small delay between requests.
-                */
 
                 if (
                     i <
@@ -2006,11 +2208,12 @@ findRouteBtn.addEventListener(
 
 
             /* =====================================
-   OPTION 1 — NEAREST NEIGHBOUR
-====================================== */
+               OPTION 1 — NEAREST NEIGHBOUR
+            ====================================== */
 
             loadingMessage.textContent =
-                "Calculating the route using Nearest Neighbour...";
+                "Calculating your route...";
+
 
             const optimizedRoute =
                 nearestNeighbour(
@@ -2027,12 +2230,14 @@ findRouteBtn.addEventListener(
                 );
 
 
+
             /* =====================================
                OPTION 2 — 2-OPT
             ====================================== */
 
             loadingMessage.textContent =
-                "Improving the route using 2-Opt heuristic...";
+                "Comparing route options...";
+
 
             const twoOptRoute =
                 twoOpt(
@@ -2050,13 +2255,9 @@ findRouteBtn.addEventListener(
 
 
 
-            
-
-
-
             /* =====================================
-                DISPLAY BOTH ROUTE OPTIONS
-              ====================================== */
+               DISPLAY ROUTE OPTIONS
+            ====================================== */
 
             displayRouteOptions(
                 optimizedRoute,
@@ -2067,25 +2268,17 @@ findRouteBtn.addEventListener(
 
 
 
-
-
-            
-
             /* =====================================
-   SHOW TWO ROUTE OPTIONS
-====================================== */
+               HIDE OLD SINGLE ROUTE DISPLAY
+            ====================================== */
 
             loadingSection.style.display =
                 "none";
 
-            /*
-                Hide the old single-route display.
-                The two new route cards contain their
-                own maps and statistics.
-            */
 
             mapSection.style.display =
                 "none";
+
 
             resultSection.style.display =
                 "none";
@@ -2096,10 +2289,14 @@ findRouteBtn.addEventListener(
                     "routeOptionsSection"
                 );
 
+
             if (routeOptionsSection) {
 
                 routeOptionsSection.scrollIntoView({
-                    behavior: "smooth"
+
+                    behavior:
+                        "smooth"
+
                 });
 
             }
@@ -2157,11 +2354,6 @@ saveRouteBtn.addEventListener(
         }
 
 
-
-        /*
-            Get existing saved routes.
-        */
-
         const savedRoutes =
             JSON.parse(
                 localStorage.getItem(
@@ -2170,20 +2362,10 @@ saveRouteBtn.addEventListener(
             ) || [];
 
 
-
-        /*
-            Add current route.
-        */
-
         savedRoutes.push(
             latestRouteData
         );
 
-
-
-        /*
-            Save all routes.
-        */
 
         localStorage.setItem(
             "roadwiseSavedRoutes",
@@ -2191,7 +2373,6 @@ saveRouteBtn.addEventListener(
                 savedRoutes
             )
         );
-
 
 
         alert(
@@ -2241,7 +2422,8 @@ const observer =
 
         },
         {
-            threshold: 0.12
+            threshold:
+                0.12
         }
     );
 

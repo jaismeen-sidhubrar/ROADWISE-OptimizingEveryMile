@@ -363,6 +363,15 @@ function createRouteCard(
        LEFT INFORMATION PANEL
     ====================================================== */
 
+    const start =
+    route.optimizedRoute?.[0]?.address ||
+    "Start";
+
+    const end =
+        route.optimizedRoute?.[
+            route.optimizedRoute.length - 1
+        ]?.address ||
+        "Destination";
     const info =
         document.createElement(
             "div"
@@ -381,7 +390,13 @@ function createRouteCard(
 
 
         <h3>
-            ${route.algorithm}
+            ${start}
+            <span style="
+                color:var(--green-dark);
+                margin:0 7px;
+                font-size:0.8em;
+            ">→</span>
+            ${end}
         </h3>
 
 
