@@ -1,9 +1,4 @@
 /* =========================================================
-   ROADWISE ROUTE HISTORY
-========================================================= */
-
-
-/* =========================================================
    CURRENT USER
 ========================================================= */
 
@@ -138,68 +133,6 @@ if (mobileMenu) {
     );
 
 }
-
-
-
-/* =========================================================
-   LOGOUT
-========================================================= */
-
-function logout() {
-
-    localStorage.removeItem(
-        "roadwiseCurrentUser"
-    );
-
-    window.location.href =
-        "../index.html";
-
-}
-
-
-const logoutBtn =
-    document.getElementById(
-        "logoutBtn"
-    );
-
-
-const footerLogout =
-    document.getElementById(
-        "footerLogout"
-    );
-
-
-if (logoutBtn) {
-
-    logoutBtn.addEventListener(
-        "click",
-        event => {
-
-            event.preventDefault();
-
-            logout();
-
-        }
-    );
-
-}
-
-
-if (footerLogout) {
-
-    footerLogout.addEventListener(
-        "click",
-        event => {
-
-            event.preventDefault();
-
-            logout();
-
-        }
-    );
-
-}
-
 
 
 /* =========================================================
@@ -822,10 +755,6 @@ function showDeleteModal(createdAt) {
     modal.innerHTML = `
 
         <div class="delete-modal">
-
-            <div class="delete-modal-icon">
-                ×
-            </div>
 
 
             <div class="delete-modal-content">

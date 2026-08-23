@@ -234,66 +234,6 @@ document
 
 
 
-/* =========================================================
-   LOGOUT
-========================================================= */
-
-function logout() {
-
-    localStorage.removeItem(
-        "roadwiseCurrentUser"
-    );
-
-    window.location.href =
-        "../index.html";
-
-}
-
-
-const logoutBtn =
-    document.getElementById(
-        "logoutBtn"
-    );
-
-
-const footerLogout =
-    document.getElementById(
-        "footerLogout"
-    );
-
-
-if (logoutBtn) {
-
-    logoutBtn.addEventListener(
-        "click",
-        event => {
-
-            event.preventDefault();
-
-            logout();
-
-        }
-    );
-
-}
-
-
-if (footerLogout) {
-
-    footerLogout.addEventListener(
-        "click",
-        event => {
-
-            event.preventDefault();
-
-            logout();
-
-        }
-    );
-
-}
-
-
 
 /* =========================================================
    ADDRESS COUNTER

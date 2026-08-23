@@ -424,43 +424,6 @@ document
     );
 
 
-/* =========================================================
-   LOGOUT
-========================================================= */
-
-function logout() {
-
-    localStorage.removeItem(
-        CURRENT_USER_KEY
-    );
-
-
-    window.location.href =
-        "../index.html";
-
-}
-
-
-const logoutBtn =
-    document.getElementById(
-        "logoutBtn"
-    );
-
-
-if (logoutBtn) {
-
-    logoutBtn.addEventListener(
-        "click",
-        event => {
-
-            event.preventDefault();
-
-            logout();
-
-        }
-    );
-
-}
 
 
 /* =========================================================

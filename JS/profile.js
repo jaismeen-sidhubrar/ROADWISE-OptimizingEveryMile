@@ -225,8 +225,6 @@ const confirmDeleteBtn = document.getElementById("confirmDeleteBtn");
 const toast = document.getElementById("profileToast");
 const toastText = document.getElementById("profileToastText");
 
-const logoutBtn = document.getElementById("logoutBtn");
-const footerLogout = document.getElementById("footerLogout");
 
 
 let pendingAvatarDataUrl = null; // null = no change queued
@@ -754,45 +752,6 @@ if (confirmDeleteBtn) {
 }
 
 
-/* =========================================================
-   LOGOUT
-   Matches the #logoutBtn / #footerLogout pattern used on
-   the dashboard page.
-
-   NOTE: previously this file declared `logoutBtn` and
-   `footerLogout` a SECOND time down here with `const`,
-   which is a duplicate-declaration SyntaxError in the same
-   scope. That error stopped the ENTIRE script from running
-   (not just logout) — which is why nothing on this page
-   worked. Fixed by reusing the elements already grabbed in
-   the ELEMENTS section above instead of redeclaring them.
-========================================================= */
-
-function logoutUser(event) {
-
-    event.preventDefault();
-
-    // Remove logged-in user
-    localStorage.removeItem(CURRENT_USER_KEY);
-
-    // Go back to landing page
-    window.location.href = LANDING_PATH;
-
-}
-
-
-if (logoutBtn) {
-
-    logoutBtn.addEventListener("click", logoutUser);
-
-}
-
-
-if (footerLogout) {
-
-    footerLogout.addEventListener("click", logoutUser);
-
-}
 
 
 /* =========================================================
