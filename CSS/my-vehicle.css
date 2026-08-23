@@ -1,0 +1,641 @@
+/* =====================================================
+   MY VEHICLES
+===================================================== */
+
+.vehicle-list {
+    display: grid;
+    gap: 25px;
+    margin-top: 55px;
+}
+
+
+.vehicle-card {
+    background: white;
+
+    padding: 35px;
+
+    border: 1px solid var(--border);
+
+    box-shadow:
+        0 20px 60px rgba(0,0,0,0.04);
+}
+
+
+.vehicle-card-header {
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: flex-start;
+
+    gap: 20px;
+
+    padding-bottom: 25px;
+
+    border-bottom: 1px solid var(--border);
+}
+
+
+.vehicle-card-label {
+    display: block;
+
+    font-size: 9px;
+
+    font-weight: 700;
+
+    letter-spacing: 2px;
+
+    color: #777870;
+
+    margin-bottom: 8px;
+}
+
+
+.vehicle-card-header h3 {
+    margin: 0;
+
+    font-family: var(--heading);
+
+    font-size: 25px;
+
+    color: #202936;
+}
+
+
+.vehicle-mileage {
+    padding: 25px 0;
+
+    border-bottom: 1px solid var(--border);
+}
+
+
+.vehicle-mileage span,
+.vehicle-stats span {
+    display: block;
+
+    font-size: 9px;
+
+    font-weight: 700;
+
+    letter-spacing: 1.5px;
+
+    color: #777870;
+
+    margin-bottom: 7px;
+}
+
+
+.vehicle-mileage strong {
+    font-family: var(--heading);
+
+    font-size: 25px;
+
+    color: var(--green-dark);
+}
+
+
+.vehicle-mileage small,
+.vehicle-stats small {
+    font-size: 10px;
+
+    font-weight: 500;
+
+    color: #777870;
+}
+
+
+.vehicle-stats {
+    display: grid;
+
+    grid-template-columns:
+        repeat(3, 1fr);
+
+    gap: 20px;
+
+    padding-top: 25px;
+}
+
+
+.vehicle-stats strong {
+    font-family: var(--heading);
+
+    font-size: 18px;
+
+    color: #202936;
+}
+
+
+.vehicle-delete-btn {
+    padding: 9px 16px;
+
+    background: transparent;
+
+    border: 1px solid #d9baba;
+
+    color: #8b2e2e;
+
+    font-size: 10px;
+
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition: 0.25s ease;
+}
+
+
+.vehicle-delete-btn:hover {
+    background: #8b2e2e;
+
+    border-color: #8b2e2e;
+
+    color: white;
+}
+
+
+/* EMPTY STATE */
+
+.vehicle-empty-state {
+    margin-top: 55px;
+
+    padding: 60px;
+
+    background: white;
+
+    border: 1px solid var(--border);
+
+    text-align: center;
+}
+
+
+.vehicle-empty-state h3 {
+    margin: 0;
+
+    font-family: var(--heading);
+
+    font-size: 25px;
+}
+
+
+.vehicle-empty-state p {
+    margin: 12px 0 25px;
+
+    color: #777870;
+
+    font-size: 12px;
+}
+
+
+
+/* OTHER VEHICLES */
+
+.other-vehicles-section {
+    margin-top: 90px;
+
+    padding-top: 55px;
+
+    border-top: 1px solid var(--border);
+}
+
+
+.vehicle-section-heading {
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: flex-end;
+
+    gap: 40px;
+}
+
+
+.vehicle-section-heading h3 {
+    margin: 10px 0 0;
+
+    font-family: var(--heading);
+
+    font-size: 32px;
+}
+
+
+.vehicle-section-heading h3 span {
+    color: var(--green-dark);
+}
+
+
+.vehicle-section-heading p {
+    max-width: 360px;
+
+    color: #777870;
+
+    font-size: 11px;
+
+    line-height: 1.7;
+}
+
+
+.other-vehicle-card {
+    background: #fafaf7;
+}
+
+
+
+/* =====================================================
+   ADD VEHICLE MODAL
+===================================================== */
+
+.vehicle-modal-overlay {
+    position: fixed;
+
+    inset: 0;
+
+    z-index: 9999;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding: 20px;
+
+    background:
+        rgba(20,28,24,0.45);
+
+    backdrop-filter:
+        blur(4px);
+
+    opacity: 0;
+
+    visibility: hidden;
+
+    transition:
+        opacity 0.25s ease,
+        visibility 0.25s ease;
+}
+
+
+.vehicle-modal-overlay.active {
+    opacity: 1;
+
+    visibility: visible;
+}
+
+
+.vehicle-modal {
+    position: relative;
+
+    width: 100%;
+
+    max-width: 470px;
+
+    background: white;
+
+    padding: 45px;
+
+    box-shadow:
+        0 30px 80px
+        rgba(0,0,0,0.18);
+
+    transform:
+        translateY(15px);
+
+    transition:
+        transform 0.25s ease;
+}
+
+
+.vehicle-modal-overlay.active
+.vehicle-modal {
+    transform:
+        translateY(0);
+}
+
+
+.vehicle-modal-close {
+    position: absolute;
+
+    top: 20px;
+
+    right: 20px;
+
+    width: 35px;
+
+    height: 35px;
+
+    background: transparent;
+
+    border: 1px solid var(--border);
+
+    font-size: 22px;
+
+    color: #555;
+
+    cursor: pointer;
+}
+
+
+.vehicle-modal-header span {
+    display: block;
+
+    font-size: 9px;
+
+    letter-spacing: 2px;
+
+    font-weight: 700;
+
+    color: var(--green-dark);
+
+    margin-bottom: 10px;
+}
+
+
+.vehicle-modal-header h3 {
+    margin: 0;
+
+    font-family: var(--heading);
+
+    font-size: 28px;
+}
+
+
+.vehicle-modal-header p {
+    margin-top: 12px;
+
+    color: #777870;
+
+    font-size: 11px;
+
+    line-height: 1.7;
+}
+
+
+.vehicle-form-group {
+    margin-top: 25px;
+}
+
+
+.vehicle-form-group label {
+    display: block;
+
+    margin-bottom: 8px;
+
+    font-size: 9px;
+
+    font-weight: 700;
+
+    letter-spacing: 1.5px;
+
+    color: #777870;
+}
+
+
+.vehicle-form-group input {
+    width: 100%;
+
+    box-sizing: border-box;
+
+    padding: 14px 15px;
+
+    border: 1px solid var(--border);
+
+    background: #fafaf7;
+
+    outline: none;
+
+    font-family: var(--body);
+
+    font-size: 12px;
+}
+
+
+.vehicle-form-group input:focus {
+    border-color:
+        var(--green-dark);
+}
+
+
+.mileage-input-wrapper {
+    position: relative;
+}
+
+
+.mileage-input-wrapper input {
+    padding-right: 55px;
+}
+
+
+.mileage-input-wrapper span {
+    position: absolute;
+
+    right: 15px;
+
+    top: 50%;
+
+    transform:
+        translateY(-50%);
+
+    color: #777870;
+
+    font-size: 10px;
+}
+
+
+.vehicle-save-btn {
+    width: 100%;
+
+    margin-top: 30px;
+
+    padding: 15px;
+
+    background:
+        var(--green-dark);
+
+    border: 1px solid
+        var(--green-dark);
+
+    color: white;
+
+    font-family: var(--body);
+
+    font-size: 11px;
+
+    font-weight: 600;
+
+    cursor: pointer;
+}
+
+
+
+/* =====================================================
+   VEHICLE DELETE MODAL
+===================================================== */
+
+.vehicle-delete-modal-overlay {
+    position: fixed;
+
+    inset: 0;
+
+    z-index: 10000;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding: 20px;
+
+    background:
+        rgba(20,28,24,0.45);
+
+    backdrop-filter:
+        blur(4px);
+}
+
+
+.vehicle-delete-modal {
+    width: 100%;
+
+    max-width: 430px;
+
+    background: white;
+
+    padding: 40px;
+
+    box-shadow:
+        0 30px 80px
+        rgba(0,0,0,0.18);
+}
+
+
+.vehicle-delete-icon {
+    width: 45px;
+
+    height: 45px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    border: 1px solid #d9baba;
+
+    color: #8b2e2e;
+
+    font-size: 27px;
+
+    margin-bottom: 22px;
+}
+
+
+.vehicle-delete-label {
+    display: block;
+
+    font-size: 9px;
+
+    font-weight: 700;
+
+    letter-spacing: 2px;
+
+    color: #8b2e2e;
+
+    margin-bottom: 10px;
+}
+
+
+.vehicle-delete-modal h3 {
+    margin: 0;
+
+    font-family: var(--heading);
+
+    font-size: 27px;
+}
+
+
+.vehicle-delete-modal p {
+    margin-top: 12px;
+
+    color: #777870;
+
+    font-size: 11px;
+
+    line-height: 1.7;
+}
+
+
+.vehicle-delete-actions {
+    display: flex;
+
+    justify-content: flex-end;
+
+    gap: 12px;
+
+    margin-top: 30px;
+}
+
+
+.vehicle-delete-actions button {
+    padding: 12px 18px;
+
+    font-size: 10px;
+
+    font-weight: 600;
+
+    cursor: pointer;
+}
+
+
+.vehicle-delete-back {
+    background: transparent;
+
+    border: 1px solid var(--border);
+
+    color: #555;
+}
+
+
+.vehicle-delete-confirm {
+    background: #8b2e2e;
+
+    border: 1px solid #8b2e2e;
+
+    color: white;
+}
+
+
+
+/* =====================================================
+   RESPONSIVE
+===================================================== */
+
+@media (max-width: 700px) {
+
+    .vehicle-stats {
+        grid-template-columns: 1fr;
+    }
+
+
+    .vehicle-section-heading {
+        flex-direction: column;
+
+        align-items: flex-start;
+    }
+
+
+    .vehicle-card {
+        padding: 25px;
+    }
+
+
+    .vehicle-modal {
+        padding: 30px;
+    }
+
+
+    .vehicle-delete-modal {
+        padding: 30px;
+    }
+
+}

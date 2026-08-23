@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>My Vehicles | RoadWise</title>
+
+
+    <!-- Google Fonts -->
+
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+    >
+
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    >
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap"
+        rel="stylesheet"
+    >
+
+
+    <!-- Main CSS -->
+
+    <link
+        rel="stylesheet"
+        href="../CSS/index.css"
+    >
+    <link
+        rel="stylesheet"
+        href="../CSS/my-vehicle.css"
+    >
+
+</head>
+
+
+<body>
+
+
+ <div id="navbar-container"></div>
+
+
+<!-- =====================================================
+     MY VEHICLES
+===================================================== -->
+
+<section
+    class="about-section"
+    style="
+        padding-top:160px;
+        min-height:100vh;
+    "
+>
+
+    <div class="section-container">
+
+
+        <!-- SECTION TOP -->
+
+        <div class="section-top">
+
+            <span class="section-number">
+                04
+            </span>
+
+            <div class="section-line"></div>
+
+            <span class="section-small-text">
+                YOUR VEHICLES
+            </span>
+
+        </div>
+
+
+
+        <!-- HEADING -->
+
+        <div class="users-heading">
+
+            <div>
+
+                <div class="eyebrow">
+
+                    <span class="eyebrow-dot"></span>
+
+                    VEHICLE GARAGE
+
+                </div>
+
+
+                <h2>
+
+                    My
+                    <span>Vehicles</span>
+
+                </h2>
+
+            </div>
+
+
+            <button
+                class="primary-btn"
+                id="addVehicleBtn"
+                type="button"
+            >
+
+                Add Vehicle
+
+                <span>+</span>
+
+            </button>
+
+        </div>
+
+
+
+        <!-- VEHICLE LIST -->
+
+        <div
+            id="vehicleList"
+            class="vehicle-list"
+        ></div>
+
+
+
+        <!-- EMPTY STATE -->
+
+        <div
+            id="emptyVehicleState"
+            class="vehicle-empty-state"
+        >
+
+            <h3>
+                No vehicles added yet.
+            </h3>
+
+            <p>
+                Add your vehicle to quickly use its
+                mileage while planning routes.
+            </p>
+
+            <button
+                class="primary-btn"
+                id="emptyAddVehicleBtn"
+                type="button"
+            >
+
+                Add Your Vehicle
+
+                <span>+</span>
+
+            </button>
+
+        </div>
+
+
+
+        <!-- =================================================
+             OTHER VEHICLES
+        ================================================== -->
+
+        <div
+            id="otherVehiclesSection"
+            class="other-vehicles-section"
+        >
+
+            <div class="vehicle-section-heading">
+
+                <div>
+
+                    <div class="eyebrow">
+
+                        <span class="eyebrow-dot"></span>
+
+                        MANUAL MILEAGE
+
+                    </div>
+
+                    <h3>
+                        Other <span>Vehicles</span>
+                    </h3>
+
+                </div>
+
+
+                <p>
+                    Vehicles where mileage was manually
+                    entered while planning a route.
+                </p>
+
+            </div>
+
+
+            <div
+                id="otherVehicleList"
+                class="vehicle-list"
+            ></div>
+
+        </div>
+
+
+    </div>
+
+</section>
+
+
+
+<!-- =====================================================
+     ADD VEHICLE MODAL
+===================================================== -->
+
+<div
+    id="vehicleModal"
+    class="vehicle-modal-overlay"
+>
+
+    <div class="vehicle-modal">
+
+
+        <button
+            type="button"
+            class="vehicle-modal-close"
+            id="closeVehicleModal"
+        >
+            ×
+        </button>
+
+
+        <div class="vehicle-modal-header">
+
+            <span>
+                ADD VEHICLE
+            </span>
+
+            <h3>
+                Add your vehicle.
+            </h3>
+
+            <p>
+                Save your vehicle mileage once and
+                RoadWise will use it automatically
+                while planning routes.
+            </p>
+
+        </div>
+
+
+        <form id="vehicleForm">
+
+
+            <div class="vehicle-form-group">
+
+                <label for="vehicleName">
+                    VEHICLE NAME
+                </label>
+
+                <input
+                    type="text"
+                    id="vehicleName"
+                    placeholder="e.g. Hyundai i20"
+                    required
+                >
+
+            </div>
+
+
+            <div class="vehicle-form-group">
+
+                <label for="vehicleMileage">
+                    MILEAGE
+                </label>
+
+                <div class="mileage-input-wrapper">
+
+                    <input
+                        type="number"
+                        id="vehicleMileage"
+                        placeholder="e.g. 18"
+                        min="0.1"
+                        step="0.1"
+                        required
+                    >
+
+                    <span>
+                        km/L
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <button
+                type="submit"
+                class="vehicle-save-btn"
+            >
+
+                Save Vehicle
+
+                <span>→</span>
+
+            </button>
+
+
+        </form>
+
+    </div>
+
+</div>
+
+
+
+<!-- =====================================================
+     FOOTER
+===================================================== -->
+
+<footer class="footer">
+
+    <div class="footer-container">
+
+        <div class="footer-main">
+
+            <a
+                href="../index.html"
+                class="logo"
+            >
+
+                <div class="logo-mark">
+                    R
+                </div>
+
+                <div class="logo-text">
+                    ROAD<span>WISE</span>
+                </div>
+
+            </a>
+
+            <p>
+                Smarter routes. Lower costs.
+                Better journeys.
+            </p>
+
+        </div>
+
+
+        <div class="footer-column">
+
+            <span>
+                NAVIGATION
+            </span>
+
+            <a href="dashboard.html">
+                Home
+            </a>
+
+            <a href="route-planner.html">
+                Find Route
+            </a>
+
+            <a href="route_history.html">
+                Route History
+            </a>
+
+        </div>
+
+
+        <div class="footer-column">
+
+            <span>
+                ACCOUNT
+            </span>
+
+            <a href="my-vehicle.html">
+                My Vehicles
+            </a>
+
+            <a href="profile.html">
+                Profile
+            </a>
+
+            <a
+                href="#"
+                id="footerLogout"
+            >
+                Log Out
+            </a>
+
+        </div>
+
+
+        <div class="footer-column">
+
+            <span>
+                ROADWISE
+            </span>
+
+            <a href="../index.html#about">
+                About
+            </a>
+
+            <a href="../index.html#how">
+                How It Works
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <div class="footer-bottom">
+
+        <span>
+            © 2026 RoadWise. All rights reserved.
+        </span>
+
+        <span>
+            ROUTE SMARTER
+        </span>
+
+    </div>
+
+</footer>
+
+
+
+<script src="../JS/my-vehicle.js"></script>
+<script src="../JS/navbar.js"></script>
+
+</body>
+
+</html>
