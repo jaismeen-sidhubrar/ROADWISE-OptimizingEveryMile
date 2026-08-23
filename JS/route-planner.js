@@ -113,7 +113,39 @@ const saveRouteBtn =
         "saveRouteBtn"
     );
 
+const pageMessage =
+    document.getElementById("pageMessage");
 
+
+
+function showMessage(message, type = "error") {
+
+    if (!pageMessage) return;
+
+    pageMessage.textContent = message;
+
+    pageMessage.className =
+        `page-message ${type}`;
+
+    pageMessage.style.display = "block";
+
+    pageMessage.scrollIntoView({
+        behavior: "smooth",
+        block: "center"
+    });
+}
+
+
+
+
+function hideMessage() {
+
+    if (!pageMessage) return;
+
+    pageMessage.textContent = "";
+    pageMessage.style.display = "none";
+    pageMessage.className = "page-message";
+}
 
 /* =========================================================
    NAVBAR SCROLL
@@ -2044,8 +2076,9 @@ function saveSelectedRoute(
     );
 
 
-    alert(
-        "This route has been added to your dashboard/history!"
+    showMessage(
+        `${algorithmName} route has been added to your dashboard/history!`,
+        "success"
     );
 
 }
@@ -2063,7 +2096,7 @@ let latestRouteData =
 findRouteBtn.addEventListener(
     "click",
     async () => {
-
+        hideMessage();
 
         const addresses =
             getAddresses();
@@ -2098,16 +2131,14 @@ findRouteBtn.addEventListener(
            VALIDATION
         ========================================== */
 
-        if (
-            addresses.length < 2
-        ) {
+        if (addresses.length < 2) {
 
-            alert(
-                "Please enter at least two addresses."
+            showMessage(
+                "Please enter at least two addresses.",
+                "error"
             );
 
             return;
-
         }
 
 
@@ -2117,12 +2148,12 @@ findRouteBtn.addEventListener(
             averageSpeed <= 0
         ) {
 
-            alert(
-                "Please enter valid trip details."
+            showMessage(
+                "Please enter valid trip details.",
+                "error"
             );
 
             return;
-
         }
 
 
@@ -2255,6 +2286,10 @@ findRouteBtn.addEventListener(
 
 
 
+
+
+
+
             /* =====================================
                DISPLAY ROUTE OPTIONS
             ====================================== */
@@ -2265,6 +2300,10 @@ findRouteBtn.addEventListener(
                 twoOptRoute,
                 twoOptJourney
             );
+
+
+
+
 
 
 
@@ -2314,9 +2353,10 @@ findRouteBtn.addEventListener(
                 "none";
 
 
-            alert(
+            showMessage(
                 error.message ||
-                "Something went wrong while finding the route."
+                "Something went wrong while finding the route.",
+                "error"
             );
 
 
@@ -2345,8 +2385,9 @@ saveRouteBtn.addEventListener(
             !latestRouteData
         ) {
 
-            alert(
-                "Please calculate a route first."
+            showMessage(
+                "Please calculate a route first.",
+                "error"
             );
 
             return;
@@ -2375,8 +2416,10 @@ saveRouteBtn.addEventListener(
         );
 
 
-        alert(
-            "Your travel has been saved successfully!"
+
+        showMessage(
+            "Your travel has been saved successfully!",
+            "success"
         );
 
 
