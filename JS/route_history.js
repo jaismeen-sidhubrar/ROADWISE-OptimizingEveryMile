@@ -364,8 +364,8 @@ function createRouteCard(
     ====================================================== */
 
     const start =
-    route.optimizedRoute?.[0]?.address ||
-    "Start";
+        route.optimizedRoute?.[0]?.address ||
+        "Start";
 
     const end =
         route.optimizedRoute?.[
@@ -601,6 +601,29 @@ function createRouteCard(
 
     `;
 
+    const deleteButton =
+        document.createElement("button");
+
+    deleteButton.className =
+        "delete-route-btn";
+
+    deleteButton.textContent =
+        "Delete Route ×";
+
+
+    deleteButton.addEventListener(
+        "click",
+        () => {
+
+            showDeleteModal(route.createdAt);
+
+        }
+    );
+
+
+    summary.appendChild(
+        deleteButton
+    );
 
     routeArea.appendChild(
         summary
@@ -712,11 +735,10 @@ function displayHistoryMap(
                         ${location.address}
                     </strong>
 
-                    ${
-                        index === 0
-                            ? "<br>Starting point"
-                            : ""
-                    }
+                    ${index === 0
+                    ? "<br>Starting point"
+                    : ""
+                }
                 `
             );
 
@@ -769,6 +791,179 @@ function displayHistoryMap(
 
 }
 
+/* =========================================================
+   DELETE CONFIRMATION MODAL
+========================================================= */
+
+function showDeleteModal(createdAt) {
+
+    /* Remove existing modal if any */
+    const existingModal =
+        document.getElementById(
+            "deleteRouteModal"
+        );
+
+    if (existingModal) {
+        existingModal.remove();
+    }
+
+
+    /* Create modal overlay */
+    const modal =
+        document.createElement("div");
+
+    modal.id =
+        "deleteRouteModal";
+
+    modal.className =
+        "delete-modal-overlay";
+
+
+    modal.innerHTML = `
+
+        <div class="delete-modal">
+
+            <div class="delete-modal-icon">
+                ×
+            </div>
+
+
+            <div class="delete-modal-content">
+
+                <span class="delete-modal-label">
+                    REMOVE JOURNEY
+                </span>
+
+                <h3>
+                    Delete this route?
+                </h3>
+
+                <p>
+                    This saved journey will be
+                    permanently removed from
+                    your route history.
+                </p>
+
+            </div>
+
+
+            <div class="delete-modal-actions">
+
+                <button
+                    type="button"
+                    class="delete-modal-back"
+                    id="deleteModalBack"
+                >
+                    Back
+                </button>
+
+
+                <button
+                    type="button"
+                    class="delete-modal-confirm"
+                    id="deleteModalConfirm"
+                >
+                    Confirm Delete
+                </button>
+
+            </div>
+
+        </div>
+
+    `;
+
+
+    document.body.appendChild(
+        modal
+    );
+
+
+    /* BACK BUTTON */
+
+    document
+        .getElementById("deleteModalBack")
+        .addEventListener(
+            "click",
+            () => {
+
+                modal.remove();
+
+            }
+        );
+
+
+    /* CONFIRM BUTTON */
+
+    document
+        .getElementById("deleteModalConfirm")
+        .addEventListener(
+            "click",
+            () => {
+
+                deleteRoute(
+                    createdAt
+                );
+
+                modal.remove();
+
+            }
+        );
+
+
+    /* Close when clicking outside modal */
+
+    modal.addEventListener(
+        "click",
+        event => {
+
+            if (
+                event.target === modal
+            ) {
+
+                modal.remove();
+
+            }
+
+        }
+    );
+
+}
+
+/* =========================================================
+   DELETE SAVED ROUTE
+========================================================= */
+
+function deleteRoute(createdAt) {
+
+    const savedRoutes =
+        JSON.parse(
+            localStorage.getItem(
+                "roadwiseSavedRoutes"
+            )
+        ) || [];
+
+
+    const updatedRoutes =
+        savedRoutes.filter(
+            route =>
+                !(
+                    route.createdAt === createdAt &&
+                    route.userEmail === currentUser.email
+                )
+        );
+
+
+    localStorage.setItem(
+        "roadwiseSavedRoutes",
+        JSON.stringify(
+            updatedRoutes
+        )
+    );
+
+
+    displayRouteHistory();
+
+}
 
 
 /* =========================================================
