@@ -1483,21 +1483,25 @@ function displayRouteOptions(
 
         optionsGrid.appendChild(
 
-            createRouteOptionCard(
+        createRouteOptionCard(
 
-                1,
+            1,
 
-                bestOption.route,
+            bestOption.route,
 
-                bestOption.journey,
+            bestOption.journey,
 
-                true,
+            true,
 
-                bestOption.algorithm
+            bestOption.algorithm,
 
-            )
+            longestRoute,
 
-        );
+            longestRouteJourney
+
+        )
+
+    );
 
     } else {
 
