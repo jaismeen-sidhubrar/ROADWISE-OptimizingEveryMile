@@ -28,73 +28,7 @@
 
 <body>
 
-
-    <!-- =====================================================
-         NAVBAR
-    ====================================================== -->
-
-    <header class="navbar" id="navbar">
-
-        <div class="nav-container">
-
-
-            <!-- LOGO -->
-
-            <a href="dashboard.html" class="logo">
-
-                <div class="logo-mark">
-                    R
-                </div>
-
-                <div class="logo-text">
-                    ROAD<span>WISE</span>
-                </div>
-
-            </a>
-
-
-            <!-- NAVIGATION -->
-
-            <nav class="nav-links">
-
-                <a href="dashboard.html">
-                    Home
-                </a>
-
-
-                <a href="#route" class="active">
-                    Find Route
-                </a>
-
-
-                <a href="route_history.html">
-                    Route History
-                </a>
-
-
-                <a href="profile.html">
-                    Profile
-                </a>
-
-
-                <a href="#" id="logoutBtn">
-                    Log Out
-                </a>
-
-            </nav>
-
-
-            <!-- MOBILE MENU -->
-
-            <button class="mobile-menu" id="mobileMenu">
-                ☰
-            </button>
-
-        </div>
-
-    </header>
-
-
+    <div id="navbar-container"></div>
 
     <!-- =====================================================
          MAIN CONTENT
@@ -109,7 +43,7 @@
 
         <section class="hero" id="route">
 
-            <div class="hero-container" >
+            <div class="hero-container">
 
 
                 <div class="hero-content reveal" style="max-width:850px;">
@@ -307,7 +241,7 @@
 
                         <!-- VEHICLE MILEAGE -->
 
-                        <div class="form-group">
+                        <!-- <div class="form-group">
 
                             <label for="fuelEfficiency">
 
@@ -317,6 +251,47 @@
 
                             <input type="number" id="fuelEfficiency" placeholder="Example: 15" min="0.1" step="0.1"
                                 value="15" required>
+
+                        </div> -->
+
+
+                        <div class="form-group">
+
+                            <label for="vehicleSelect">
+                                VEHICLE
+                            </label>
+
+                            <select id="vehicleSelect" class="vehicle-select">
+
+                                <option value="">
+                                    Select your vehicle
+                                </option>
+
+                                <option value="other">
+                                    Other
+                                </option>
+
+                            </select>
+
+                        </div>
+
+
+                        <div class="form-group" id="otherMileageGroup" style="display:none;">
+
+                            <label for="fuelEfficiency">
+                                VEHICLE MILEAGE
+                            </label>
+
+                            <div class="mileage-input-wrapper">
+
+                                <input type="number" id="fuelEfficiency" placeholder="Enter mileage" min="0.1"
+                                    step="0.1">
+
+                                <span>
+                                    km/L
+                                </span>
+
+                            </div>
 
                         </div>
 
@@ -348,6 +323,10 @@
                             <span>→</span>
 
                         </button>
+
+                        <p id="vehicleError" class="vehicle-error">
+                            Please select a vehicle.
+                        </p>
 
 
                     </div>
@@ -824,6 +803,7 @@
     <!-- JAVASCRIPT -->
 
     <script src="../JS/route-planner.js"></script>
+    <script src="../JS/navbar.js"></script>
 
 </body>
 

@@ -113,7 +113,243 @@ const saveRouteBtn =
         "saveRouteBtn"
     );
 
+const pageMessage =
+    document.getElementById("pageMessage");
 
+
+const vehicleSelect =
+    document.getElementById(
+        "vehicleSelect"
+    );
+
+const otherMileageGroup =
+    document.getElementById(
+        "otherMileageGroup"
+    );
+
+const fuelEfficiencyInput =
+    document.getElementById(
+        "fuelEfficiency"
+    );
+
+const vehicleError =
+    document.getElementById(
+        "vehicleError"
+    );
+
+
+
+
+/* =========================================================
+   LOAD USER VEHICLES
+========================================================= */
+
+function getUserVehicles() {
+
+    const vehicles =
+        JSON.parse(
+            localStorage.getItem(
+                "roadwiseVehicles"
+            )
+        ) || [];
+
+
+    return vehicles.filter(
+        vehicle =>
+            vehicle.userEmail ===
+            currentUser.email
+    );
+
+}
+
+
+
+/* =========================================================
+   POPULATE VEHICLE DROPDOWN
+========================================================= */
+
+function populateVehicleDropdown() {
+
+    if (!vehicleSelect) {
+        return;
+    }
+
+
+    const vehicles =
+        getUserVehicles();
+
+
+    vehicleSelect.innerHTML = `
+
+        <option value="">
+            Select your vehicle
+        </option>
+
+    `;
+
+
+    vehicles.forEach(
+        vehicle => {
+
+            const option =
+                document.createElement(
+                    "option"
+                );
+
+
+            option.value =
+                vehicle.id;
+
+
+            option.textContent =
+                `${vehicle.name} — ${vehicle.mileage} km/L`;
+
+
+            vehicleSelect.appendChild(
+                option
+            );
+
+        }
+    );
+
+
+    const otherOption =
+        document.createElement(
+            "option"
+        );
+
+
+    otherOption.value =
+        "other";
+
+    otherOption.textContent =
+        "Other";
+
+
+    vehicleSelect.appendChild(
+        otherOption
+    );
+
+}
+
+
+
+/* =========================================================
+   VEHICLE SELECTION
+========================================================= */
+
+vehicleSelect.addEventListener(
+    "change",
+    () => {
+
+        vehicleError.style.display =
+            "none";
+
+        const selectedValue =
+            vehicleSelect.value;
+
+
+        if (
+            selectedValue === "other"
+        ) {
+
+            otherMileageGroup.style.display =
+                "block";
+
+
+            fuelEfficiencyInput.value =
+                "";
+
+
+            fuelEfficiencyInput.required =
+                true;
+
+
+            return;
+
+        }
+
+
+        if (!selectedValue) {
+
+            otherMileageGroup.style.display =
+                "none";
+
+
+            fuelEfficiencyInput.value =
+                "";
+
+
+            fuelEfficiencyInput.required =
+                false;
+
+
+            return;
+
+        }
+
+
+        const vehicles =
+            getUserVehicles();
+
+
+        const selectedVehicle =
+            vehicles.find(
+                vehicle =>
+                    vehicle.id ===
+                    selectedValue
+            );
+
+
+        if (!selectedVehicle) {
+            return;
+        }
+
+
+        otherMileageGroup.style.display =
+            "none";
+
+
+        fuelEfficiencyInput.value =
+            selectedVehicle.mileage;
+
+
+        fuelEfficiencyInput.required =
+            false;
+
+    }
+);
+
+
+
+function showMessage(message, type = "error") {
+
+    if (!pageMessage) return;
+
+    pageMessage.textContent = message;
+
+    pageMessage.className =
+        `page-message ${type}`;
+
+    pageMessage.style.display = "block";
+
+    pageMessage.scrollIntoView({
+        behavior: "smooth",
+        block: "center"
+    });
+}
+
+
+
+
+function hideMessage() {
+
+    if (!pageMessage) return;
+
+    pageMessage.textContent = "";
+    pageMessage.style.display = "none";
+    pageMessage.className = "page-message";
+}
 
 /* =========================================================
    NAVBAR SCROLL
@@ -200,66 +436,6 @@ document
 
     });
 
-
-
-/* =========================================================
-   LOGOUT
-========================================================= */
-
-function logout() {
-
-    localStorage.removeItem(
-        "roadwiseCurrentUser"
-    );
-
-    window.location.href =
-        "../index.html";
-
-}
-
-
-const logoutBtn =
-    document.getElementById(
-        "logoutBtn"
-    );
-
-
-const footerLogout =
-    document.getElementById(
-        "footerLogout"
-    );
-
-
-if (logoutBtn) {
-
-    logoutBtn.addEventListener(
-        "click",
-        event => {
-
-            event.preventDefault();
-
-            logout();
-
-        }
-    );
-
-}
-
-
-if (footerLogout) {
-
-    footerLogout.addEventListener(
-        "click",
-        event => {
-
-            event.preventDefault();
-
-            logout();
-
-        }
-    );
-
-}
 
 
 
@@ -2034,6 +2210,34 @@ function displayOptionMap(
 
 
 /* =========================================================
+   GET SELECTED VEHICLE NAME
+========================================================= */
+
+function getSelectedVehicleName() {
+
+    const vehicles =
+        getUserVehicles();
+
+
+    const selectedVehicle =
+        vehicles.find(
+            vehicle =>
+                vehicle.id ===
+                vehicleSelect.value
+        );
+
+
+    return selectedVehicle
+        ? selectedVehicle.name
+        : "Unknown Vehicle";
+
+}
+
+
+
+
+
+/* =========================================================
    SAVE SELECTED ROUTE
 ========================================================= */
 
@@ -2063,6 +2267,16 @@ function saveSelectedRoute(
 
         algorithm:
             algorithmName,
+
+        vehicleId:
+            vehicleSelect.value === "other"
+                ? null
+                : vehicleSelect.value,
+
+        vehicleName:
+            vehicleSelect.value === "other"
+                ? "Other Vehicle"
+                : getSelectedVehicleName(),
 
         createdAt:
             new Date().toISOString(),
@@ -2125,7 +2339,6 @@ function saveSelectedRoute(
         savedRoute
     );
 
-
     localStorage.setItem(
         "roadwiseSavedRoutes",
         JSON.stringify(
@@ -2133,12 +2346,21 @@ function saveSelectedRoute(
         )
     );
 
+    /* UPDATE VEHICLE STATS */
 
-    alert(
-        "This route has been added to your dashboard/history!"
+    updateVehicleStatistics(
+        journey
+    );
+
+    showMessage(
+        `${algorithmName} route has been added to your dashboard/history!`,
+        "success"
     );
 
 }
+
+
+
 
 
 
@@ -2153,7 +2375,7 @@ let latestRouteData =
 findRouteBtn.addEventListener(
     "click",
     async () => {
-
+        hideMessage();
 
         const addresses =
             getAddresses();
@@ -2188,31 +2410,36 @@ findRouteBtn.addEventListener(
            VALIDATION
         ========================================== */
 
-        if (
-            addresses.length < 2
-        ) {
+        if (addresses.length < 2) {
 
-            alert(
-                "Please enter at least two addresses."
+            showMessage(
+                "Please enter at least two addresses.",
+                "error"
             );
+
+            return;
+        }
+
+        if (!vehicleSelect.value) {
+
+            vehicleError.style.display =
+                "block";
 
             return;
 
         }
-
-
         if (
             fuelPrice <= 0 ||
             fuelEfficiency <= 0 ||
             averageSpeed <= 0
         ) {
 
-            alert(
-                "Please enter valid trip details."
+            showMessage(
+                "Please enter valid trip details.",
+                "error"
             );
 
             return;
-
         }
 
 
@@ -2356,6 +2583,10 @@ findRouteBtn.addEventListener(
 
             
 
+
+
+
+
             /* =====================================
                DISPLAY ROUTE OPTIONS
             ====================================== */
@@ -2368,6 +2599,10 @@ findRouteBtn.addEventListener(
                 longestRoute,
                 longestRouteJourney
             );
+
+
+
+
 
 
 
@@ -2417,9 +2652,10 @@ findRouteBtn.addEventListener(
                 "none";
 
 
-            alert(
+            showMessage(
                 error.message ||
-                "Something went wrong while finding the route."
+                "Something went wrong while finding the route.",
+                "error"
             );
 
 
@@ -2448,8 +2684,9 @@ saveRouteBtn.addEventListener(
             !latestRouteData
         ) {
 
-            alert(
-                "Please calculate a route first."
+            showMessage(
+                "Please calculate a route first.",
+                "error"
             );
 
             return;
@@ -2477,14 +2714,21 @@ saveRouteBtn.addEventListener(
             )
         );
 
+        
 
-        alert(
-            "Your travel has been saved successfully!"
+
+
+        showMessage(
+            "Your travel has been saved successfully!",
+            "success"
         );
 
 
     }
 );
+
+
+
 
 
 
@@ -2540,3 +2784,173 @@ revealElements.forEach(
 
     }
 );
+
+
+
+
+
+/* =========================================================
+   UPDATE VEHICLE STATISTICS
+========================================================= */
+
+function updateVehicleStatistics(journey) {
+
+    const selectedValue =
+        vehicleSelect.value;
+
+
+    /* =========================================
+       OTHER VEHICLE
+    ========================================= */
+
+    if (
+        selectedValue === "other"
+    ) {
+
+        const mileage =
+            Number(
+                fuelEfficiencyInput.value
+            );
+
+
+        const otherVehicles =
+            JSON.parse(
+                localStorage.getItem(
+                    "roadwiseOtherVehicles"
+                )
+            ) || [];
+
+
+        const otherVehicle = {
+
+            id:
+                crypto.randomUUID(),
+
+            userEmail:
+                currentUser.email,
+
+            mileage:
+                mileage,
+
+            totalDistance:
+                Number(
+                    journey.totalDistance
+                ) || 0,
+
+            totalFuel:
+                Number(
+                    journey.totalFuel
+                ) || 0,
+
+            totalCost:
+                Number(
+                    journey.totalCost
+                ) || 0,
+
+            createdAt:
+                new Date().toISOString()
+
+        };
+
+
+        otherVehicles.push(
+            otherVehicle
+        );
+
+
+        localStorage.setItem(
+            "roadwiseOtherVehicles",
+            JSON.stringify(
+                otherVehicles
+            )
+        );
+
+
+        return;
+
+    }
+
+
+
+    /* =========================================
+       SAVED VEHICLE
+    ========================================= */
+
+    const vehicles =
+        JSON.parse(
+            localStorage.getItem(
+                "roadwiseVehicles"
+            )
+        ) || [];
+
+
+    const vehicleIndex =
+        vehicles.findIndex(
+            vehicle =>
+                vehicle.id ===
+                    selectedValue &&
+                vehicle.userEmail ===
+                    currentUser.email
+        );
+
+
+    if (
+        vehicleIndex === -1
+    ) {
+
+        console.error(
+            "Selected vehicle not found."
+        );
+
+        return;
+
+    }
+
+
+    /* ADD NEW JOURNEY STATS */
+
+    vehicles[
+        vehicleIndex
+    ].totalDistance =
+        Number(
+            vehicles[vehicleIndex].totalDistance
+        ) +
+        Number(
+            journey.totalDistance
+        );
+
+
+    vehicles[
+        vehicleIndex
+    ].totalFuel =
+        Number(
+            vehicles[vehicleIndex].totalFuel
+        ) +
+        Number(
+            journey.totalFuel
+        );
+
+
+    vehicles[
+        vehicleIndex
+    ].totalCost =
+        Number(
+            vehicles[vehicleIndex].totalCost
+        ) +
+        Number(
+            journey.totalCost
+        );
+
+
+    localStorage.setItem(
+        "roadwiseVehicles",
+        JSON.stringify(
+            vehicles
+        )
+    );
+
+}
+
+
+
+populateVehicleDropdown();

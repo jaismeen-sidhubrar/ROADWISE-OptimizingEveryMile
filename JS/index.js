@@ -567,6 +567,7 @@ function showLoginForm() {
 
 
         <form id="loginForm">
+            <div id="loginMessage" class="form-message"></div>
 
             <div class="form-group">
 
@@ -709,13 +710,16 @@ function handleLogin(event) {
         users.find(
             user =>
                 user.email.toLowerCase() ===
-                    email.toLowerCase() &&
+                email.toLowerCase() &&
                 user.password === password
         );
 
     if (!user) {
 
-        alert("Invalid email or password.");
+        const message = document.getElementById("loginMessage");
+
+        message.textContent = "Invalid email or password.";
+        message.className = "form-message error";
 
         return;
     }
@@ -733,9 +737,7 @@ function handleLogin(event) {
         JSON.stringify(currentUser)
     );
 
-    alert(
-        `Welcome back, ${user.name}!`
-    );
+
 
     /* Go to Dashboard */
 
@@ -802,6 +804,9 @@ function showSignupForm() {
 
         <form id="signupForm">
 
+
+            <div id="signupMessage" class="form-message"></div>
+
             <div class="form-group">
 
                 <label for="fullName">
@@ -844,8 +849,14 @@ function showSignupForm() {
                     type="password"
                     id="password"
                     placeholder="Create a password"
+                    minlength="8"
                     required
                 >
+
+                <small class="password-hint">
+                    Password must be at least 8 characters and contain
+                    an uppercase letter, lowercase letter, number, and special character.
+                </small>
 
             </div>
 
@@ -961,9 +972,25 @@ function handleSignup(event) {
 
     if (!name || !email || !password) {
 
-        alert(
-            "Please fill in all the fields."
-        );
+        const message = document.getElementById("signupMessage");
+
+        message.textContent = "Please fill in all the fields.";
+        message.className = "form-message error";
+
+        return;
+    }
+
+    const passwordRegex =
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&]).{8,}$/;
+
+    if (!passwordRegex.test(password)) {
+
+        const message = document.getElementById("signupMessage");
+
+        message.textContent =
+            "Password must be at least 8 characters and contain an uppercase letter, lowercase letter, number, and special character.";
+
+        message.className = "form-message error";
 
         return;
     }
@@ -979,9 +1006,13 @@ function handleSignup(event) {
 
     if (existingUser) {
 
-        alert(
-            "An account with this email already exists. Please sign in."
-        );
+        const message = document.getElementById("signupMessage");
+
+        message.textContent =
+            "An account with this email already exists. Please sign in.";
+
+        message.className = "form-message error";
+
 
         return;
     }
@@ -1013,9 +1044,7 @@ function handleSignup(event) {
         JSON.stringify(currentUser)
     );
 
-    alert(
-        `Welcome to RoadWise, ${name}!`
-    );
+    
 
     /* Go to Dashboard */
 
