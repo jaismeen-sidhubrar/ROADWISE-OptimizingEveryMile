@@ -9,7 +9,6 @@
 <p align="center">
   <a href="https://roadwise-six.vercel.app/">🌐 Live Demo</a>
   &nbsp;&nbsp;•&nbsp;&nbsp;
-  <a href="https://github.com/jaismeen-sidhubrar/ROADWISE-OptimizingEveryMile">💻 GitHub</a>
 </p>
 
 ---
