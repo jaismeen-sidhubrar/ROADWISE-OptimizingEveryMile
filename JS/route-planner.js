@@ -855,7 +855,82 @@ function twoOpt(route) {
 
 }
 
+/* =========================================================
+   LONGEST ROUTE
+========================================================= */
 
+function calculateLongestRoute(route) {
+
+    let longestRoute =
+        [...route];
+
+    let improved =
+        true;
+
+    while (improved) {
+
+        improved =
+            false;
+
+        const currentDistance =
+            calculateTotalRouteDistance(
+                longestRoute
+            );
+
+        for (
+            let i = 1;
+            i < longestRoute.length - 1;
+            i++
+        ) {
+
+            for (
+                let j = i + 1;
+                j < longestRoute.length;
+                j++
+            ) {
+
+                const candidateRoute =
+                    reverseRouteSegment(
+                        longestRoute,
+                        i,
+                        j
+                    );
+
+                const candidateDistance =
+                    calculateTotalRouteDistance(
+                        candidateRoute
+                    );
+
+                if (
+                    candidateDistance >
+                    currentDistance
+                ) {
+
+                    longestRoute =
+                        candidateRoute;
+
+                    improved =
+                        true;
+
+                    break;
+
+                }
+
+            }
+
+            if (improved) {
+
+                break;
+
+            }
+
+        }
+
+    }
+
+    return longestRoute;
+
+}
 
 /* =========================================================
    BUILD ROUTE DETAILS
@@ -1199,7 +1274,9 @@ function displayRouteOptions(
     nearestRoute,
     nearestJourney,
     twoOptRoute,
-    twoOptJourney
+    twoOptJourney,
+    longestRoute,
+    longestRouteJourney
 ) {
 
     const oldSection =
@@ -1441,7 +1518,9 @@ function displayRouteOptions(
 
                 nearestIsBest,
 
-                "Nearest Neighbour"
+                "Nearest Neighbour",
+                longestRoute,
+                longestRouteJourney
 
             )
 
@@ -1460,7 +1539,9 @@ function displayRouteOptions(
 
                 !nearestIsBest,
 
-                "2-Opt Heuristic"
+                "2-Opt Heuristic",
+                longestRoute,
+                longestRouteJourney
 
             )
 
@@ -1500,7 +1581,9 @@ function createRouteOptionCard(
     route,
     journey,
     isRecommended,
-    algorithmName
+    algorithmName,
+    longestRoute,
+    longestRouteJourney
 ) {
 
     const card =
@@ -1762,7 +1845,9 @@ function createRouteOptionCard(
                 saveSelectedRoute(
                     algorithmName,
                     route,
-                    journey
+                    journey,
+                    longestRoute,
+                    longestRouteJourney
                 );
 
             }
@@ -2159,7 +2244,9 @@ function getSelectedVehicleName() {
 function saveSelectedRoute(
     algorithmName,
     route,
-    journey
+    journey,
+    longestRoute,
+    longestRouteJourney
 ) {
 
     const savedRoutes =
@@ -2228,7 +2315,22 @@ function saveSelectedRoute(
         averageSpeed:
             document.getElementById(
                 "averageSpeed"
-            ).value
+            ).value,
+        
+        longestRoute:
+            longestRoute,
+
+        longestRouteTotalDistance:
+            longestRouteJourney.totalDistance,
+
+        longestRouteTotalTime:
+            longestRouteJourney.totalTime,
+
+        longestRouteTotalFuel:
+            longestRouteJourney.totalFuel,
+
+        longestRouteTotalCost:
+            longestRouteJourney.totalCost,
 
     };
 
@@ -2466,6 +2568,23 @@ findRouteBtn.addEventListener(
                     averageSpeed
                 );
 
+            const longestRoute =
+                calculateLongestRoute(
+                    locations
+                );
+
+            const longestRouteJourney =
+                buildRouteDetails(
+                    longestRoute,
+                    fuelEfficiency,
+                    fuelPrice,
+                    averageSpeed
+                );
+
+            
+
+
+
 
 
 
@@ -2480,7 +2599,9 @@ findRouteBtn.addEventListener(
                 optimizedRoute,
                 nearestNeighbourJourney,
                 twoOptRoute,
-                twoOptJourney
+                twoOptJourney,
+                longestRoute,
+                longestRouteJourney
             );
 
 
