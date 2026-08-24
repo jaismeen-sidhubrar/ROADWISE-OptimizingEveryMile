@@ -679,7 +679,82 @@ function twoOpt(route) {
 
 }
 
+/* =========================================================
+   LONGEST ROUTE
+========================================================= */
 
+function calculateLongestRoute(route) {
+
+    let longestRoute =
+        [...route];
+
+    let improved =
+        true;
+
+    while (improved) {
+
+        improved =
+            false;
+
+        const currentDistance =
+            calculateTotalRouteDistance(
+                longestRoute
+            );
+
+        for (
+            let i = 1;
+            i < longestRoute.length - 1;
+            i++
+        ) {
+
+            for (
+                let j = i + 1;
+                j < longestRoute.length;
+                j++
+            ) {
+
+                const candidateRoute =
+                    reverseRouteSegment(
+                        longestRoute,
+                        i,
+                        j
+                    );
+
+                const candidateDistance =
+                    calculateTotalRouteDistance(
+                        candidateRoute
+                    );
+
+                if (
+                    candidateDistance >
+                    currentDistance
+                ) {
+
+                    longestRoute =
+                        candidateRoute;
+
+                    improved =
+                        true;
+
+                    break;
+
+                }
+
+            }
+
+            if (improved) {
+
+                break;
+
+            }
+
+        }
+
+    }
+
+    return longestRoute;
+
+}
 
 /* =========================================================
    BUILD ROUTE DETAILS
@@ -1023,7 +1098,9 @@ function displayRouteOptions(
     nearestRoute,
     nearestJourney,
     twoOptRoute,
-    twoOptJourney
+    twoOptJourney,
+    longestRoute,
+    longestRouteJourney
 ) {
 
     const oldSection =
@@ -1067,7 +1144,7 @@ function displayRouteOptions(
 
         bestOption =
             nearestJourney.totalFuel <=
-            twoOptJourney.totalFuel
+                twoOptJourney.totalFuel
 
                 ? {
 
@@ -1099,7 +1176,7 @@ function displayRouteOptions(
 
         bestOption =
             nearestJourney.totalDistance <
-            twoOptJourney.totalDistance
+                twoOptJourney.totalDistance
 
                 ? {
 
@@ -1265,7 +1342,9 @@ function displayRouteOptions(
 
                 nearestIsBest,
 
-                "Nearest Neighbour"
+                "Nearest Neighbour",
+                longestRoute,
+                longestRouteJourney
 
             )
 
@@ -1284,7 +1363,9 @@ function displayRouteOptions(
 
                 !nearestIsBest,
 
-                "2-Opt Heuristic"
+                "2-Opt Heuristic",
+                longestRoute,
+                longestRouteJourney
 
             )
 
@@ -1324,7 +1405,9 @@ function createRouteOptionCard(
     route,
     journey,
     isRecommended,
-    algorithmName
+    algorithmName,
+    longestRoute,
+    longestRouteJourney
 ) {
 
     const card =
@@ -1334,19 +1417,17 @@ function createRouteOptionCard(
 
 
     card.className =
-        `route-option-card${
-            isRecommended
-                ? " recommended"
-                : ""
+        `route-option-card${isRecommended
+            ? " recommended"
+            : ""
         }`;
 
 
     card.innerHTML = `
 
-        ${
-            isRecommended
+        ${isRecommended
 
-                ? `
+            ? `
 
                     <div class="recommended-badge">
 
@@ -1358,7 +1439,7 @@ function createRouteOptionCard(
 
                 `
 
-                : ""
+            : ""
         }
 
 
@@ -1367,7 +1448,7 @@ function createRouteOptionCard(
             <div class="route-card-number">
 
                 ${String(optionNumber)
-                    .padStart(2, "0")}
+            .padStart(2, "0")}
 
             </div>
 
@@ -1376,22 +1457,20 @@ function createRouteOptionCard(
 
                 <div class="route-card-label">
 
-                    ${
-                        isRecommended
-                            ? "BEST MATCH FOR THIS JOURNEY"
-                            : "ALTERNATIVE ROUTE"
-                    }
+                    ${isRecommended
+            ? "BEST MATCH FOR THIS JOURNEY"
+            : "ALTERNATIVE ROUTE"
+        }
 
                 </div>
 
 
                 <h3>
 
-                    ${
-                        isRecommended
-                            ? "A smarter choice."
-                            : "Another way to go."
-                    }
+                    ${isRecommended
+            ? "A smarter choice."
+            : "Another way to go."
+        }
 
                 </h3>
 
@@ -1411,10 +1490,9 @@ function createRouteOptionCard(
 
                 <strong>
 
-                    ${
-                        journey.totalDistance
-                            .toFixed(2)
-                    }
+                    ${journey.totalDistance
+            .toFixed(2)
+        }
 
                     <small>
                         km
@@ -1433,10 +1511,9 @@ function createRouteOptionCard(
 
                 <strong>
 
-                    ${
-                        journey.totalFuel
-                            .toFixed(2)
-                    }
+                    ${journey.totalFuel
+            .toFixed(2)
+        }
 
                     <small>
                         L
@@ -1455,11 +1532,10 @@ function createRouteOptionCard(
 
                 <strong>
 
-                    ${
-                        formatTime(
-                            journey.totalTime
-                        )
-                    }
+                    ${formatTime(
+            journey.totalTime
+        )
+        }
 
                 </strong>
 
@@ -1474,11 +1550,10 @@ function createRouteOptionCard(
 
                 <strong>
 
-                    ${
-                        formatCurrency(
-                            journey.totalCost
-                        )
-                    }
+                    ${formatCurrency(
+            journey.totalCost
+        )
+        }
 
                 </strong>
 
@@ -1544,10 +1619,9 @@ function createRouteOptionCard(
 
                 <span class="route-stop-number">
 
-                    ${
-                        String(index + 1)
-                            .padStart(2, "0")
-                    }
+                    ${String(index + 1)
+                    .padStart(2, "0")
+                }
 
                 </span>
 
@@ -1576,8 +1650,7 @@ function createRouteOptionCard(
 
 
     const mapId =
-        `routeOptionMap${
-            Date.now()
+        `routeOptionMap${Date.now()
         }_${optionNumber}`;
 
 
@@ -1596,7 +1669,9 @@ function createRouteOptionCard(
                 saveSelectedRoute(
                     algorithmName,
                     route,
-                    journey
+                    journey,
+                    longestRoute,
+                    longestRouteJourney
                 );
 
             }
@@ -1711,11 +1786,10 @@ function displayRouteMap(
 
                             border-radius:50%;
 
-                            background:${
-                                isStart
-                                    ? "#1f4d2b"
-                                    : "var(--green-dark, #2f6b3f)"
-                            };
+                            background:${isStart
+                            ? "#1f4d2b"
+                            : "var(--green-dark, #2f6b3f)"
+                        };
 
                             color:#fff;
 
@@ -1764,10 +1838,9 @@ function displayRouteMap(
                     `<strong>
                         ${stopNumber}.
                         ${location.address}
-                    </strong>${
-                        isStart
-                            ? "<br>Starting point"
-                            : ""
+                    </strong>${isStart
+                        ? "<br>Starting point"
+                        : ""
                     }`
                 );
 
@@ -1967,7 +2040,9 @@ function displayOptionMap(
 function saveSelectedRoute(
     algorithmName,
     route,
-    journey
+    journey,
+    longestRoute,
+    longestRouteJourney
 ) {
 
     const savedRoutes =
@@ -2026,7 +2101,22 @@ function saveSelectedRoute(
         averageSpeed:
             document.getElementById(
                 "averageSpeed"
-            ).value
+            ).value,
+        
+        longestRoute:
+            longestRoute,
+
+        longestRouteTotalDistance:
+            longestRouteJourney.totalDistance,
+
+        longestRouteTotalTime:
+            longestRouteJourney.totalTime,
+
+        longestRouteTotalFuel:
+            longestRouteJourney.totalFuel,
+
+        longestRouteTotalCost:
+            longestRouteJourney.totalCost,
 
     };
 
@@ -2170,10 +2260,8 @@ findRouteBtn.addEventListener(
             ) {
 
                 loadingMessage.textContent =
-                    `Finding location ${
-                        i + 1
-                    } of ${
-                        addresses.length
+                    `Finding location ${i + 1
+                    } of ${addresses.length
                     }...`;
 
 
@@ -2253,7 +2341,20 @@ findRouteBtn.addEventListener(
                     averageSpeed
                 );
 
+            const longestRoute =
+                calculateLongestRoute(
+                    locations
+                );
 
+            const longestRouteJourney =
+                buildRouteDetails(
+                    longestRoute,
+                    fuelEfficiency,
+                    fuelPrice,
+                    averageSpeed
+                );
+
+            
 
             /* =====================================
                DISPLAY ROUTE OPTIONS
@@ -2263,7 +2364,9 @@ findRouteBtn.addEventListener(
                 optimizedRoute,
                 nearestNeighbourJourney,
                 twoOptRoute,
-                twoOptJourney
+                twoOptJourney,
+                longestRoute,
+                longestRouteJourney
             );
 
 
