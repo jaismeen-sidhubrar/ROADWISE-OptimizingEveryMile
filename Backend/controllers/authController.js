@@ -33,3 +33,16 @@ exports.login = async (req, res) => {
 exports.getMe = async (req, res) => {
   res.json(pub(await User.findById(req.userId)));
 };
+
+exports.updateMe = async (req, res) => {
+  const allowed = ['name', 'username', 'phone', 'bio', 'profilePic'];
+  const updates = {};
+  for (const key of allowed) {
+    if (req.body[key] !== undefined) updates[key] = req.body[key];
+  }
+  const user = await User.findByIdAndUpdate(req.userId, updates, {
+    new: true,
+    runValidators: true,
+  });
+  res.json(pub(user));
+};
