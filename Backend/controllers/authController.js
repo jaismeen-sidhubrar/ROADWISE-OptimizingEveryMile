@@ -3,7 +3,15 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 
 const sign = (u) => jwt.sign({ id: u._id }, process.env.JWT_SECRET, { expiresIn: '7d' });
-const pub = (u) => ({ id: u._id, name: u.name, email: u.email });
+const pub = (u) => ({
+  id: u._id,
+  name: u.name,
+  email: u.email,
+  username: u.username,
+  phone: u.phone,
+  bio: u.bio,
+  profilePic: u.profilePic,
+});
 
 exports.signup = async (req, res) => {
   const { name, email, password } = req.body;
