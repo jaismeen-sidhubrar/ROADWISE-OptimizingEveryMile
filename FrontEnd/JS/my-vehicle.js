@@ -916,4 +916,4 @@ function displayOtherVehicles() {
    INITIALIZE
 ========================================================= */
 
-displayVehicles();
+loadVehicles().then(displayVehicles).catch((error) => alert(error.message));
