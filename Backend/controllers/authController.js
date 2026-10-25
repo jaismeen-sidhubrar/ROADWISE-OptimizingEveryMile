@@ -5,6 +5,9 @@ const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const isString = (v) => typeof v === 'string';
 const DUPLICATE_MSG = 'An account with this email already exists. Please sign in.';
 
+
+// Cost factor for bcrypt. Higher is slower and safer. Can be changed from .env.
+const hashPassword = (plain) => bcrypt.hash(plain, Number(process.env.BCRYPT_ROUNDS) || 10);
 const makeToken = (user) =>
   jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '7d' });
 
@@ -47,7 +50,7 @@ exports.signup = async (req, res) => {
     user = await User.create({
       name: cleanName,
       email: cleanEmail,
-      password: await bcrypt.hash(password, 10),
+      password: await hashPassword(password),
     });
   } catch (err) {
     // Two sign-ups with the same email at the same moment: the unique index catches the second.
@@ -106,7 +109,7 @@ exports.updateMe = async (req, res) => {
     if (newPassword.length < 8) {
       return res.status(400).json({ message: 'New password must be at least 8 characters.' });
     }
-    user.password = await bcrypt.hash(newPassword, 10);
+    user.password = await hashPassword(newPassword);
   }
 
   await user.save();
