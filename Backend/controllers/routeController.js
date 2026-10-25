@@ -15,3 +15,15 @@ exports.getRouteById = async (req, res) => {
   if (!route) return res.status(404).json({ message: 'Route not found.' });
   res.json(route);
 };
+
+exports.updateRoute = async (req, res) => {
+  // The client cannot change ownership, ids or creation time.
+  const { _id, id, user, createdAt, ...data } = req.body || {};
+  const route = await SavedRoute.findOneAndUpdate(
+    { _id: req.params.id, user: req.userId },
+    { $set: data },
+    { new: true }
+  );
+  if (!route) return res.status(404).json({ message: 'Route not found.' });
+  res.json(route);
+};
