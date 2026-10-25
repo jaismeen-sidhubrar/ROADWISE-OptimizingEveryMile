@@ -88,6 +88,7 @@ const handle = (fn) => async (req, res) => {
 };
 
 const ALGORITHMS = ['nearest-neighbour', '2-opt'];
+const MAX_WAYPOINTS = 25;
 
 function isValidCoord(value, limit) {
     if (value === null || value === undefined || value === '') return false;
@@ -242,6 +243,8 @@ function validateRouteInput(body) {
     if (body.waypoints !== undefined) {
         if (!Array.isArray(body.waypoints)) {
             errors.push('waypoints must be an array.');
+        } else if (body.waypoints.length > MAX_WAYPOINTS) {
+            errors.push(`waypoints cannot have more than ${MAX_WAYPOINTS} stops.`);
         } else {
             body.waypoints.forEach((w, i) => {
                 if (!isValidPoint(w)) errors.push(`waypoints[${i}] needs a valid lat and lng.`);
@@ -301,6 +304,9 @@ exports.getRouteById = async (req, res) => {
 exports.updateRoute = async (req, res) => {
     const route = await findOwnedRoute(req);
     if (!route) return res.status(404).json({ message: 'Route not found.' });
+    if (!req.body || Object.keys(req.body).length === 0) {
+        return res.status(400).json({ message: 'Nothing to update.' });
+    }
 
     // Merge old + new values, validate the result, then recompute everything.
     const merged = { ...route.toObject(), ...req.body };
@@ -316,7 +322,7 @@ exports.deleteRoute = async (req, res) => {
     const route = await findOwnedRoute(req);
     if (!route) return res.status(404).json({ message: 'Route not found.' });
     await route.deleteOne();
-     res.json({ ok: true, id: route.id });
+    res.json({ ok: true, id: route.id });
 };
 
 

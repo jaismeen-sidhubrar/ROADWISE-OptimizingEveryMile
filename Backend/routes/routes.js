@@ -10,4 +10,7 @@ router.post('/', c.addRoute);
 router.put('/:id', c.updateRoute);
 router.delete('/:id', c.deleteRoute);
 
+// Anything that did not match above.
+router.use((req, res) => res.status(404).json({ message: 'Route endpoint not found.' }));
+
 module.exports = router;
