@@ -1,6 +1,7 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 const makeToken = (user) =>
   jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '7d' });
@@ -22,6 +23,9 @@ exports.signup = async (req, res) => {
   if (!name || !email || !password) {
     return res.status(400).json({ message: 'Please fill in all the fields.' });
   }
+  if (!EMAIL_RE.test(email)) {
+    return res.status(400).json({ message: 'Please enter a valid email address.' });
+  }
   if (password.length < 8) {
     return res.status(400).json({ message: 'Password must be at least 8 characters.' });
   }
@@ -40,6 +44,9 @@ exports.signup = async (req, res) => {
 
 exports.login = async (req, res) => {
   const { email, password } = req.body || {};
+  if (!EMAIL_RE.test(email)) {
+    return res.status(400).json({ message: 'Please enter a valid email address.' });
+  }
   const user = await User.findOne({ email: (email || '').toLowerCase() });
   if (!user || !(await bcrypt.compare(password || '', user.password))) {
     return res.status(401).json({ message: 'Invalid email or password.' });
@@ -60,6 +67,10 @@ exports.updateMe = async (req, res) => {
   const { name, username, email, phone, bio, profilePic, currentPassword, newPassword } =
     req.body || {};
 
+  if (email && !EMAIL_RE.test(email)) {
+    return res.status(400).json({ message: 'Please enter a valid email address.' });
+  }
+  
   if (email && email.toLowerCase() !== user.email) {
     if (await User.findOne({ email: email.toLowerCase() })) {
       return res.status(409).json({ message: 'That email is already in use.' });
