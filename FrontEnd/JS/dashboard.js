@@ -477,49 +477,14 @@ if (footerLogout) {
     for the Dashboard.
 */
 
+let routesCache = [];
+
+async function loadRoutes() {
+    routesCache = await apiAll("/routes");
+}
+
 function getUserRoutes() {
-
-    try {
-
-        const savedRoutes =
-            JSON.parse(
-                localStorage.getItem(
-                    SAVED_ROUTES_KEY
-                )
-            ) || [];
-
-
-        if (
-            !currentUser ||
-            !currentUser.email
-        ) {
-
-            return [];
-
-        }
-
-
-        const currentUserEmail =
-            currentUser.email;
-
-
-        return savedRoutes.filter(
-            route =>
-                route.userEmail ===
-                currentUserEmail
-        );
-
-    } catch (error) {
-
-        console.error(
-            "Unable to load saved routes.",
-            error
-        );
-
-        return [];
-
-    }
-
+    return routesCache;
 }
 
 
