@@ -8,7 +8,7 @@
     <title>RoadWise — Profile</title>
 
     <link rel="icon" type="image/png" href="../Assets/Images/logo.png">
-    
+
     <link rel="stylesheet" href="../CSS/index.css">
     <link rel="stylesheet" href="../CSS/profile.css">
 
@@ -265,9 +265,13 @@
             <h2>Delete your account?</h2>
 
             <p>
-                This removes your account from this browser
-                and cannot be undone.
+                This permanently deletes your account, vehicles and saved routes.
+                Enter your password to confirm.
             </p>
+            <input type="password" id="deletePassword" placeholder="Your password" autocomplete="current-password"
+                style="width:100%;margin:12px 0 4px;padding:10px;border:1px solid #ccc;border-radius:8px;">
+            <p id="deleteError" style="color:#c0392b;font-size:0.9rem;min-height:1.2em;margin:0 0 10px;"></p>
+
 
             <div class="confirm-modal-actions">
 
@@ -380,7 +384,7 @@
 
 
     <script src="../JS/config.js"></script>
-  <script src="../JS/api.js"></script>
+    <script src="../JS/api.js"></script>
     <script src="../JS/profile.js"></script>
     <script src="../JS/navbar.js"></script>
 
