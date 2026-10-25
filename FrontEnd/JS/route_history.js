@@ -933,4 +933,4 @@ function displayRouteHistory() {
    INITIALIZE
 ========================================================= */
 
-displayRouteHistory();
+loadRoutes().then(displayRouteHistory);
