@@ -791,20 +791,7 @@ function displayVehicles() {
 
 function displayOtherVehicles() {
 
-    const otherVehicles =
-        JSON.parse(
-            localStorage.getItem(
-                "roadwiseOtherVehicles"
-            )
-        ) || [];
-
-
-    const userOtherVehicles =
-        otherVehicles.filter(
-            vehicle =>
-                vehicle.userEmail ===
-                currentUser.email
-        );
+    const userOtherVehicles = otherVehiclesCache;
 
 
     otherVehicleList.innerHTML =
