@@ -8,7 +8,9 @@ if (!process.env.JWT_SECRET) {
   console.error('JWT_SECRET is missing in .env');
   process.exit(1);
 }
-
+if (process.env.JWT_SECRET.length < 32) {
+  console.warn('Warning: JWT_SECRET is shorter than 32 characters. Use a longer random value.');
+}
 const app = express();
 
 const allowedOrigins = (process.env.FRONTEND_URL || '')
