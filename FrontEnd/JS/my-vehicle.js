@@ -314,25 +314,17 @@ vehicleModal.addEventListener(
    GET SAVED VEHICLES
 ========================================================= */
 
-function getSavedVehicles() {
+let vehiclesCache = [];
+let otherVehiclesCache = [];
 
-    const vehicles =
-        JSON.parse(
-            localStorage.getItem(
-                "roadwiseVehicles"
-            )
-        ) || [];
-
-
-    return vehicles.filter(
-        vehicle =>
-            vehicle.userEmail ===
-            currentUser.email
-    );
-
+async function loadVehicles() {
+    vehiclesCache = await api("/vehicles");
+    otherVehiclesCache = await api("/other-vehicles");
 }
 
-
+function getSavedVehicles() {
+    return vehiclesCache;
+}
 
 /* =========================================================
    SAVE VEHICLE
