@@ -10,6 +10,34 @@ async function findOwnedRoute(req) {
     return SavedRoute.findOne({ _id: req.params.id, user: req.userId });
 }
 
+const escapeRegex = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+function buildHistoryFilter(query, userId) {
+    const filter = { user: userId };
+
+    if (ALGORITHMS.includes(query.algorithm)) filter.algorithm = query.algorithm;
+
+    const distance = {};
+    if (query.minDistance !== undefined && Number.isFinite(Number(query.minDistance))) {
+        distance.$gte = Number(query.minDistance);
+    }
+    if (query.maxDistance !== undefined && Number.isFinite(Number(query.maxDistance))) {
+        distance.$lte = Number(query.maxDistance);
+    }
+    if (Object.keys(distance).length) filter.distanceKm = distance;
+
+    const created = {};
+    const from = new Date(query.from);
+    const to = new Date(query.to);
+    if (query.from && !isNaN(from)) created.$gte = from;
+    if (query.to && !isNaN(to)) created.$lte = to;
+    if (Object.keys(created).length) filter.createdAt = created;
+
+    if (query.q) filter.name = { $regex: escapeRegex(String(query.q)), $options: 'i' };
+
+    return filter;
+}
+
 // Turns a request body into the document we save: cleans the points and
 // (re)computes distance, fuel and the optimized comparison.
 async function buildRouteData(body, userId) {
@@ -244,18 +272,19 @@ exports.compareRoutes = async (req, res) => {
 };
 
 exports.getRoutes = async (req, res) => {
-    const page = Math.max(parseInt(req.query.page, 10) || 1, 1);
-    const limit = Math.min(Math.max(parseInt(req.query.limit, 10) || 50, 1), 100);
-    const filter = { user: req.userId };
+  const page = Math.max(parseInt(req.query.page, 10) || 1, 1);
+  const limit = Math.min(Math.max(parseInt(req.query.limit, 10) || 50, 1), 100);
+  const filter = buildHistoryFilter(req.query, req.userId);
+  const order = req.query.order === 'desc' ? -1 : 1;
 
-    const total = await SavedRoute.countDocuments(filter);
-    const routes = await SavedRoute.find(filter)
-        .sort({ createdAt: 1 })
-        .skip((page - 1) * limit)
-        .limit(limit);
+  const total = await SavedRoute.countDocuments(filter);
+  const routes = await SavedRoute.find(filter)
+    .sort({ createdAt: order })
+    .skip((page - 1) * limit)
+    .limit(limit);
 
-    res.set('X-Total-Count', String(total));
-    res.json(routes);
+  res.set('X-Total-Count', String(total));
+  res.json(routes);
 };
 
 exports.getRouteById = async (req, res) => {
