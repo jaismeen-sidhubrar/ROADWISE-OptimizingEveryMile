@@ -66,11 +66,15 @@ exports.signup = async (req, res) => {
 
 exports.login = async (req, res) => {
   const { email, password } = req.body || {};
-  if (!EMAIL_RE.test(email)) {
-    return res.status(400).json({ message: 'Please enter a valid email address.' });
+  if (!email || !password) {
+    return res.status(400).json({ message: 'Please enter your email and password.' });
   }
-  const user = await User.findOne({ email: (email || '').toLowerCase() });
-  if (!user || !(await bcrypt.compare(password || '', user.password))) {
+  if (!isString(email) || !isString(password)) {
+    return res.status(400).json({ message: 'Invalid input.' });
+  }
+  const user = await User.findOne({ email: email.trim().toLowerCase() });
+  // Same message for "no such email" and "wrong password" so nobody can probe which emails exist.
+  if (!user || !(await bcrypt.compare(password, user.password))) {
     return res.status(401).json({ message: 'Invalid email or password.' });
   }
   res.json({ token: makeToken(user), user: publicUser(user) });
