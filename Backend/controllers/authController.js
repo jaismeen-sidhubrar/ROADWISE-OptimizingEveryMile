@@ -2,6 +2,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const isString = (v) => typeof v === 'string';
 
 const makeToken = (user) =>
   jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '7d' });
@@ -23,24 +24,33 @@ exports.signup = async (req, res) => {
   if (!name || !email || !password) {
     return res.status(400).json({ message: 'Please fill in all the fields.' });
   }
-  if (!EMAIL_RE.test(email)) {
+  if (![name, email, password].every(isString)) {
+    return res.status(400).json({ message: 'Invalid input.' });
+  }
+  const cleanName = name.trim();
+  const cleanEmail = email.trim().toLowerCase();
+  if (cleanName.length < 2 || cleanName.length > 60) {
+    return res.status(400).json({ message: 'Name must be between 2 and 60 characters.' });
+  }
+  if (!EMAIL_RE.test(cleanEmail)) {
     return res.status(400).json({ message: 'Please enter a valid email address.' });
   }
-  if (password.length < 8) {
-    return res.status(400).json({ message: 'Password must be at least 8 characters.' });
+  if (password.length < 8 || password.length > 72) {
+    return res.status(400).json({ message: 'Password must be 8 to 72 characters.' });
   }
-  if (await User.findOne({ email: email.toLowerCase() })) {
+  if (await User.findOne({ email: cleanEmail })) {
     return res
       .status(409)
       .json({ message: 'An account with this email already exists. Please sign in.' });
   }
   const user = await User.create({
-    name,
-    email,
+    name: cleanName,
+    email: cleanEmail,
     password: await bcrypt.hash(password, 10),
   });
   res.status(201).json({ token: makeToken(user), user: publicUser(user) });
 };
+
 
 exports.login = async (req, res) => {
   const { email, password } = req.body || {};
@@ -70,7 +80,7 @@ exports.updateMe = async (req, res) => {
   if (email && !EMAIL_RE.test(email)) {
     return res.status(400).json({ message: 'Please enter a valid email address.' });
   }
-  
+
   if (email && email.toLowerCase() !== user.email) {
     if (await User.findOne({ email: email.toLowerCase() })) {
       return res.status(409).json({ message: 'That email is already in use.' });
