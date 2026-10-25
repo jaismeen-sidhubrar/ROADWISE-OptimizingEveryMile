@@ -2730,164 +2730,33 @@ revealElements.forEach(
    UPDATE VEHICLE STATISTICS
 ========================================================= */
 
-function updateVehicleStatistics(journey) {
+async function updateVehicleStatistics(journey) {
+    const selectedValue = vehicleSelect.value;
+    if (!selectedValue) return;
 
-    const selectedValue =
-        vehicleSelect.value;
-
-
-    /* =========================================
-       OTHER VEHICLE
-    ========================================= */
-
-    if (
-        selectedValue === "other"
-    ) {
-
-        const mileage =
-            Number(
-                fuelEfficiencyInput.value
-            );
-
-
-        const otherVehicles =
-            JSON.parse(
-                localStorage.getItem(
-                    "roadwiseOtherVehicles"
-                )
-            ) || [];
-
-
-        const otherVehicle = {
-
-            id:
-                crypto.randomUUID(),
-
-            userEmail:
-                currentUser.email,
-
-            mileage:
-                mileage,
-
-            totalDistance:
-                Number(
-                    journey.totalDistance
-                ) || 0,
-
-            totalFuel:
-                Number(
-                    journey.totalFuel
-                ) || 0,
-
-            totalCost:
-                Number(
-                    journey.totalCost
-                ) || 0,
-
-            createdAt:
-                new Date().toISOString()
-
-        };
-
-
-        otherVehicles.push(
-            otherVehicle
-        );
-
-
-        localStorage.setItem(
-            "roadwiseOtherVehicles",
-            JSON.stringify(
-                otherVehicles
-            )
-        );
-
-
+    if (selectedValue === "other") {
+        await api("/other-vehicles", {
+            method: "POST",
+            body: {
+                mileage: Number(fuelEfficiencyInput.value),
+                totalDistance: Number(journey.totalDistance) || 0,
+                totalFuel: Number(journey.totalFuel) || 0,
+                totalCost: Number(journey.totalCost) || 0
+            }
+        });
         return;
-
     }
 
-
-
-    /* =========================================
-       SAVED VEHICLE
-    ========================================= */
-
-    const vehicles =
-        JSON.parse(
-            localStorage.getItem(
-                "roadwiseVehicles"
-            )
-        ) || [];
-
-
-    const vehicleIndex =
-        vehicles.findIndex(
-            vehicle =>
-                vehicle.id ===
-                    selectedValue &&
-                vehicle.userEmail ===
-                    currentUser.email
-        );
-
-
-    if (
-        vehicleIndex === -1
-    ) {
-
-        console.error(
-            "Selected vehicle not found."
-        );
-
-        return;
-
-    }
-
-
-    /* ADD NEW JOURNEY STATS */
-
-    vehicles[
-        vehicleIndex
-    ].totalDistance =
-        Number(
-            vehicles[vehicleIndex].totalDistance
-        ) +
-        Number(
-            journey.totalDistance
-        );
-
-
-    vehicles[
-        vehicleIndex
-    ].totalFuel =
-        Number(
-            vehicles[vehicleIndex].totalFuel
-        ) +
-        Number(
-            journey.totalFuel
-        );
-
-
-    vehicles[
-        vehicleIndex
-    ].totalCost =
-        Number(
-            vehicles[vehicleIndex].totalCost
-        ) +
-        Number(
-            journey.totalCost
-        );
-
-
-    localStorage.setItem(
-        "roadwiseVehicles",
-        JSON.stringify(
-            vehicles
-        )
-    );
-
+    await api(`/vehicles/${selectedValue}/stats`, {
+        method: "PATCH",
+        body: {
+            distance: Number(journey.totalDistance) || 0,
+            fuel: Number(journey.totalFuel) || 0,
+            cost: Number(journey.totalCost) || 0
+        }
+    });
+    await loadVehicles();
 }
-
 
 
 loadVehicles().then(populateVehicleDropdown);
