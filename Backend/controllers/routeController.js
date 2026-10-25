@@ -2,6 +2,20 @@ const SavedRoute = require('../models/SavedRoute');
 
 const ALGORITHMS = ['nearest-neighbour', '2-opt'];
 
+function isValidCoord(value, limit) {
+  if (value === null || value === undefined || value === '') return false;
+  const n = Number(value);
+  return Number.isFinite(n) && Math.abs(n) <= limit;
+}
+
+function isValidPoint(p) {
+  return !!p && typeof p === 'object' && isValidCoord(p.lat, 90) && isValidCoord(p.lng, 180);
+}
+
+function normalizePoint(p, fallbackName) {
+  return { name: String(p.name || fallbackName).trim(), lat: Number(p.lat), lng: Number(p.lng) };
+}
+
 // Returns an array of error messages (empty array = valid).
 function validateRouteInput(body) {
   if (!body || typeof body !== 'object' || Array.isArray(body)) {
@@ -22,6 +36,22 @@ function validateRouteInput(body) {
     }
   }
 
+    if (!isValidPoint(body.origin)) {
+        errors.push('origin needs a valid lat (-90 to 90) and lng (-180 to 180).');
+    }
+    if (!isValidPoint(body.destination)) {
+        errors.push('destination needs a valid lat (-90 to 90) and lng (-180 to 180).');
+    }
+    if (body.waypoints !== undefined) {
+        if (!Array.isArray(body.waypoints)) {
+        errors.push('waypoints must be an array.');
+    } else {
+        body.waypoints.forEach((w, i) => {
+        if (!isValidPoint(w)) errors.push(`waypoints[${i}] needs a valid lat and lng.`);
+      });
+    }
+  }
+
   return errors;
 }
 
@@ -29,8 +59,14 @@ exports.addRoute = async (req, res) => {
   const errors = validateRouteInput(req.body);
   if (errors.length) return res.status(400).json({ message: 'Invalid route data.', errors });
 
-  // Drop fields the client must not control.
-  const { _id, id, user, ...data } = req.body;
+  const { _id, id, user, ...rest } = req.body;
+  const data = {
+    ...rest,
+    origin: normalizePoint(rest.origin, 'Origin'),
+    destination: normalizePoint(rest.destination, 'Destination'),
+    waypoints: (rest.waypoints || []).map((w, i) => normalizePoint(w, `Stop ${i + 1}`)),
+  };
+
   const route = await SavedRoute.create({ ...data, user: req.userId });
   res.status(201).json(route);
 };
