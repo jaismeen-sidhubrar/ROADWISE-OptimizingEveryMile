@@ -10,6 +10,18 @@ async function findOwnedRoute(req) {
   return SavedRoute.findOne({ _id: req.params.id, user: req.userId });
 }
 
+// Wraps a handler so a thrown error becomes a clean JSON response instead of a crash.
+const handle = (fn) => async (req, res) => {
+  try {
+    await fn(req, res);
+  } catch (err) {
+    console.error('[routeController]', err);
+    if (err.name === 'ValidationError') return res.status(400).json({ message: err.message });
+    if (err.name === 'CastError') return res.status(400).json({ message: 'Invalid id or value.' });
+    res.status(500).json({ message: 'Something went wrong while handling the route request.' });
+  }
+};
+
 const ALGORITHMS = ['nearest-neighbour', '2-opt'];
 
 function isValidCoord(value, limit) {
@@ -250,3 +262,8 @@ exports.deleteRoute = async (req, res) => {
   await route.deleteOne();
   res.json({ ok: true });
 };
+
+
+for (const name of Object.keys(exports)) {
+  exports[name] = handle(exports[name]);
+}
