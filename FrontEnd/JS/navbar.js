@@ -147,9 +147,7 @@ function showLogoutModal() {
         .getElementById("logoutModalConfirm")
         .addEventListener("click", function () {
 
-            localStorage.removeItem(
-                "roadwiseCurrentUser"
-            );
+            clearSession();
 
             window.location.href =
                 "../index.html";

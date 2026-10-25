@@ -442,35 +442,6 @@ const signupForm =
     document.getElementById("signupForm");
 
 
-/* =========================================================
-   GET USERS
-========================================================= */
-
-function getUsers() {
-
-    const users =
-        localStorage.getItem("roadwiseUsers");
-
-
-    return users
-        ? JSON.parse(users)
-        : [];
-
-}
-
-
-/* =========================================================
-   SAVE USERS
-========================================================= */
-
-function saveUsers(users) {
-
-    localStorage.setItem(
-        "roadwiseUsers",
-        JSON.stringify(users)
-    );
-
-}
 
 
 /* =========================================================

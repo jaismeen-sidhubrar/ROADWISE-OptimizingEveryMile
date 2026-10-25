@@ -184,9 +184,7 @@ if (mobileMenu) {
 
 function logout() {
 
-    localStorage.removeItem(
-        "roadwiseCurrentUser"
-    );
+    clearSession();
 
     window.location.href =
         "../index.html";
