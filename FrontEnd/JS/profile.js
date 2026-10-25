@@ -164,23 +164,16 @@ if (!sessionUser) {
 
 
 function buildWorkingProfile(session) {
-
-    const matchingAccount =
-        getUsers().find(
-            u => u.email.toLowerCase() === session.email.toLowerCase()
-        ) || {};
-
     return {
-        name: session.name || matchingAccount.name || "",
-        email: session.email || matchingAccount.email || "",
-        password: matchingAccount.password || "",
+        name: session.name || "",
+        email: session.email || "",
+        password: "",
         username: session.username || "",
         phone: session.phone || "",
         bio: session.bio || "",
         profilePic: session.profilePic || "",
         joinedDate: session.joinedDate || new Date().toISOString()
     };
-
 }
 
 
