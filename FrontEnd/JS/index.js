@@ -688,7 +688,7 @@ function showLoginForm() {
    HANDLE LOGIN
 ========================================================= */
 
-function handleLogin(event) {
+async function handleLogin(event) {
 
     event.preventDefault();
 
@@ -704,45 +704,19 @@ function handleLogin(event) {
             .value
             .trim();
 
-    const users = getUsers();
+    const message = document.getElementById("loginMessage");
 
-    const user =
-        users.find(
-            user =>
-                user.email.toLowerCase() ===
-                email.toLowerCase() &&
-                user.password === password
-        );
-
-    if (!user) {
-
-        const message = document.getElementById("loginMessage");
-
-        message.textContent = "Invalid email or password.";
+    try {
+        const data = await api("/auth/login", {
+            method: "POST",
+            body: { email, password }
+        });
+        saveSession(data);
+        window.location.href = "Pages/dashboard.html";
+    } catch (error) {
+        message.textContent = error.message;
         message.className = "form-message error";
-
-        return;
     }
-
-    const currentUser = {
-
-        name: user.name,
-
-        email: user.email
-
-    };
-
-    localStorage.setItem(
-        "roadwiseCurrentUser",
-        JSON.stringify(currentUser)
-    );
-
-
-
-    /* Go to Dashboard */
-
-    window.location.href =
-        "Pages/dashboard.html";
 }
 
 
