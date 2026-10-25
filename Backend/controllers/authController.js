@@ -129,6 +129,12 @@ exports.updateMe = async (req, res) => {
   res.json(publicUser(user));
 };
 
+// Tokens are stateless, so logging out means the frontend deletes its saved token.
+// This endpoint exists so the frontend has one clear call to make when the user logs out.
+exports.logout = (req, res) => {
+  res.json({ ok: true });
+};
+
 exports.deleteMe = async (req, res) => {
   const { password } = req.body || {};
   if (!password || !isString(password)) {
