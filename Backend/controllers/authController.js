@@ -8,8 +8,11 @@ const DUPLICATE_MSG = 'An account with this email already exists. Please sign in
 
 // Cost factor for bcrypt. Higher is slower and safer. Can be changed from .env.
 const hashPassword = (plain) => bcrypt.hash(plain, Number(process.env.BCRYPT_ROUNDS) || 10);
+// The token only carries the user id. It expires after JWT_EXPIRES_IN (default 7 days).
 const makeToken = (user) =>
-  jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '7d' });
+  jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
+    expiresIn: process.env.JWT_EXPIRES_IN || '7d',
+  });
 
 // Never send the password hash to the browser.
 const publicUser = (u) => ({
