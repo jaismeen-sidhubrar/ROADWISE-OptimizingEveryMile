@@ -720,41 +720,15 @@ function showVehicleDeleteModal(
    DELETE VEHICLE
 ========================================================= */
 
-function deleteVehicle(
-    vehicleId
-) {
-
-    const vehicles =
-        JSON.parse(
-            localStorage.getItem(
-                "roadwiseVehicles"
-            )
-        ) || [];
-
-
-    const updatedVehicles =
-        vehicles.filter(
-            vehicle =>
-                !(
-                    vehicle.id === vehicleId &&
-                    vehicle.userEmail ===
-                        currentUser.email
-                )
-        );
-
-
-    localStorage.setItem(
-        "roadwiseVehicles",
-        JSON.stringify(
-            updatedVehicles
-        )
-    );
-
-
-    displayVehicles();
-
+async function deleteVehicle(vehicleId) {
+    try {
+        await api(`/vehicles/${vehicleId}`, { method: "DELETE" });
+        await loadVehicles();
+        displayVehicles();
+    } catch (error) {
+        alert(error.message);
+    }
 }
-
 
 
 /* =========================================================
