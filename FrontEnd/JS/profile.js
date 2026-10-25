@@ -532,22 +532,15 @@ function validateForm() {
    "roadwiseCurrentUser") stay in sync.
 ========================================================= */
 
-form.addEventListener("submit", (event) => {
-
+form.addEventListener("submit", async (event) => {
     event.preventDefault();
 
     if (!validateForm()) {
-
         showToast("Please fix the highlighted fields.", true);
-
         return;
-
     }
 
-    const wantsPasswordChange = newPasswordInput.value.length > 0;
-
-    const updatedUser = {
-        ...currentUser,
+    const payload = {
         name: fullNameInput.value.trim(),
         username: usernameInput.value.trim(),
         email: emailInput.value.trim(),
@@ -556,88 +549,33 @@ form.addEventListener("submit", (event) => {
     };
 
     if (avatarRemoved) {
-
-        updatedUser.profilePic = "";
-
+        payload.profilePic = "";
     } else if (pendingAvatarDataUrl) {
-
-        updatedUser.profilePic = pendingAvatarDataUrl;
-
+        payload.profilePic = pendingAvatarDataUrl;
     }
 
-    if (wantsPasswordChange) {
-
-        updatedUser.password = newPasswordInput.value;
-
+    if (newPasswordInput.value.length > 0) {
+        payload.currentPassword = currentPasswordInput.value;
+        payload.newPassword = newPasswordInput.value;
     }
 
+    try {
+        const saved = await api("/auth/me", { method: "PUT", body: payload });
 
-    /* --- Update the account record in "roadwiseUsers" --- */
+        saveCurrentUser(saved);
+        currentUser = buildWorkingProfile(saved);
+        originalEmail = currentUser.email;
+        pendingAvatarDataUrl = null;
+        avatarRemoved = false;
+        currentPasswordInput.value = "";
+        newPasswordInput.value = "";
+        confirmPasswordInput.value = "";
 
-    const users = getUsers();
-
-    const accountIndex = users.findIndex(
-        u => u.email.toLowerCase() === originalEmail.toLowerCase()
-    );
-
-    const accountRecord = {
-        name: updatedUser.name,
-        email: updatedUser.email,
-        password: updatedUser.password,
-        username: updatedUser.username,
-        phone: updatedUser.phone,
-        bio: updatedUser.bio,
-        profilePic: updatedUser.profilePic,
-        joinedDate: updatedUser.joinedDate
-    };
-
-    if (accountIndex >= 0) {
-
-        users[accountIndex] = accountRecord;
-
-    } else {
-
-        users.push(accountRecord);
-
+        renderForm(currentUser);
+        showToast("Profile updated successfully.");
+    } catch (error) {
+        showToast(error.message, true);
     }
-
-    const usersSaved = saveUsers(users);
-
-
-    /* --- Update the active session in "roadwiseCurrentUser" --- */
-
-    const sessionSaved = saveCurrentUser({
-        name: updatedUser.name,
-        email: updatedUser.email,
-        username: updatedUser.username,
-        phone: updatedUser.phone,
-        bio: updatedUser.bio,
-        profilePic: updatedUser.profilePic,
-        joinedDate: updatedUser.joinedDate
-    });
-
-    if (!usersSaved || !sessionSaved) {
-
-        showToast("Something went wrong while saving. Please try again.", true);
-
-        return;
-
-    }
-
-    currentUser = updatedUser;
-    originalEmail = updatedUser.email;
-
-    pendingAvatarDataUrl = null;
-    avatarRemoved = false;
-
-    currentPasswordInput.value = "";
-    newPasswordInput.value = "";
-    confirmPasswordInput.value = "";
-
-    renderForm(currentUser);
-
-    showToast("Profile updated successfully.");
-
 });
 
 
@@ -723,21 +661,22 @@ document.addEventListener("keydown", (event) => {
 });
 
 if (confirmDeleteBtn) {
+    confirmDeleteBtn.addEventListener("click", async () => {
+        const passwordBox = document.getElementById("deletePassword");
+        const errorBox = document.getElementById("deleteError");
+        errorBox.textContent = "";
 
-    confirmDeleteBtn.addEventListener("click", () => {
-
-        const users = getUsers().filter(
-            u => u.email.toLowerCase() !== originalEmail.toLowerCase()
-        );
-
-        saveUsers(users);
-
-        localStorage.removeItem(CURRENT_USER_KEY);
-
-        window.location.href = LANDING_PATH;
-
+        try {
+            await api("/auth/me", {
+                method: "DELETE",
+                body: { password: passwordBox.value }
+            });
+            clearSession();
+            window.location.href = LANDING_PATH;
+        } catch (error) {
+            errorBox.textContent = error.message;
+        }
     });
-
 }
 
 
