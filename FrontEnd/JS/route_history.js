@@ -218,36 +218,14 @@ function formatDate(dateString) {
    GET USER'S SAVED ROUTES
 ========================================================= */
 
+let routesCache = [];
+
+async function loadRoutes() {
+    routesCache = await apiAll("/routes");
+}
+
 function getUserRoutes() {
-
-    // Get all saved routes
-    const savedRoutes =
-        JSON.parse(
-            localStorage.getItem("roadwiseSavedRoutes")
-        ) || [];
-
-
-    // Get the logged-in user's email
-    const currentUserEmail =
-        currentUser.email;
-
-
-    // Return only routes belonging to this user
-    const userRoutes =
-        savedRoutes.filter(
-            route =>
-                route.userEmail === currentUserEmail
-        );
-
-
-    console.log("Current User:", currentUser);
-    console.log("Current User Email:", currentUserEmail);
-    console.log("All Saved Routes:", savedRoutes);
-    console.log("User Routes:", userRoutes);
-
-
-    return userRoutes;
-
+    return routesCache;
 }
 
 
