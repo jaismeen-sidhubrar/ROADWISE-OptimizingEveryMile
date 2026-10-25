@@ -409,11 +409,7 @@ function isValidEmail(value) {
 
 function emailTakenByAnotherAccount(email) {
 
-    return getUsers().some(
-        u =>
-            u.email.toLowerCase() === email.toLowerCase() &&
-            u.email.toLowerCase() !== originalEmail.toLowerCase()
-    );
+    return false;
 
 }
 
