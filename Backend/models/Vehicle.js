@@ -4,6 +4,7 @@ const vehicleSchema = new mongoose.Schema(
   {
     name: { type: String, required: true, trim: true },
     totalDistance: { type: Number, default: 0 },
+    totalFuel: { type: Number, default: 0 },
   },
   { timestamps: true, versionKey: false, toJSON: { virtuals: true } }
 );
