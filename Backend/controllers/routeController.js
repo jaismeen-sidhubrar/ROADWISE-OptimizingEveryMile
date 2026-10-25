@@ -1,4 +1,6 @@
 const SavedRoute = require('../models/SavedRoute');
+const mongoose = require('mongoose');
+const Vehicle = require('../models/Vehicle');
 
 const ALGORITHMS = ['nearest-neighbour', '2-opt'];
 
@@ -95,6 +97,7 @@ exports.addRoute = async (req, res) => {
     const errors = validateRouteInput(req.body);
     if (errors.length) return res.status(400).json({ message: 'Invalid route data.', errors });
 
+    // Drop fields the client must not control.
     const { _id, id, user, ...rest } = req.body;
     const data = {
         ...rest,
@@ -104,7 +107,16 @@ exports.addRoute = async (req, res) => {
     };
 
     data.distanceKm = pathDistanceKm(buildStops(data));
-    Object.assign(data, calculateFuel(data.distanceKm));
+
+    // Mileage: the chosen vehicle's mileage, else the one in the request, else the default.
+    let mileage = Number(data.vehicleMileage);
+    if (data.vehicleId && mongoose.isValidObjectId(data.vehicleId)) {
+        const vehicle = await Vehicle.findOne({ _id: data.vehicleId, user: req.userId });
+        if (vehicle) mileage = vehicle.mileage;
+    }
+    data.vehicleMileage = mileage > 0 ? mileage : DEFAULT_MILEAGE_KMPL;
+    data.fuelPrice = Number(data.fuelPrice) > 0 ? Number(data.fuelPrice) : DEFAULT_FUEL_PRICE;
+    Object.assign(data, calculateFuel(data.distanceKm, data.vehicleMileage, data.fuelPrice));
 
     const route = await SavedRoute.create({ ...data, user: req.userId });
     res.status(201).json(route);
