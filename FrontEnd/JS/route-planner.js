@@ -2236,125 +2236,63 @@ function getSelectedVehicleName() {
    SAVE SELECTED ROUTE
 ========================================================= */
 
-function saveSelectedRoute(
+async function saveSelectedRoute(
     algorithmName,
     route,
     journey,
     longestRoute,
     longestRouteJourney
 ) {
+    if (route.length < 2) {
+        showMessage("A route needs at least two stops.", "error");
+        return;
+    }
 
-    const savedRoutes =
-        JSON.parse(
-            localStorage.getItem(
-                "roadwiseSavedRoutes"
-            )
-        ) || [];
-
+    // The server wants origin / destination / waypoints as { name, lat, lng }.
+    const stops = route.map((stop) => ({
+        name: stop.address,
+        lat: stop.latitude,
+        lng: stop.longitude
+    }));
 
     const savedRoute = {
-
-        userEmail:
-            currentUser.email,
-
-        userName:
-            currentUser.name,
-
-        algorithm:
-            algorithmName,
-
-        vehicleId:
-            vehicleSelect.value === "other"
-                ? null
-                : vehicleSelect.value,
-
+        name: `${stops[0].name} → ${stops[stops.length - 1].name}`,
+        algorithm: algorithmName === "2-Opt Heuristic" ? "2-opt" : "nearest-neighbour",
+        algorithmName: algorithmName,
+        origin: stops[0],
+        destination: stops[stops.length - 1],
+        waypoints: stops.slice(1, -1),
+        vehicleMileage: Number(document.getElementById("fuelEfficiency").value),
+        vehicleId: vehicleSelect.value === "other" ? null : vehicleSelect.value,
         vehicleName:
-            vehicleSelect.value === "other"
-                ? "Other Vehicle"
-                : getSelectedVehicleName(),
-
-        createdAt:
-            new Date().toISOString(),
-
-        originalAddresses:
-            getAddresses(),
-
-        optimizedRoute:
-            route,
-
-        legs:
-            journey.legs,
-
-        totalDistance:
-            journey.totalDistance,
-
-        totalTime:
-            journey.totalTime,
-
-        totalFuel:
-            journey.totalFuel,
-
-        totalCost:
-            journey.totalCost,
-
-        fuelPrice:
-            document.getElementById(
-                "fuelPrice"
-            ).value,
-
-        fuelEfficiency:
-            document.getElementById(
-                "fuelEfficiency"
-            ).value,
-
-        averageSpeed:
-            document.getElementById(
-                "averageSpeed"
-            ).value,
-        
-        longestRoute:
-            longestRoute,
-
-        longestRouteTotalDistance:
-            longestRouteJourney.totalDistance,
-
-        longestRouteTotalTime:
-            longestRouteJourney.totalTime,
-
-        longestRouteTotalFuel:
-            longestRouteJourney.totalFuel,
-
-        longestRouteTotalCost:
-            longestRouteJourney.totalCost,
-
+            vehicleSelect.value === "other" ? "Other Vehicle" : getSelectedVehicleName(),
+        originalAddresses: getAddresses(),
+        optimizedRoute: route,
+        legs: journey.legs,
+        totalDistance: journey.totalDistance,
+        totalTime: journey.totalTime,
+        totalFuel: journey.totalFuel,
+        totalCost: journey.totalCost,
+        fuelPrice: document.getElementById("fuelPrice").value,
+        fuelEfficiency: document.getElementById("fuelEfficiency").value,
+        averageSpeed: document.getElementById("averageSpeed").value,
+        longestRoute: longestRoute,
+        longestRouteTotalDistance: longestRouteJourney.totalDistance,
+        longestRouteTotalTime: longestRouteJourney.totalTime,
+        longestRouteTotalFuel: longestRouteJourney.totalFuel,
+        longestRouteTotalCost: longestRouteJourney.totalCost
     };
 
+    try {
+        await api("/routes", { method: "POST", body: savedRoute });
+        await updateVehicleStatistics(journey);
+    } catch (error) {
+        showMessage(error.message, "error");
+        return;
+    }
 
-    savedRoutes.push(
-        savedRoute
-    );
-
-    localStorage.setItem(
-        "roadwiseSavedRoutes",
-        JSON.stringify(
-            savedRoutes
-        )
-    );
-
-    /* UPDATE VEHICLE STATS */
-
-    updateVehicleStatistics(
-        journey
-    );
-
-    showMessage(
-        `${algorithmName} route has been added to your dashboard/history!`,
-        "success"
-    );
-
+    showMessage(`${algorithmName} route has been added to your dashboard/history!`, "success");
 }
-
-
 
 
 
