@@ -9,4 +9,6 @@ const savedRouteSchema = new mongoose.Schema(
   { strict: false, versionKey: false, toJSON: { virtuals: true } }
 );
 
+
+savedRouteSchema.index({ user: 1, createdAt: -1 });
 module.exports = mongoose.model('SavedRoute', savedRouteSchema);

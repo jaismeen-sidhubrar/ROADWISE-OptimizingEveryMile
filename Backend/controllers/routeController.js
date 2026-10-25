@@ -6,20 +6,57 @@ const Vehicle = require('../models/Vehicle');
 // Returns the route only if it exists AND belongs to the logged-in user.
 // A bad id and someone else's route both give null, so it's never revealed that a route exists.
 async function findOwnedRoute(req) {
-  if (!mongoose.isValidObjectId(req.params.id)) return null;
-  return SavedRoute.findOne({ _id: req.params.id, user: req.userId });
+    if (!mongoose.isValidObjectId(req.params.id)) return null;
+    return SavedRoute.findOne({ _id: req.params.id, user: req.userId });
+}
+
+// Turns a request body into the document we save: cleans the points and
+// (re)computes distance, fuel and the optimized comparison.
+async function buildRouteData(body, userId) {
+    // Drop fields the client must not control.
+    const { _id, id, user, createdAt, ...rest } = body;
+
+    const data = {
+        ...rest,
+        origin: normalizePoint(rest.origin, 'Origin'),
+        destination: normalizePoint(rest.destination, 'Destination'),
+        waypoints: (rest.waypoints || []).map((w, i) => normalizePoint(w, `Stop ${i + 1}`)),
+    };
+
+    data.distanceKm = pathDistanceKm(buildStops(data));
+
+    // Mileage: the chosen vehicle's mileage, else the one in the request, else the default.
+    let mileage = Number(data.vehicleMileage);
+    if (data.vehicleId && mongoose.isValidObjectId(data.vehicleId)) {
+        const vehicle = await Vehicle.findOne({ _id: data.vehicleId, user: userId });
+        if (vehicle) mileage = vehicle.mileage;
+    }
+    data.vehicleMileage = mileage > 0 ? mileage : DEFAULT_MILEAGE_KMPL;
+    data.fuelPrice = Number(data.fuelPrice) > 0 ? Number(data.fuelPrice) : DEFAULT_FUEL_PRICE;
+    Object.assign(data, calculateFuel(data.distanceKm, data.vehicleMileage, data.fuelPrice));
+
+    const algorithm = data.algorithm || '2-opt';
+    data.algorithm = algorithm;
+    data.comparison = compareRouteOptions(data.origin, data.waypoints, data.destination, {
+        mileage: data.vehicleMileage,
+        fuelPrice: data.fuelPrice,
+    });
+    data.optimizedStops = data.comparison[algorithm].order;
+    data.optimizedDistanceKm = data.comparison[algorithm].distanceKm;
+
+    return data;
 }
 
 // Wraps a handler so a thrown error becomes a clean JSON response instead of a crash.
 const handle = (fn) => async (req, res) => {
-  try {
-    await fn(req, res);
-  } catch (err) {
-    console.error('[routeController]', err);
-    if (err.name === 'ValidationError') return res.status(400).json({ message: err.message });
-    if (err.name === 'CastError') return res.status(400).json({ message: 'Invalid id or value.' });
-    res.status(500).json({ message: 'Something went wrong while handling the route request.' });
-  }
+    try {
+        await fn(req, res);
+    } catch (err) {
+        console.error('[routeController]', err);
+        if (err.name === 'ValidationError') return res.status(400).json({ message: err.message });
+        if (err.name === 'CastError') return res.status(400).json({ message: 'Invalid id or value.' });
+        res.status(500).json({ message: 'Something went wrong while handling the route request.' });
+    }
 };
 
 const ALGORITHMS = ['nearest-neighbour', '2-opt'];
@@ -183,42 +220,12 @@ function validateRouteInput(body) {
 }
 
 exports.addRoute = async (req, res) => {
-    const errors = validateRouteInput(req.body);
-    if (errors.length) return res.status(400).json({ message: 'Invalid route data.', errors });
+  const errors = validateRouteInput(req.body);
+  if (errors.length) return res.status(400).json({ message: 'Invalid route data.', errors });
 
-    // Drop fields the client must not control.
-    const { _id, id, user, ...rest } = req.body;
-    const data = {
-        ...rest,
-        origin: normalizePoint(rest.origin, 'Origin'),
-        destination: normalizePoint(rest.destination, 'Destination'),
-        waypoints: (rest.waypoints || []).map((w, i) => normalizePoint(w, `Stop ${i + 1}`)),
-    };
-
-    data.distanceKm = pathDistanceKm(buildStops(data));
-
-    // Mileage: the chosen vehicle's mileage, else the one in the request, else the default.
-    let mileage = Number(data.vehicleMileage);
-    if (data.vehicleId && mongoose.isValidObjectId(data.vehicleId)) {
-        const vehicle = await Vehicle.findOne({ _id: data.vehicleId, user: req.userId });
-        if (vehicle) mileage = vehicle.mileage;
-    }
-    data.vehicleMileage = mileage > 0 ? mileage : DEFAULT_MILEAGE_KMPL;
-    data.fuelPrice = Number(data.fuelPrice) > 0 ? Number(data.fuelPrice) : DEFAULT_FUEL_PRICE;
-    Object.assign(data, calculateFuel(data.distanceKm, data.vehicleMileage, data.fuelPrice));
-
-    // Compare algorithms and store the one the user picked (default: 2-opt).
-    const algorithm = data.algorithm || '2-opt';
-    data.algorithm = algorithm;
-    data.comparison = compareRouteOptions(data.origin, data.waypoints, data.destination, {
-        mileage: data.vehicleMileage,
-        fuelPrice: data.fuelPrice,
-    });
-    data.optimizedStops = data.comparison[algorithm].order;
-    data.optimizedDistanceKm = data.comparison[algorithm].distanceKm;
-
-    const route = await SavedRoute.create({ ...data, user: req.userId });
-    res.status(201).json(route);
+  const data = await buildRouteData(req.body, req.userId);
+  const route = await SavedRoute.create({ ...data, user: req.userId });
+  res.status(201).json(route);
 };
 
 exports.compareRoutes = async (req, res) => {
@@ -241,29 +248,33 @@ exports.getRoutes = async (req, res) => {
 };
 
 exports.getRouteById = async (req, res) => {
-  const route = await findOwnedRoute(req);
-  if (!route) return res.status(404).json({ message: 'Route not found.' });
-  res.json(route);
+    const route = await findOwnedRoute(req);
+    if (!route) return res.status(404).json({ message: 'Route not found.' });
+    res.json(route);
 };
 
 exports.updateRoute = async (req, res) => {
   const route = await findOwnedRoute(req);
   if (!route) return res.status(404).json({ message: 'Route not found.' });
 
-  const { _id, id, user, createdAt, ...data } = req.body || {};
-  route.set(data);
+  // Merge old + new values, validate the result, then recompute everything.
+  const merged = { ...route.toObject(), ...req.body };
+  const errors = validateRouteInput(merged);
+  if (errors.length) return res.status(400).json({ message: 'Invalid route data.', errors });
+
+  route.set(await buildRouteData(merged, req.userId));
   await route.save();
   res.json(route);
 };
 
 exports.deleteRoute = async (req, res) => {
-  const route = await findOwnedRoute(req);
-  if (!route) return res.status(404).json({ message: 'Route not found.' });
-  await route.deleteOne();
-  res.json({ ok: true });
+    const route = await findOwnedRoute(req);
+    if (!route) return res.status(404).json({ message: 'Route not found.' });
+    await route.deleteOne();
+    res.json({ ok: true });
 };
 
 
 for (const name of Object.keys(exports)) {
-  exports[name] = handle(exports[name]);
+    exports[name] = handle(exports[name]);
 }
