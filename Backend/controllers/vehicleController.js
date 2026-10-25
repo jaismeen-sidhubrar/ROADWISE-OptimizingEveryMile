@@ -1,7 +1,7 @@
 const Vehicle = require('../models/Vehicle');
 
 exports.getVehicles = async (req, res) => {
-  res.json(await Vehicle.find({ user: req.userId }).sort({ createdAt: 1 }));
+  res.json(await Vehicle.find({ user:req.userId }).sort({ createdAt: 1 }));
 };
 
 exports.addVehicle = async (req, res) => {
