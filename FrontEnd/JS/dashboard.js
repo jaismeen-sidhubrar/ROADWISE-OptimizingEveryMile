@@ -498,7 +498,12 @@ function getDashboardData() {
    UPDATE DASHBOARD STATISTICS
 ========================================================= */
 
-function updateDashboardStats() {
+async function updateDashboardStats() {
+    try {
+        await loadRoutes();
+    } catch (error) {
+        console.error(error);
+    }
 
     const data =
         getDashboardData();
