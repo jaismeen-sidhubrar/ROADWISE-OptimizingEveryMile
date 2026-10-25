@@ -16,6 +16,33 @@ function normalizePoint(p, fallbackName) {
   return { name: String(p.name || fallbackName).trim(), lat: Number(p.lat), lng: Number(p.lng) };
 }
 
+
+const EARTH_RADIUS_KM = 6371;
+const toRad = (deg) => (deg * Math.PI) / 180;
+const round2 = (n) => Math.round(n * 100) / 100;
+
+// Straight-line (great-circle) distance between two {lat, lng} points, in km.
+function haversineKm(a, b) {
+  const dLat = toRad(b.lat - a.lat);
+  const dLng = toRad(b.lng - a.lng);
+  const h =
+    Math.sin(dLat / 2) ** 2 +
+    Math.cos(toRad(a.lat)) * Math.cos(toRad(b.lat)) * Math.sin(dLng / 2) ** 2;
+  return 2 * EARTH_RADIUS_KM * Math.asin(Math.sqrt(h));
+}
+
+// Unrounded total length of a list of points (used by the algorithms).
+function rawDistance(points) {
+  let total = 0;
+  for (let i = 1; i < points.length; i++) total += haversineKm(points[i - 1], points[i]);
+  return total;
+}
+
+const pathDistanceKm = (points) => round2(rawDistance(points));
+
+// origin -> waypoints (in the order given) -> destination
+const buildStops = (route) => [route.origin, ...(route.waypoints || []), route.destination];
+
 // Returns an array of error messages (empty array = valid).
 function validateRouteInput(body) {
   if (!body || typeof body !== 'object' || Array.isArray(body)) {
@@ -66,6 +93,8 @@ exports.addRoute = async (req, res) => {
     destination: normalizePoint(rest.destination, 'Destination'),
     waypoints: (rest.waypoints || []).map((w, i) => normalizePoint(w, `Stop ${i + 1}`)),
   };
+
+    data.distanceKm = pathDistanceKm(buildStops(data));
 
   const route = await SavedRoute.create({ ...data, user: req.userId });
   res.status(201).json(route);
