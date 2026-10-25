@@ -144,24 +144,15 @@ const vehicleError =
    LOAD USER VEHICLES
 ========================================================= */
 
-function getUserVehicles() {
+let vehiclesCache = [];
 
-    const vehicles =
-        JSON.parse(
-            localStorage.getItem(
-                "roadwiseVehicles"
-            )
-        ) || [];
-
-
-    return vehicles.filter(
-        vehicle =>
-            vehicle.userEmail ===
-            currentUser.email
-    );
-
+async function loadVehicles() {
+    vehiclesCache = await api("/vehicles");
 }
 
+function getUserVehicles() {
+    return vehiclesCache;
+}
 
 
 /* =========================================================
@@ -2961,4 +2952,4 @@ function updateVehicleStatistics(journey) {
 
 
 
-populateVehicleDropdown();
+loadVehicles().then(populateVehicleDropdown);
