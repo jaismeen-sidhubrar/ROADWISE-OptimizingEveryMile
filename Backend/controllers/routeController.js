@@ -220,12 +220,12 @@ function validateRouteInput(body) {
 }
 
 exports.addRoute = async (req, res) => {
-  const errors = validateRouteInput(req.body);
-  if (errors.length) return res.status(400).json({ message: 'Invalid route data.', errors });
+    const errors = validateRouteInput(req.body);
+    if (errors.length) return res.status(400).json({ message: 'Invalid route data.', errors });
 
-  const data = await buildRouteData(req.body, req.userId);
-  const route = await SavedRoute.create({ ...data, user: req.userId });
-  res.status(201).json(route);
+    const data = await buildRouteData(req.body, req.userId);
+    const route = await SavedRoute.create({ ...data, user: req.userId });
+    res.status(201).json(route);
 };
 
 exports.compareRoutes = async (req, res) => {
@@ -244,7 +244,18 @@ exports.compareRoutes = async (req, res) => {
 };
 
 exports.getRoutes = async (req, res) => {
-    res.json(await SavedRoute.find({ user: req.userId }).sort({ createdAt: 1 }));
+    const page = Math.max(parseInt(req.query.page, 10) || 1, 1);
+    const limit = Math.min(Math.max(parseInt(req.query.limit, 10) || 50, 1), 100);
+    const filter = { user: req.userId };
+
+    const total = await SavedRoute.countDocuments(filter);
+    const routes = await SavedRoute.find(filter)
+        .sort({ createdAt: 1 })
+        .skip((page - 1) * limit)
+        .limit(limit);
+
+    res.set('X-Total-Count', String(total));
+    res.json(routes);
 };
 
 exports.getRouteById = async (req, res) => {
@@ -254,17 +265,17 @@ exports.getRouteById = async (req, res) => {
 };
 
 exports.updateRoute = async (req, res) => {
-  const route = await findOwnedRoute(req);
-  if (!route) return res.status(404).json({ message: 'Route not found.' });
+    const route = await findOwnedRoute(req);
+    if (!route) return res.status(404).json({ message: 'Route not found.' });
 
-  // Merge old + new values, validate the result, then recompute everything.
-  const merged = { ...route.toObject(), ...req.body };
-  const errors = validateRouteInput(merged);
-  if (errors.length) return res.status(400).json({ message: 'Invalid route data.', errors });
+    // Merge old + new values, validate the result, then recompute everything.
+    const merged = { ...route.toObject(), ...req.body };
+    const errors = validateRouteInput(merged);
+    if (errors.length) return res.status(400).json({ message: 'Invalid route data.', errors });
 
-  route.set(await buildRouteData(merged, req.userId));
-  await route.save();
-  res.json(route);
+    route.set(await buildRouteData(merged, req.userId));
+    await route.save();
+    res.json(route);
 };
 
 exports.deleteRoute = async (req, res) => {
