@@ -53,6 +53,27 @@ function calculateFuel(distanceKm, kmPerLitre, pricePerLitre) {
     return { fuelLitres: round2(fuelLitres), fuelCost: round2(fuelLitres * price) };
 }
 
+// Greedy heuristic: from the current stop, go to the closest unvisited one.
+// Origin stays first and destination stays last.
+function nearestNeighbour(origin, waypoints, destination) {
+    const remaining = [...waypoints];
+    const path = [origin];
+    let current = origin;
+
+    while (remaining.length) {
+        let bestIndex = 0;
+        let bestDist = Infinity;
+        remaining.forEach((p, i) => {
+            const d = haversineKm(current, p);
+            if (d < bestDist) { bestDist = d; bestIndex = i; }
+        });
+        current = remaining.splice(bestIndex, 1)[0];
+        path.push(current);
+    }
+
+    path.push(destination);
+    return path;
+}
 
 // Returns an array of error messages (empty array = valid).
 function validateRouteInput(body) {
