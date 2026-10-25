@@ -30,6 +30,7 @@ exports.addStats = async (req, res) => {
 
 exports.deleteVehicle = async (req, res) => {
   const vehicle = await Vehicle.findOneAndDelete({ _id: req.params.id, user: req.userId });
-  if (!vehicle) return res.status(404).json({ message: 'Vehicle not found.' });
+  if (!vehicle) return res.status(404).json({ message: 'vehicle not found.' });
   res.json({ ok: true });
 };
+
