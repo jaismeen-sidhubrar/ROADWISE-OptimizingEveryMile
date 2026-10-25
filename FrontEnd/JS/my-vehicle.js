@@ -332,7 +332,7 @@ function getSavedVehicles() {
 
 vehicleForm.addEventListener(
     "submit",
-    event => {
+    async event => {
 
         event.preventDefault();
 
@@ -415,12 +415,13 @@ vehicleForm.addEventListener(
         );
 
 
-        localStorage.setItem(
-            "roadwiseVehicles",
-            JSON.stringify(
-                vehicles
-            )
-        );
+        try {
+            await api("/vehicles", { method: "POST", body: { name, mileage } });
+            await loadVehicles();
+        } catch (error) {
+            alert(error.message);
+            return;
+        }
 
 
         closeVehicleModalFunction();
