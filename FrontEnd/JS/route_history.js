@@ -526,7 +526,7 @@ function createRouteCard(
         "click",
         () => {
 
-            showDeleteModal(route.createdAt);
+            showDeleteModal(route.id);
 
         }
     );
@@ -840,38 +840,15 @@ function showDeleteModal(createdAt) {
    DELETE SAVED ROUTE
 ========================================================= */
 
-function deleteRoute(createdAt) {
-
-    const savedRoutes =
-        JSON.parse(
-            localStorage.getItem(
-                "roadwiseSavedRoutes"
-            )
-        ) || [];
-
-
-    const updatedRoutes =
-        savedRoutes.filter(
-            route =>
-                !(
-                    route.createdAt === createdAt &&
-                    route.userEmail === currentUser.email
-                )
-        );
-
-
-    localStorage.setItem(
-        "roadwiseSavedRoutes",
-        JSON.stringify(
-            updatedRoutes
-        )
-    );
-
-
-    displayRouteHistory();
-
+async function deleteRoute(routeId) {
+    try {
+        await api(`/routes/${routeId}`, { method: "DELETE" });
+        await loadRoutes();
+        displayRouteHistory();
+    } catch (error) {
+        alert(error.message);
+    }
 }
-
 
 /* =========================================================
    DISPLAY ALL ROUTES
