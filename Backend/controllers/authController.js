@@ -3,6 +3,7 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const isString = (v) => typeof v === 'string';
+const DUPLICATE_MSG = 'An account with this email already exists. Please sign in.';
 
 const makeToken = (user) =>
   jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '7d' });
@@ -38,16 +39,21 @@ exports.signup = async (req, res) => {
   if (password.length < 8 || password.length > 72) {
     return res.status(400).json({ message: 'Password must be 8 to 72 characters.' });
   }
-  if (await User.findOne({ email: cleanEmail })) {
-    return res
-      .status(409)
-      .json({ message: 'An account with this email already exists. Please sign in.' });
+    if (await User.findOne({ email: cleanEmail })) {
+    return res.status(409).json({ message: DUPLICATE_MSG });
   }
-  const user = await User.create({
-    name: cleanName,
-    email: cleanEmail,
-    password: await bcrypt.hash(password, 10),
-  });
+  let user;
+  try {
+    user = await User.create({
+      name: cleanName,
+      email: cleanEmail,
+      password: await bcrypt.hash(password, 10),
+    });
+  } catch (err) {
+    // Two sign-ups with the same email at the same moment: the unique index catches the second.
+    if (err.code === 11000) return res.status(409).json({ message: DUPLICATE_MSG });
+    throw err;
+  }
   res.status(201).json({ token: makeToken(user), user: publicUser(user) });
 };
 
