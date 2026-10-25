@@ -3,6 +3,9 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const isString = (v) => typeof v === 'string';
+// Error reply. "field" tells the frontend which input box to put the message under.
+const fail = (res, status, message, field) =>
+  res.status(status).json(field ? { message, field } : { message });
 const DUPLICATE_MSG = 'An account with this email already exists. Please sign in.';
 
 
@@ -29,24 +32,24 @@ const publicUser = (u) => ({
 exports.signup = async (req, res) => {
   const { name, email, password } = req.body || {};
   if (!name || !email || !password) {
-    return res.status(400).json({ message: 'Please fill in all the fields.' });
+    return fail(res, 400, 'Please fill in all the fields.');
   }
   if (![name, email, password].every(isString)) {
-    return res.status(400).json({ message: 'Invalid input.' });
+    return fail(res, 400, 'Invalid input.');
   }
   const cleanName = name.trim();
   const cleanEmail = email.trim().toLowerCase();
   if (cleanName.length < 2 || cleanName.length > 60) {
-    return res.status(400).json({ message: 'Name must be between 2 and 60 characters.' });
+    return fail(res, 400, 'Name must be between 2 and 60 characters.', 'name');
   }
   if (!EMAIL_RE.test(cleanEmail)) {
-    return res.status(400).json({ message: 'Please enter a valid email address.' });
+    return fail(res, 400, 'Please enter a valid email address.', 'email');
   }
   if (password.length < 8 || password.length > 72) {
-    return res.status(400).json({ message: 'Password must be 8 to 72 characters.' });
+    return fail(res, 400, 'Password must be 8 to 72 characters.', 'password');
   }
-    if (await User.findOne({ email: cleanEmail })) {
-    return res.status(409).json({ message: DUPLICATE_MSG });
+  if (await User.findOne({ email: cleanEmail })) {
+    return fail(res, 409, DUPLICATE_MSG, 'email');
   }
   let user;
   try {
@@ -57,7 +60,7 @@ exports.signup = async (req, res) => {
     });
   } catch (err) {
     // Two sign-ups with the same email at the same moment: the unique index catches the second.
-    if (err.code === 11000) return res.status(409).json({ message: DUPLICATE_MSG });
+    if (err.code === 11000) return fail(res, 409, DUPLICATE_MSG, 'email');
     throw err;
   }
   res.status(201).json({ token: makeToken(user), user: publicUser(user) });
