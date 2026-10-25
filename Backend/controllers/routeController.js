@@ -1,7 +1,36 @@
 const SavedRoute = require('../models/SavedRoute');
 
+const ALGORITHMS = ['nearest-neighbour', '2-opt'];
+
+// Returns an array of error messages (empty array = valid).
+function validateRouteInput(body) {
+  if (!body || typeof body !== 'object' || Array.isArray(body)) {
+    return ['Request body must be a JSON object.'];
+  }
+
+  const errors = [];
+
+  if (body.name !== undefined && (typeof body.name !== 'string' || !body.name.trim())) {
+    errors.push('name must be a non-empty string.');
+  }
+  if (body.algorithm !== undefined && !ALGORITHMS.includes(body.algorithm)) {
+    errors.push(`algorithm must be one of: ${ALGORITHMS.join(', ')}.`);
+  }
+  for (const key of ['vehicleMileage', 'fuelPrice']) {
+    if (body[key] !== undefined && !(Number(body[key]) > 0)) {
+      errors.push(`${key} must be a positive number.`);
+    }
+  }
+
+  return errors;
+}
+
 exports.addRoute = async (req, res) => {
-  const { _id, id, user, ...data } = req.body || {};
+  const errors = validateRouteInput(req.body);
+  if (errors.length) return res.status(400).json({ message: 'Invalid route data.', errors });
+
+  // Drop fields the client must not control.
+  const { _id, id, user, ...data } = req.body;
   const route = await SavedRoute.create({ ...data, user: req.userId });
   res.status(201).json(route);
 };
