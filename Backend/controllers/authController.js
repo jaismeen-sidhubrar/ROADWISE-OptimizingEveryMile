@@ -1,6 +1,9 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
+const Vehicle = require('../models/Vehicle');
+const OtherVehicle = require('../models/OtherVehicle');
+const SavedRoute = require('../models/SavedRoute');
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const isString = (v) => typeof v === 'string';
 // Error reply. "field" tells the frontend which input box to put the message under.
@@ -124,4 +127,24 @@ exports.updateMe = async (req, res) => {
 
   await user.save();
   res.json(publicUser(user));
+};
+
+exports.deleteMe = async (req, res) => {
+  const { password } = req.body || {};
+  if (!password || !isString(password)) {
+    return fail(res, 400, 'Please enter your password to delete your account.', 'password');
+  }
+  const user = await User.findById(req.userId);
+  if (!user) return res.status(401).json({ message: 'Account not found.' });
+  if (!(await bcrypt.compare(password, user.password))) {
+    return fail(res, 400, 'Password is incorrect.', 'password');
+  }
+  // Remove everything that belongs to this user, then the user.
+  await Promise.all([
+    Vehicle.deleteMany({ user: req.userId }),
+    OtherVehicle.deleteMany({ user: req.userId }),
+    SavedRoute.deleteMany({ user: req.userId }),
+    User.findByIdAndDelete(req.userId),
+  ]);
+  res.json({ ok: true });
 };

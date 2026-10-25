@@ -6,5 +6,5 @@ router.post('/signup', c.signup);
 router.post('/login', c.login);
 router.get('/me', auth, c.getMe);
 router.put('/me', auth, c.updateMe);
-
+router.delete('/me', auth, c.deleteMe);
 module.exports = router;
