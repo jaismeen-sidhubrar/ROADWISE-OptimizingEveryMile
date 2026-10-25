@@ -205,7 +205,12 @@ function compareRouteOptions(origin, waypoints, destination, { mileage, fuelPric
     const savingsKm = round2(original.distanceKm - candidates[best].distanceKm);
     const savingsPercent = original.distanceKm ? round2((savingsKm / original.distanceKm) * 100) : 0;
 
-    return { ...candidates, best, savingsKm, savingsPercent };
+    const summary =
+        best === 'original'
+            ? 'The entered order is already the shortest.'
+            : `${best} saves ${savingsKm} km (${savingsPercent}%) compared with the entered order.`;
+
+    return { ...candidates, best, savingsKm, savingsPercent, summary };
 }
 
 // Returns an array of error messages (empty array = valid).
@@ -272,19 +277,19 @@ exports.compareRoutes = async (req, res) => {
 };
 
 exports.getRoutes = async (req, res) => {
-  const page = Math.max(parseInt(req.query.page, 10) || 1, 1);
-  const limit = Math.min(Math.max(parseInt(req.query.limit, 10) || 50, 1), 100);
-  const filter = buildHistoryFilter(req.query, req.userId);
-  const order = req.query.order === 'desc' ? -1 : 1;
+    const page = Math.max(parseInt(req.query.page, 10) || 1, 1);
+    const limit = Math.min(Math.max(parseInt(req.query.limit, 10) || 50, 1), 100);
+    const filter = buildHistoryFilter(req.query, req.userId);
+    const order = req.query.order === 'desc' ? -1 : 1;
 
-  const total = await SavedRoute.countDocuments(filter);
-  const routes = await SavedRoute.find(filter)
-    .sort({ createdAt: order })
-    .skip((page - 1) * limit)
-    .limit(limit);
+    const total = await SavedRoute.countDocuments(filter);
+    const routes = await SavedRoute.find(filter)
+        .sort({ createdAt: order })
+        .skip((page - 1) * limit)
+        .limit(limit);
 
-  res.set('X-Total-Count', String(total));
-  res.json(routes);
+    res.set('X-Total-Count', String(total));
+    res.json(routes);
 };
 
 exports.getRouteById = async (req, res) => {
@@ -311,7 +316,7 @@ exports.deleteRoute = async (req, res) => {
     const route = await findOwnedRoute(req);
     if (!route) return res.status(404).json({ message: 'Route not found.' });
     await route.deleteOne();
-    res.json({ ok: true });
+     res.json({ ok: true, id: route.id });
 };
 
 
