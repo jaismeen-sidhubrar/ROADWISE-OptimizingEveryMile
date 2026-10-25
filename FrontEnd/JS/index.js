@@ -948,7 +948,7 @@ function showSignupForm() {
    HANDLE SIGNUP
 ========================================================= */
 
-function handleSignup(event) {
+async function handleSignup(event) {
 
     event.preventDefault();
 
@@ -995,61 +995,19 @@ function handleSignup(event) {
         return;
     }
 
-    const users = getUsers();
+    const message = document.getElementById("signupMessage");
 
-    const existingUser =
-        users.find(
-            user =>
-                user.email.toLowerCase() ===
-                email.toLowerCase()
-        );
-
-    if (existingUser) {
-
-        const message = document.getElementById("signupMessage");
-
-        message.textContent =
-            "An account with this email already exists. Please sign in.";
-
+    try {
+        const data = await api("/auth/signup", {
+            method: "POST",
+            body: { name, email, password }
+        });
+        saveSession(data);
+        window.location.href = "Pages/dashboard.html";
+    } catch (error) {
+        message.textContent = error.message;
         message.className = "form-message error";
-
-
-        return;
     }
-
-    const newUser = {
-
-        name: name,
-
-        email: email,
-
-        password: password
-
-    };
-
-    users.push(newUser);
-
-    saveUsers(users);
-
-    const currentUser = {
-
-        name: name,
-
-        email: email
-
-    };
-
-    localStorage.setItem(
-        "roadwiseCurrentUser",
-        JSON.stringify(currentUser)
-    );
-
-    
-
-    /* Go to Dashboard */
-
-    window.location.href =
-        "Pages/dashboard.html";
 }
 
 
