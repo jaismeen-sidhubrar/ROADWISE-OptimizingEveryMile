@@ -7,9 +7,6 @@ const handleError = (res, err) => {
 };
 
 exports.getOtherVehicles = async (req, res) => {
-  if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
-    return res.status(400).json({ message: 'Invalid vehicle id' });
-  }
   res.json(await OtherVehicle.find({ user: req.userId }).sort({ createdAt: 1 }));
 };
 
