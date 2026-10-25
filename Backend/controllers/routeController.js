@@ -75,6 +75,31 @@ function nearestNeighbour(origin, waypoints, destination) {
     return path;
 }
 
+// Reverses segments of the path while that makes it shorter.
+// First and last stops (origin, destination) never move.
+function twoOpt(path) {
+    let best = [...path];
+    let improved = true;
+
+    while (improved) {
+        improved = false;
+        for (let i = 1; i < best.length - 2; i++) {
+            for (let j = i + 1; j < best.length - 1; j++) {
+                const candidate = [
+                    ...best.slice(0, i),
+                    ...best.slice(i, j + 1).reverse(),
+                    ...best.slice(j + 1),
+                ];
+                if (rawDistance(candidate) < rawDistance(best) - 1e-9) {
+                    best = candidate;
+                    improved = true;
+                }
+            }
+        }
+    }
+    return best;
+}
+
 // Returns an array of error messages (empty array = valid).
 function validateRouteInput(body) {
     if (!body || typeof body !== 'object' || Array.isArray(body)) {
