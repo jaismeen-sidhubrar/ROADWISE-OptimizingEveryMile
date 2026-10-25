@@ -100,6 +100,29 @@ function twoOpt(path) {
     return best;
 }
 
+function describe(order, mileage, fuelPrice) {
+    const distanceKm = pathDistanceKm(order);
+    return { order, distanceKm, ...calculateFuel(distanceKm, mileage, fuelPrice) };
+}
+
+// Compares the entered order, nearest neighbour, and 2-opt (seeded by nearest neighbour).
+function compareRouteOptions(origin, waypoints, destination, { mileage, fuelPrice } = {}) {
+    const original = describe([origin, ...waypoints, destination], mileage, fuelPrice);
+    const nnOrder = nearestNeighbour(origin, waypoints, destination);
+    const nn = describe(nnOrder, mileage, fuelPrice);
+    const opt = describe(twoOpt(nnOrder), mileage, fuelPrice);
+
+    const candidates = { original, 'nearest-neighbour': nn, '2-opt': opt };
+    const best = Object.keys(candidates).reduce((a, b) =>
+        candidates[b].distanceKm < candidates[a].distanceKm ? b : a
+    );
+
+    const savingsKm = round2(original.distanceKm - candidates[best].distanceKm);
+    const savingsPercent = original.distanceKm ? round2((savingsKm / original.distanceKm) * 100) : 0;
+
+    return { ...candidates, best, savingsKm, savingsPercent };
+}
+
 // Returns an array of error messages (empty array = valid).
 function validateRouteInput(body) {
     if (!body || typeof body !== 'object' || Array.isArray(body)) {
@@ -164,8 +187,33 @@ exports.addRoute = async (req, res) => {
     data.fuelPrice = Number(data.fuelPrice) > 0 ? Number(data.fuelPrice) : DEFAULT_FUEL_PRICE;
     Object.assign(data, calculateFuel(data.distanceKm, data.vehicleMileage, data.fuelPrice));
 
+    // Compare algorithms and store the one the user picked (default: 2-opt).
+    const algorithm = data.algorithm || '2-opt';
+    data.algorithm = algorithm;
+    data.comparison = compareRouteOptions(data.origin, data.waypoints, data.destination, {
+        mileage: data.vehicleMileage,
+        fuelPrice: data.fuelPrice,
+    });
+    data.optimizedStops = data.comparison[algorithm].order;
+    data.optimizedDistanceKm = data.comparison[algorithm].distanceKm;
+
     const route = await SavedRoute.create({ ...data, user: req.userId });
     res.status(201).json(route);
+};
+
+exports.compareRoutes = async (req, res) => {
+    const errors = validateRouteInput(req.body);
+    if (errors.length) return res.status(400).json({ message: 'Invalid route data.', errors });
+
+    const { origin, destination, waypoints = [], vehicleMileage, fuelPrice } = req.body;
+    res.json(
+        compareRouteOptions(
+            normalizePoint(origin, 'Origin'),
+            waypoints.map((w, i) => normalizePoint(w, `Stop ${i + 1}`)),
+            normalizePoint(destination, 'Destination'),
+            { mileage: Number(vehicleMileage), fuelPrice: Number(fuelPrice) }
+        )
+    );
 };
 
 exports.getRoutes = async (req, res) => {
