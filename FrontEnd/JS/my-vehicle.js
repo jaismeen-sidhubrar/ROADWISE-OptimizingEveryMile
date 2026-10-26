@@ -241,9 +241,50 @@ if (footerLogout) {
    OPEN MODAL
 ========================================================= */
 
+let editingVehicleId = null;
+
+function setVehicleModalMode(isEdit) {
+
+    document.getElementById("vehicleModalLabel").textContent =
+        isEdit ? "EDIT VEHICLE" : "ADD VEHICLE";
+
+    document.getElementById("vehicleModalTitle").textContent =
+        isEdit ? "Edit your vehicle." : "Add your vehicle.";
+
+    document.getElementById("vehicleModalText").textContent =
+        isEdit
+            ? "Update your vehicle name or mileage. Your travel totals will stay as they are."
+            : "Save your vehicle mileage once and RoadWise will use it automatically while planning routes.";
+
+    document.getElementById("vehicleSaveText").textContent =
+        isEdit ? "Save Changes" : "Save Vehicle";
+
+}
+
 function openVehicleModal() {
 
+    editingVehicleId = null;
+
     vehicleForm.reset();
+
+    setVehicleModalMode(false);
+
+    vehicleModal.classList.add(
+        "active"
+    );
+
+}
+
+function openEditVehicleModal(vehicle) {
+
+    editingVehicleId = vehicle.id;
+
+    vehicleForm.reset();
+
+    document.getElementById("vehicleName").value = vehicle.name;
+    document.getElementById("vehicleMileage").value = vehicle.mileage;
+
+    setVehicleModalMode(true);
 
     vehicleModal.classList.add(
         "active"
@@ -282,6 +323,8 @@ function closeVehicleModalFunction() {
     vehicleModal.classList.remove(
         "active"
     );
+
+    editingVehicleId = null;
 
 }
 
@@ -416,7 +459,11 @@ vehicleForm.addEventListener(
 
 
         try {
-            await api("/vehicles", { method: "POST", body: { name, mileage } });
+            if (editingVehicleId) {
+                await api(`/vehicles/${editingVehicleId}`, { method: "PUT", body: { name, mileage } });
+            } else {
+                await api("/vehicles", { method: "POST", body: { name, mileage } });
+            }
             await loadVehicles();
         } catch (error) {
             alert(error.message);
@@ -480,12 +527,23 @@ function createVehicleCard(
             </div>
 
 
-            <button
-                type="button"
-                class="vehicle-delete-btn"
-            >
-                Delete
-            </button>
+            <div class="vehicle-card-actions">
+
+                <button
+                    type="button"
+                    class="vehicle-edit-btn"
+                >
+                    Edit
+                </button>
+
+                <button
+                    type="button"
+                    class="vehicle-delete-btn"
+                >
+                    Delete
+                </button>
+
+            </div>
 
         </div>
 
@@ -550,7 +608,12 @@ function createVehicleCard(
 
     `;
 
-
+    card.querySelector(".vehicle-edit-btn")
+        .addEventListener(
+            "click",
+            () => openEditVehicleModal(vehicle)
+        );
+    
     const deleteButton =
         card.querySelector(
             ".vehicle-delete-btn"
