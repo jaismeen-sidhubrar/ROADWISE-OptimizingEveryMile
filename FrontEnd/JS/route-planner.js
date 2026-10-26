@@ -2283,15 +2283,29 @@ async function saveSelectedRoute(
         longestRouteTotalCost: longestRouteJourney.totalCost
     };
 
-    try {
-        await api("/routes", { method: "POST", body: savedRoute });
-        await updateVehicleStatistics(journey);
+        try {
+        if (editingRouteId) {
+            // Editing: replace the saved route instead of adding a second one.
+            // Vehicle totals are not touched, they were counted when it was first saved.
+            await api(`/routes/${encodeURIComponent(editingRouteId)}`, {
+                method: "PUT",
+                body: savedRoute
+            });
+        } else {
+            await api("/routes", { method: "POST", body: savedRoute });
+            await updateVehicleStatistics(journey);
+        }
     } catch (error) {
         showMessage(error.message, "error");
         return;
     }
 
-    showMessage(`${algorithmName} route has been added to your dashboard/history!`, "success");
+    showMessage(
+        editingRouteId
+            ? `${algorithmName} route has been updated in your dashboard/history!`
+            : `${algorithmName} route has been added to your dashboard/history!`,
+        "success"
+    );
 }
 
 
