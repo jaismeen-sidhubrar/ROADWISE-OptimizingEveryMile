@@ -208,3 +208,61 @@ function renderHomeStats() {
 
     homeStatsBox.hidden = false;
 }
+
+/* ---------- map ---------- */
+
+function drawHomeMap(home, alternatives, best) {
+    if (!homeMap) {
+        homeMap = L.map("homeMap");
+        L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+            maxZoom: 19,
+            attribution: "&copy; OpenStreetMap contributors"
+        }).addTo(homeMap);
+        routeLayer = L.layerGroup().addTo(homeMap);
+    }
+
+    routeLayer.clearLayers();
+
+    alternatives.forEach((alt) => {
+        L.polyline(alt.coords, { color: "#9aa0a6", weight: 4, opacity: 0.6, dashArray: "6 8" })
+            .addTo(routeLayer);
+    });
+
+    if (best) {
+        L.polyline(best.coords, { color: "#6f9a1f", weight: 6, opacity: 0.95 }).addTo(routeLayer);
+    }
+
+    L.marker([home.lat, home.lng]).bindTooltip("Home").addTo(routeLayer);
+
+    if (currentPos) {
+        L.circleMarker([currentPos.lat, currentPos.lng], {
+            radius: 9, color: "#ffffff", weight: 3, fillColor: "#2563eb", fillOpacity: 1
+        }).bindTooltip("You are here").addTo(routeLayer);
+    }
+
+    const points = best ? best.coords : [[home.lat, home.lng]];
+    if (points.length > 1) {
+        homeMap.fitBounds(L.latLngBounds(points), { padding: [40, 40] });
+    } else {
+        homeMap.setView(points[0], 15);
+    }
+    setTimeout(() => homeMap.invalidateSize(), 100);
+}
+
+
+/* ---------- events ---------- */
+
+locateBtn.addEventListener("click", locateAndRoute);
+homeVehicleSelect.addEventListener("change", renderHomeStats);
+homeFuelPriceInput.addEventListener("input", renderHomeStats);
+
+const footerLogoutLink = document.getElementById("footerLogout");
+if (footerLogoutLink) {
+    footerLogoutLink.addEventListener("click", (event) => {
+        event.preventDefault();
+        clearSession();
+        window.location.href = "../index.html";
+    });
+}
+
+initFindHome();
