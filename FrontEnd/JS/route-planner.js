@@ -2258,12 +2258,38 @@ async function loadPetrolPumps(route, map) {
             );
         }
 
-        const data = await response.json();
+        
+const data = await response.json();
 
-        console.log("Petrol pump API response:", data);
-        showMessage(
-            `Petrol pump data received: ${data.elements.length} mapped locations.`
-        );
+const pumps = data.elements
+    .map(element => {
+        const latitude = element.lat ?? element.center?.lat;
+        const longitude = element.lon ?? element.center?.lon;
+
+        if (latitude == null || longitude == null) {
+            return null;
+        }
+
+        return {
+            id: element.type + "-" + element.id,
+            latitude: Number(latitude),
+            longitude: Number(longitude),
+            name:
+                element.tags?.name ||
+                element.tags?.brand ||
+                "Petrol Pump",
+            tags: element.tags || {}
+        };
+    })
+    .filter(Boolean);
+
+console.log("Extracted petrol pumps:", pumps);
+
+showMessage(
+    `Found ${pumps.length} mapped petrol pumps in the search area.`
+);
+
+
     } catch (error) {
         console.error("Petrol pump lookup failed:", error);
 
