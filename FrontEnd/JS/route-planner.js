@@ -2353,11 +2353,43 @@ const pumps = data.elements
             ).values()
         ].slice(0, 20);
 
+       
         console.log("Petrol pumps near route:", uniquePumps);
+
+        if (uniquePumps.length === 0) {
+            showMessage("No petrol pumps found near this route.");
+            return;
+        }
+
+        uniquePumps.forEach((pump, index) => {
+            const number = index + 1;
+
+            const icon = L.divIcon({
+                className: "fuel-pump-marker",
+                html: `
+                    <div class="fuel-pump-marker-inner">
+                        <span>⛽</span>
+                        <b>${number}</b>
+                    </div>
+                `,
+                iconSize: [38, 34],
+                iconAnchor: [19, 17]
+            });
+
+            const marker = L.marker(
+                [pump.latitude, pump.longitude],
+                { icon }
+            ).addTo(map);
+
+            marker.bindPopup(
+                pump.name + " — Petrol Pump " + number
+            );
+        });
 
         showMessage(
             `Found ${uniquePumps.length} petrol pumps near the route.`
         );
+
 
 
 
