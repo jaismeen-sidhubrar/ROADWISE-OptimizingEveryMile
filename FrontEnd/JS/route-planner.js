@@ -2759,4 +2759,186 @@ async function updateVehicleStatistics(journey) {
 }
 
 
-loadVehicles().then(populateVehicleDropdown);
+/* =========================================================
+   EDIT A SAVED ROUTE
+   The history page opens this page as route-planner.html?edit=<routeId>.
+   We load that route and fill the form in so it can be changed
+   and searched again.
+========================================================= */
+
+let editingRouteId =
+    new URLSearchParams(window.location.search).get("edit");
+
+
+function showEditBanner(routeName) {
+
+    const banner =
+        document.createElement("div");
+
+    banner.id =
+        "editBanner";
+
+    banner.className =
+        "page-message success";
+
+    banner.style.display =
+        "block";
+
+
+    // textContent (not innerHTML) because the name comes from addresses the user typed.
+    const text =
+        document.createElement("span");
+
+    text.textContent =
+        `Editing saved route: ${routeName}. Change any stop or detail, then press Find Route. `;
+
+
+    const cancelLink =
+        document.createElement("a");
+
+    cancelLink.href =
+        "route_history.html";
+
+    cancelLink.textContent =
+        "Cancel";
+
+
+    banner.append(
+        text,
+        cancelLink
+    );
+
+    addressContainer.parentNode.insertBefore(
+        banner,
+        addressContainer
+    );
+
+    banner.scrollIntoView({
+        behavior: "smooth",
+        block: "center"
+    });
+
+}
+
+
+function fillFormFromRoute(route) {
+
+    /* ---------- Stops, in the order they were originally typed ---------- */
+
+    const addresses =
+        Array.isArray(route.originalAddresses) &&
+        route.originalAddresses.length >= 2
+            ? route.originalAddresses
+            : [
+                route.origin?.name,
+                ...(route.waypoints || []).map(stop => stop.name),
+                route.destination?.name
+            ].filter(Boolean);
+
+
+    // The form starts with two boxes. Press "+ Add Address" until there is one per stop.
+    while (
+        document.querySelectorAll(".address-input").length <
+        addresses.length
+    ) {
+        addAddressBtn.click();
+    }
+
+    document
+        .querySelectorAll(".address-input")
+        .forEach((input, index) => {
+            input.value =
+                addresses[index] || "";
+        });
+
+
+    /* ---------- Trip details ---------- */
+
+    if (route.fuelPrice) {
+        document.getElementById("fuelPrice").value =
+            route.fuelPrice;
+    }
+
+    if (route.averageSpeed) {
+        document.getElementById("averageSpeed").value =
+            route.averageSpeed;
+    }
+
+
+    /* ---------- Vehicle ---------- */
+
+    const savedVehicle =
+        route.vehicleId &&
+        getUserVehicles().find(
+            vehicle => vehicle.id === String(route.vehicleId)
+        );
+
+    if (savedVehicle) {
+
+        vehicleSelect.value =
+            savedVehicle.id;
+
+        vehicleSelect.dispatchEvent(
+            new Event("change")
+        );
+
+    } else if (!route.vehicleId) {
+
+        // The route used "Other" with a mileage typed in by hand.
+        vehicleSelect.value =
+            "other";
+
+        vehicleSelect.dispatchEvent(
+            new Event("change")
+        );
+
+        fuelEfficiencyInput.value =
+            route.vehicleMileage || route.fuelEfficiency || "";
+
+    } else {
+
+        // The vehicle used before has been deleted: ask the user to pick one.
+        vehicleError.style.display =
+            "block";
+
+    }
+
+}
+
+
+async function loadRouteForEdit() {
+
+    if (!editingRouteId) return;
+
+    let route;
+
+    try {
+
+        route =
+            await api(`/routes/${encodeURIComponent(editingRouteId)}`);
+
+    } catch (error) {
+
+        editingRouteId =
+            null;
+
+        showMessage(
+            `Could not open that route for editing. ${error.message}`,
+            "error"
+        );
+
+        return;
+
+    }
+
+    fillFormFromRoute(route);
+
+    showEditBanner(route.name);
+
+}
+
+
+// Vehicles must be loaded first so the vehicle dropdown can be filled in.
+loadVehicles()
+    .then(populateVehicleDropdown)
+    .then(loadRouteForEdit);
