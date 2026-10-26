@@ -2283,11 +2283,82 @@ const pumps = data.elements
     })
     .filter(Boolean);
 
-console.log("Extracted petrol pumps:", pumps);
+    
+        // Estimate each petrol pump's distance from the route.
+        function getRoutePosition(point) {
+            let closestDistance = Infinity;
+            let closestProgress = 0;
 
-showMessage(
-    `Found ${pumps.length} mapped petrol pumps in the search area.`
-);
+            for (let i = 0; i < route.length - 1; i++) {
+                const start = route[i];
+                const end = route[i + 1];
+
+                const averageLatitude =
+                    (start.latitude + end.latitude + point.latitude) / 3;
+
+                const longitudeScale =
+                    111320 * Math.cos(averageLatitude * Math.PI / 180);
+
+                const x1 = start.longitude * longitudeScale;
+                const y1 = start.latitude * 111320;
+                const x2 = end.longitude * longitudeScale;
+                const y2 = end.latitude * 111320;
+                const px = point.longitude * longitudeScale;
+                const py = point.latitude * 111320;
+
+                const dx = x2 - x1;
+                const dy = y2 - y1;
+                const lengthSquared = dx * dx + dy * dy;
+
+                const t = lengthSquared === 0
+                    ? 0
+                    : Math.max(
+                        0,
+                        Math.min(
+                            1,
+                            ((px - x1) * dx + (py - y1) * dy) /
+                            lengthSquared
+                        )
+                    );
+
+                const distance = Math.hypot(
+                    px - (x1 + t * dx),
+                    py - (y1 + t * dy)
+                );
+
+                if (distance < closestDistance) {
+                    closestDistance = distance;
+                    closestProgress = i + t;
+                }
+            }
+
+            return {
+                distance: closestDistance,
+                progress: closestProgress
+            };
+        }
+
+        const nearbyPumps = pumps
+            .map(pump => ({
+                ...pump,
+                ...getRoutePosition(pump)
+            }))
+            .filter(pump => pump.distance <= 3000)
+            .sort((a, b) => a.progress - b.progress);
+
+        // Keep the list manageable.
+        const uniquePumps = [
+            ...new Map(
+                nearbyPumps.map(pump => [pump.id, pump])
+            ).values()
+        ].slice(0, 20);
+
+        console.log("Petrol pumps near route:", uniquePumps);
+
+        showMessage(
+            `Found ${uniquePumps.length} petrol pumps near the route.`
+        );
+
 
 
     } catch (error) {
