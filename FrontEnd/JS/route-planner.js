@@ -2239,14 +2239,39 @@ async function loadPetrolPumps(route, map) {
         out center tags;
     `;
 
-    console.log("Petrol pump search area:", {
-        south,
-        west,
-        north,
-        east
-    });
+    
+    try {
+        const response = await fetch(
+            "https://overpass-api.de/api/interpreter",
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded"
+                },
+                body: "data=" + encodeURIComponent(query)
+            }
+        );
 
-    console.log("Prepared petrol pump query:", query);
+        if (!response.ok) {
+            throw new Error(
+                "Petrol pump API returned status " + response.status
+            );
+        }
+
+        const data = await response.json();
+
+        console.log("Petrol pump API response:", data);
+        showMessage(
+            `Petrol pump data received: ${data.elements.length} mapped locations.`
+        );
+    } catch (error) {
+        console.error("Petrol pump lookup failed:", error);
+
+        showMessage(
+            "Could not load petrol pumps right now. Please try again later."
+        );
+    }
+
 }
 
 
