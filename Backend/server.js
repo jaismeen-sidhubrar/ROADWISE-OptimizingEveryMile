@@ -26,6 +26,7 @@ app.use('/api/auth', require('./routes/auth'));
 app.use('/api/vehicles', require('./routes/Vehicle'));
 app.use('/api/other-vehicles', require('./routes/otherVehicles'));
 app.use('/api/routes', require('./routes/routes'));
+app.use('/api/chatbot', require('./routes/chatbot'));
 
 app.use(notFound);
 app.use(errorHandler);
