@@ -24,52 +24,185 @@
 
     <div id="navbar-container"></div>
 
+    <main>
 
+        <!-- INTRO -->
+        <section class="hero" id="findHome">
+            <div class="hero-container">
+                <div class="hero-content" style="max-width:850px;">
 
-    <!-- =================================================
+                    <div class="eyebrow">
+                        <span class="eyebrow-dot"></span>
+                        FIND HOME
+                    </div>
+
+                    <h1>Take me<br><span>home.</span></h1>
+
+                    <p class="hero-description" id="homeIntro">Checking your saved home address…</p>
+
+                    <div class="hero-buttons">
+                        <button type="button" class="primary-btn" id="locateBtn" disabled>
+                            Refresh my location <span>→</span>
+                        </button>
+                        <a href="profile.html" class="outline-btn">Edit home address</a>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- ROUTE -->
+        <section class="about-section" id="homeRouteSection">
+            <div class="section-container">
+
+                <div id="homeStatus" class="home-status" role="status"></div>
+
+                <div class="home-controls">
+                    <div class="home-field">
+                        <label for="homeVehicle">VEHICLE</label>
+                        <select id="homeVehicle">
+                            <option value="15">Default (15 km/l)</option>
+                        </select>
+                    </div>
+                    <div class="home-field">
+                        <label for="homeFuelPrice">FUEL PRICE (per litre)</label>
+                        <input type="number" id="homeFuelPrice" value="100" min="1" step="0.5">
+                    </div>
+                </div>
+
+                <div class="home-stats" id="homeStats" hidden>
+                    <div class="home-stat"><span id="statDistance">—</span><small>Distance</small></div>
+                    <div class="home-stat"><span id="statTime">—</span><small>Travel time</small></div>
+                    <div class="home-stat"><span id="statFuel">—</span><small>Fuel needed</small></div>
+                    <div class="home-stat"><span id="statCost">—</span><small>Fuel cost</small></div>
+                </div>
+
+                <div id="homeMap"></div>
+
+            </div>
+        </section>
+
+        <!-- =================================================
              FOOTER
         ================================================== -->
 
-    <footer class="footer">
+        <footer class="footer">
 
-        <div class="footer-container">
-
-
-            <div class="footer-main">
-
-                <a href="dashboard.html" class="logo footer-logo">
-
-                    <div class="logo-mark">
-                        R
-                    </div>
-
-                    <div class="logo-text">
-                        ROAD<span>WISE</span>
-                    </div>
-
-                </a>
+            <div class="footer-container">
 
 
-                <p>
+                <div class="footer-main">
 
-                    Vehicle route and fuel cost optimization
-                    designed to help every journey make more sense.
+                    <a href="dashboard.html" class="logo footer-logo">
 
-                </p>
+                        <div class="logo-mark">
+                            R
+                        </div>
 
+                        <div class="logo-text">
+                            ROAD<span>WISE</span>
+                        </div>
 
-                <div class="footer-socials">
-
-                    <a href="#">
-                        in
                     </a>
 
-                    <a href="#">
-                        X
+
+                    <p>
+
+                        Vehicle route and fuel cost optimization
+                        designed to help every journey make more sense.
+
+                    </p>
+
+
+                    <div class="footer-socials">
+
+                        <a href="#">
+                            in
+                        </a>
+
+                        <a href="#">
+                            X
+                        </a>
+
+                        <a href="#">
+                            G
+                        </a>
+
+                    </div>
+
+                </div>
+
+
+
+                <div class="footer-column">
+
+                    <span>
+                        PRODUCT
+                    </span>
+
+
+                    <a href="#route">
+                        Find Route
                     </a>
 
-                    <a href="#">
-                        G
+
+                    <a href="route_history.html">
+                        Route History
+                    </a>
+
+
+                    <a href="dashboard.html">
+                        Dashboard
+                    </a>
+
+                </div>
+
+
+
+                <div class="footer-column">
+
+                    <span>
+                        ACCOUNT
+                    </span>
+
+
+                    <a href="profile.html">
+                        Profile
+                    </a>
+
+
+                    <a href="route_history.html">
+                        My Routes
+                    </a>
+
+
+                    <a href="#" id="footerLogout">
+                        Log Out
+                    </a>
+
+                </div>
+
+
+
+                <div class="footer-column">
+
+                    <span>
+                        ROADWISE
+                    </span>
+
+
+                    <a href="../index.html">
+                        Landing Page
+                    </a>
+
+
+                    <a href="#route">
+                        Find Route
+                    </a>
+
+
+                    <a href="dashboard.html">
+                        Dashboard
                     </a>
 
                 </div>
@@ -78,97 +211,20 @@
 
 
 
-            <div class="footer-column">
+            <div class="footer-bottom">
 
                 <span>
-                    PRODUCT
+                    © 2026 RoadWise. All rights reserved.
                 </span>
 
 
-                <a href="#route">
-                    Find Route
-                </a>
-
-
-                <a href="route_history.html">
-                    Route History
-                </a>
-
-
-                <a href="dashboard.html">
-                    Dashboard
-                </a>
-
-            </div>
-
-
-
-            <div class="footer-column">
-
                 <span>
-                    ACCOUNT
+                    Built to optimize every mile.
                 </span>
 
-
-                <a href="profile.html">
-                    Profile
-                </a>
-
-
-                <a href="route_history.html">
-                    My Routes
-                </a>
-
-
-                <a href="#" id="footerLogout">
-                    Log Out
-                </a>
-
             </div>
 
-
-
-            <div class="footer-column">
-
-                <span>
-                    ROADWISE
-                </span>
-
-
-                <a href="../index.html">
-                    Landing Page
-                </a>
-
-
-                <a href="#route">
-                    Find Route
-                </a>
-
-
-                <a href="dashboard.html">
-                    Dashboard
-                </a>
-
-            </div>
-
-        </div>
-
-
-
-        <div class="footer-bottom">
-
-            <span>
-                © 2026 RoadWise. All rights reserved.
-            </span>
-
-
-            <span>
-                Built to optimize every mile.
-            </span>
-
-        </div>
-
-    </footer>
+        </footer>
     </main>
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
