@@ -2204,6 +2204,7 @@ function displayOptionMap(
 
 
 
+
 async function loadPetrolPumps(route, map) {
     const card = map.getContainer().closest(".route-option-card");
     const list = card?.querySelector(".route-petrol-pump-list");
@@ -2223,7 +2224,31 @@ async function loadPetrolPumps(route, map) {
     }
 
     showMessage("Preparing to search for nearby petrol pumps...");
+
+    const latitudes = route.map(point => point.latitude);
+    const longitudes = route.map(point => point.longitude);
+
+    const south = Math.min(...latitudes) - 0.05;
+    const west = Math.min(...longitudes) - 0.05;
+    const north = Math.max(...latitudes) + 0.05;
+    const east = Math.max(...longitudes) + 0.05;
+
+    const query = `
+        [out:json][timeout:25];
+        nwr["amenity"="fuel"](${south},${west},${north},${east});
+        out center tags;
+    `;
+
+    console.log("Petrol pump search area:", {
+        south,
+        west,
+        north,
+        east
+    });
+
+    console.log("Prepared petrol pump query:", query);
 }
+
 
 
 /* =========================================================
