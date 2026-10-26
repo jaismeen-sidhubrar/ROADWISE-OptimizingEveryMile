@@ -2355,6 +2355,7 @@ const pumps = data.elements
 
        
         console.log("Petrol pumps near route:", uniquePumps);
+        list.replaceChildren();
 
         if (uniquePumps.length === 0) {
             showMessage("No petrol pumps found near this route.");
@@ -2384,6 +2385,42 @@ const pumps = data.elements
             marker.bindPopup(
                 pump.name + " — Petrol Pump " + number
             );
+            
+            // Create the matching petrol pump card entry.
+            const item = document.createElement("div");
+            item.className = "route-petrol-pump-item";
+
+            const badge = document.createElement("span");
+            badge.className = "route-petrol-pump-number";
+            badge.textContent = "⛽ " + number;
+
+            const details = document.createElement("div");
+            details.className = "route-petrol-pump-details";
+
+            const name = document.createElement("strong");
+            name.textContent = pump.name;
+
+            details.appendChild(name);
+
+            const addressParts = [
+                pump.tags["addr:street"],
+                pump.tags["addr:place"],
+                pump.tags["addr:city"]
+            ].filter(Boolean);
+
+            if (addressParts.length > 0) {
+                const address = document.createElement("small");
+                address.textContent = addressParts.join(", ");
+                details.appendChild(address);
+            }
+
+            item.append(badge, details);
+
+            const card = map.getContainer().closest(".route-option-card");
+            const list = card?.querySelector(".route-petrol-pump-list");
+
+            list?.appendChild(item);
+
         });
 
         showMessage(
