@@ -73,3 +73,17 @@ async function initFindHome() {
     locateBtn.disabled = false;
     locateAndRoute();
 }
+
+async function loadHomeVehicles() {
+    try {
+        const vehicles = await api("/vehicles");
+        vehicles.forEach((v) => {
+            const option = document.createElement("option");
+            option.value = String(v.mileage);
+            option.textContent = `${v.name} (${v.mileage} km/l)`;
+            homeVehicleSelect.appendChild(option);
+        });
+    } catch (error) {
+        /* keep the default option */
+    }
+}
