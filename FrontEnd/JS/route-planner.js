@@ -2283,10 +2283,16 @@ async function saveSelectedRoute(
         longestRouteTotalCost: longestRouteJourney.totalCost
     };
 
-        try {
-        if (editingRouteId) {
-            // Editing: replace the saved route instead of adding a second one.
-            // Vehicle totals are not touched, they were counted when it was first saved.
+            // When editing, the checkbox in the banner decides: replace the original, or save a copy.
+    const saveAsNew =
+        Boolean(document.getElementById("saveAsNewRoute")?.checked);
+
+    const replacingOriginal =
+        Boolean(editingRouteId) && !saveAsNew;
+
+    try {
+        if (replacingOriginal) {
+            // The server also fixes the vehicle totals: old trip out, new trip in.
             await api(`/routes/${encodeURIComponent(editingRouteId)}`, {
                 method: "PUT",
                 body: savedRoute
@@ -2301,7 +2307,7 @@ async function saveSelectedRoute(
     }
 
     showMessage(
-        editingRouteId
+        replacingOriginal
             ? `${algorithmName} route has been updated in your dashboard/history!`
             : `${algorithmName} route has been added to your dashboard/history!`,
         "success"
@@ -2817,9 +2823,43 @@ function showEditBanner(routeName) {
         "Cancel";
 
 
+        // Lets the user keep the original route and save the changes as a copy instead.
+    const saveAsNewLabel =
+        document.createElement("label");
+
+    saveAsNewLabel.style.display =
+        "block";
+
+    saveAsNewLabel.style.marginTop =
+        "10px";
+
+    saveAsNewLabel.style.cursor =
+        "pointer";
+
+
+    const saveAsNewBox =
+        document.createElement("input");
+
+    saveAsNewBox.type =
+        "checkbox";
+
+    saveAsNewBox.id =
+        "saveAsNewRoute";
+
+    saveAsNewBox.style.marginRight =
+        "8px";
+
+
+    saveAsNewLabel.append(
+        saveAsNewBox,
+        "Save as a new route (keep the original)"
+    );
+
+
     banner.append(
         text,
-        cancelLink
+        cancelLink,
+        saveAsNewLabel
     );
 
     addressContainer.parentNode.insertBefore(
