@@ -1734,21 +1734,19 @@ function createRouteOptionCard(
         </div>
 
 
-        <div class="route-card-route">
-
-            <div class="route-card-route-title">
-
-                Stop sequence
-
+        ${isRecommended ? `
+        <div class="route-petrol-pumps">
+            <div class="route-petrol-pumps-title">
+                Petrol pumps along this route
             </div>
 
-
-            <div class="route-stop-list"></div>
-
+            <div class="route-petrol-pump-list">
+                <p class="route-pumps-loading">
+                    Petrol pumps will appear here.
+                </p>
+            </div>
         </div>
-
-
-        <div class="route-option-map"></div>
+    ` : ""}
 
 
         <button
