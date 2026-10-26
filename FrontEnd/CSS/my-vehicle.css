@@ -152,6 +152,29 @@
     color: white;
 }
 
+.vehicle-card-actions {
+    display: flex;
+    gap: 10px;
+    flex-shrink: 0;
+}
+
+.vehicle-edit-btn {
+    padding: 9px 16px;
+    background: transparent;
+    border: 1px solid var(--border);
+    color: #202936;
+    font-size: 10px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.25s ease;
+}
+
+.vehicle-edit-btn:hover {
+    background: #202936;
+    border-color: #202936;
+    color: white;
+}
+
 
 /* EMPTY STATE */
 
