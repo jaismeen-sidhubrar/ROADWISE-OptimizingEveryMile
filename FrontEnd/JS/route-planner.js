@@ -346,26 +346,16 @@ function hideMessage() {
    NAVBAR SCROLL
 ========================================================= */
 
-window.addEventListener(
-    "scroll",
-    () => {
 
-        if (window.scrollY > 40) {
+window.addEventListener("scroll", () => {
+    if (!navbar) return;
 
-            navbar.classList.add(
-                "scrolled"
-            );
-
-        } else {
-
-            navbar.classList.remove(
-                "scrolled"
-            );
-
-        }
-
+    if (window.scrollY > 40) {
+        navbar.classList.add("scrolled");
+    } else {
+        navbar.classList.remove("scrolled");
     }
-);
+});
 
 
 
@@ -1474,25 +1464,25 @@ function displayRouteOptions(
 
         optionsGrid.appendChild(
 
-        createRouteOptionCard(
+            createRouteOptionCard(
 
-            1,
+                1,
 
-            bestOption.route,
+                bestOption.route,
 
-            bestOption.journey,
+                bestOption.journey,
 
-            true,
+                true,
 
-            bestOption.algorithm,
+                bestOption.algorithm,
 
-            longestRoute,
+                longestRoute,
 
-            longestRouteJourney
+                longestRouteJourney
 
-        )
+            )
 
-    );
+        );
 
     } else {
 
@@ -1661,9 +1651,7 @@ function createRouteOptionCard(
 
                 <strong>
 
-                    ${journey.totalDistance
-            .toFixed(2)
-        }
+                    ${journey.totalDistance.toFixed(2)}
 
                     <small>
                         km
@@ -1732,6 +1720,12 @@ function createRouteOptionCard(
 
 
         </div>
+
+        
+<div class="route-stop-list"></div>
+
+<div class="route-option-map"></div>
+
 
 
         ${isRecommended ? `
@@ -2083,7 +2077,7 @@ function displayRouteMap(
 function displayOptionMap(
     route,
     mapId,
-    isRecommended=false
+    isRecommended = false
 ) {
 
     const mapElement =
@@ -2200,7 +2194,7 @@ function displayOptionMap(
         100
     );
 
-        // Search for petrol pumps only on the recommended route.
+    // Search for petrol pumps only on the recommended route.
     if (isRecommended) {
         loadPetrolPumps(route, map);
     }
@@ -2218,36 +2212,43 @@ async function loadPetrolPumps(route, map) {
         return;
     }
 
-    function showMessage(message) {
-        list.replaceChildren();
+    
+function showMessage(message) {
+    // Remove any previous loading or status message.
+    list.querySelectorAll(
+        ".route-pumps-loading, .route-pumps-message"
+    ).forEach(element => element.remove());
 
-        const paragraph = document.createElement("p");
-        paragraph.className = "route-pumps-message";
-        paragraph.textContent = message;
+    const paragraph = document.createElement("p");
+    paragraph.className = "route-pumps-message";
+    paragraph.textContent = message;
 
-        list.appendChild(paragraph);
-    }
+    // Keep existing petrol-pump entries intact.
+    list.prepend(paragraph);
+}
 
     showMessage("Preparing to search for nearby petrol pumps...");
 
     const latitudes = route.map(point => point.latitude);
     const longitudes = route.map(point => point.longitude);
 
-    const south = Math.min(...latitudes) - 0.05;
-    const west = Math.min(...longitudes) - 0.05;
-    const north = Math.max(...latitudes) + 0.05;
-    const east = Math.max(...longitudes) + 0.05;
-
-    const query = `
-        [out:json][timeout:25];
-        nwr["amenity"="fuel"](${south},${west},${north},${east});
-        out center tags;
-    `;
-
     
+const south = Math.min(...latitudes) - 0.02;
+const west = Math.min(...longitudes) - 0.02;
+const north = Math.max(...latitudes) + 0.02;
+const east = Math.max(...longitudes) + 0.02;
+
+const query = `
+    [out:json][timeout:60];
+    nwr["amenity"="fuel"](${south},${west},${north},${east});
+    out center tags;
+`;
+
+
+
     try {
         const response = await fetch(
-            "https://overpass-api.de/api/interpreter",
+            "https://overpass.kumi.systems/api/interpreter",
             {
                 method: "POST",
                 headers: {
@@ -2263,32 +2264,32 @@ async function loadPetrolPumps(route, map) {
             );
         }
 
-        
-const data = await response.json();
 
-const pumps = data.elements
-    .map(element => {
-        const latitude = element.lat ?? element.center?.lat;
-        const longitude = element.lon ?? element.center?.lon;
+        const data = await response.json();
 
-        if (latitude == null || longitude == null) {
-            return null;
-        }
+        const pumps = data.elements
+            .map(element => {
+                const latitude = element.lat ?? element.center?.lat;
+                const longitude = element.lon ?? element.center?.lon;
 
-        return {
-            id: element.type + "-" + element.id,
-            latitude: Number(latitude),
-            longitude: Number(longitude),
-            name:
-                element.tags?.name ||
-                element.tags?.brand ||
-                "Petrol Pump",
-            tags: element.tags || {}
-        };
-    })
-    .filter(Boolean);
+                if (latitude == null || longitude == null) {
+                    return null;
+                }
 
-    
+                return {
+                    id: element.type + "-" + element.id,
+                    latitude: Number(latitude),
+                    longitude: Number(longitude),
+                    name:
+                        element.tags?.name ||
+                        element.tags?.brand ||
+                        "Petrol Pump",
+                    tags: element.tags || {}
+                };
+            })
+            .filter(Boolean);
+
+
         // Estimate each petrol pump's distance from the route.
         function getRoutePosition(point) {
             let closestDistance = Infinity;
@@ -2358,14 +2359,17 @@ const pumps = data.elements
             ).values()
         ].slice(0, 20);
 
-       
-        console.log("Petrol pumps near route:", uniquePumps);
-        list.replaceChildren();
 
-        if (uniquePumps.length === 0) {
-            showMessage("No petrol pumps found near this route.");
-            return;
-        }
+        
+console.log("Petrol pumps near route:", uniquePumps);
+
+list.replaceChildren();
+
+if (uniquePumps.length === 0) {
+    showMessage("No petrol pumps found near this route.");
+    return;
+}
+
 
         uniquePumps.forEach((pump, index) => {
             const number = index + 1;
@@ -2390,7 +2394,7 @@ const pumps = data.elements
             marker.bindPopup(
                 pump.name + " — Petrol Pump " + number
             );
-            
+
             // Create the matching petrol pump card entry.
             const item = document.createElement("div");
             item.className = "route-petrol-pump-item";
@@ -2428,11 +2432,12 @@ const pumps = data.elements
 
         });
 
-        showMessage(
-            `Found ${uniquePumps.length} petrol pumps near the route.`
-        );
+        const status = document.createElement("p");
+status.className = "route-pumps-message";
+status.textContent =
+    `Found ${uniquePumps.length} petrol pumps near the route.`;
 
-
+list.prepend(status);
 
 
     } catch (error) {
@@ -2526,7 +2531,7 @@ async function saveSelectedRoute(
         longestRouteTotalCost: longestRouteJourney.totalCost
     };
 
-            // When editing, the checkbox in the banner decides: replace the original, or save a copy.
+    // When editing, the checkbox in the banner decides: replace the original, or save a copy.
     const saveAsNew =
         Boolean(document.getElementById("saveAsNewRoute")?.checked);
 
@@ -2777,7 +2782,7 @@ findRouteBtn.addEventListener(
                     averageSpeed
                 );
 
-            
+
 
 
 
@@ -2914,7 +2919,7 @@ saveRouteBtn.addEventListener(
             )
         );
 
-        
+
 
 
 
@@ -3066,7 +3071,7 @@ function showEditBanner(routeName) {
         "Cancel";
 
 
-        // Lets the user keep the original route and save the changes as a copy instead.
+    // Lets the user keep the original route and save the changes as a copy instead.
     const saveAsNewLabel =
         document.createElement("label");
 
@@ -3124,7 +3129,7 @@ function fillFormFromRoute(route) {
 
     const addresses =
         Array.isArray(route.originalAddresses) &&
-        route.originalAddresses.length >= 2
+            route.originalAddresses.length >= 2
             ? route.originalAddresses
             : [
                 route.origin?.name,
