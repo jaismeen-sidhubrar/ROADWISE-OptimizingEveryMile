@@ -42,3 +42,34 @@ function formatTime(minutes) {
     if (m < 60) return m + " min";
     return Math.floor(m / 60) + " h " + (m % 60) + " min";
 }
+
+/* ---------- startup ---------- */
+
+async function initFindHome() {
+    try {
+        homeUser = await api("/auth/me");
+    } catch (error) {
+        showHomeStatus(error.message, "error");
+        return;
+    }
+
+    const hasHome =
+        homeUser.homeAddress &&
+        homeUser.homeLat != null &&
+        homeUser.homeLng != null;
+
+    if (!hasHome) {
+        homeIntro.textContent = "You haven't saved a home address yet.";
+        showHomeStatus(
+            "Add your home address on the Profile page, then come back here.",
+            "warn"
+        );
+        return;
+    }
+
+    homeIntro.textContent = "Heading to: " + homeUser.homeAddress;
+
+    await loadHomeVehicles();
+    locateBtn.disabled = false;
+    locateAndRoute();
+}
