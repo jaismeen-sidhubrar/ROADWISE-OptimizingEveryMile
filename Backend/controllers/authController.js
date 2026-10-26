@@ -29,7 +29,10 @@ const publicUser = (u) => ({
   phone: u.phone,
   bio: u.bio,
   profilePic: u.profilePic,
-  joinedDate: u.createdAt,
+  homeAddress: u.homeAddress || '',
+  homeLat: u.homeLat ?? null,
+  homeLng: u.homeLng ?? null,
+  joinedDate: u.createdAt
 });
 
 exports.signup = async (req, res) => {
@@ -96,8 +99,7 @@ exports.updateMe = async (req, res) => {
   const user = await User.findById(req.userId);
   if (!user) return res.status(401).json({ message: 'Account not found.' });
 
-  const { name, username, email, phone, bio, profilePic, currentPassword, newPassword } =
-    req.body || {};
+  const { name, username, email, phone, bio, profilePic, homeAddress, homeLat, homeLng, currentPassword, newPassword } = req.body || {};
 
   if (email && !EMAIL_RE.test(email)) {
     return res.status(400).json({ message: 'Please enter a valid email address.' });
@@ -114,6 +116,28 @@ exports.updateMe = async (req, res) => {
   if (phone !== undefined) user.phone = phone;
   if (bio !== undefined) user.bio = bio;
   if (profilePic !== undefined) user.profilePic = profilePic;
+
+  if (homeAddress !== undefined) {
+    if (!isString(homeAddress) || homeAddress.length > 200) {
+      return res.status(400).json({ message: 'Home address must be text up to 200 characters.' });
+    }
+    if (homeAddress.trim() === '') {
+      user.homeAddress = '';
+      user.homeLat = null;
+      user.homeLng = null;
+    } else {
+      if (
+        typeof homeLat !== 'number' || typeof homeLng !== 'number' ||
+        !Number.isFinite(homeLat) || !Number.isFinite(homeLng) ||
+        Math.abs(homeLat) > 90 || Math.abs(homeLng) > 180
+      ) {
+        return res.status(400).json({ message: 'Could not locate that home address. Please check it.' });
+      }
+      user.homeAddress = homeAddress.trim();
+      user.homeLat = homeLat;
+      user.homeLng = homeLng;
+    }
+  }
 
   if (newPassword) {
     if (!currentPassword || !(await bcrypt.compare(currentPassword, user.password))) {
