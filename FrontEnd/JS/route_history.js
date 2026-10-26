@@ -532,6 +532,33 @@ function createRouteCard(
     );
 
 
+    const editButton =
+        document.createElement("button");
+
+    editButton.className =
+        "edit-route-btn";
+
+    editButton.textContent =
+        "Edit Route ✎";
+
+
+    // Opens the planner with this route's id in the address bar.
+    // The planner reads it and fills the form in.
+    editButton.addEventListener(
+        "click",
+        () => {
+
+            window.location.href =
+                `route-planner.html?edit=${encodeURIComponent(route.id)}`;
+
+        }
+    );
+
+
+    summary.appendChild(
+        editButton
+    );
+
     summary.appendChild(
         deleteButton
     );

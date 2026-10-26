@@ -1,3 +1,33 @@
+/* =====================================================
+   EDIT ROUTE BUTTON
+===================================================== */
+
+.edit-route-btn {
+    margin-top: 25px;
+    margin-right: 12px;
+    padding: 12px 20px;
+
+    background: transparent;
+    color: var(--green-dark);
+
+    border: 1px solid var(--green-dark);
+
+    font-family: var(--body);
+    font-size: 11px;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition:
+        background 0.25s ease,
+        color 0.25s ease;
+}
+
+
+.edit-route-btn:hover {
+    background: var(--green-dark);
+    color: white;
+}
 
 /* =====================================================
    DELETE ROUTE BUTTON
