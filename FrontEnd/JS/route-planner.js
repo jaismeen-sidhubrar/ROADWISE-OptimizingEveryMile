@@ -2555,11 +2555,11 @@ async function saveSelectedRoute(
     }
 
     showMessage(
-        replacingOriginal
-            ? `${algorithmName} route has been updated in your dashboard/history!`
-            : `${algorithmName} route has been added to your dashboard/history!`,
-        "success"
-    );
+    replacingOriginal
+        ? "Route updated"
+        : "Route saved",
+    "success"
+);
 }
 
 
