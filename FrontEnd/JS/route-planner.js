@@ -2200,6 +2200,11 @@ function displayOptionMap(
         100
     );
 
+        // Search for petrol pumps only on the recommended route.
+    if (isRecommended) {
+        loadPetrolPumps(route, map);
+    }
+
 }
 
 
