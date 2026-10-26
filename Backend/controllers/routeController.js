@@ -75,6 +75,63 @@ async function buildRouteData(body, userId) {
     return data;
 }
 
+// Adds (or, with negative numbers, removes) one trip's distance / fuel / cost on a vehicle.
+// Totals never go below zero.
+function addToVehicleTotals(vehicleId, userId, trip) {
+    if (!vehicleId || !mongoose.isValidObjectId(vehicleId)) return null;
+    const bump = (field, by) => ({ $max: [0, { $add: [{ $ifNull: [`$${field}`, 0] }, by] }] });
+    // updatePipeline: true is required by Mongoose for an update written as an array.
+    return Vehicle.updateOne(
+        { _id: vehicleId, user: userId },
+        [
+            {
+                $set: {
+                    totalDistance: bump('totalDistance', trip.distance),
+                    totalFuel: bump('totalFuel', trip.fuel),
+                    totalCost: bump('totalCost', trip.cost),
+                },
+            },
+        ],
+        { updatePipeline: true }
+    );
+}
+
+const tripNumbers = (r) => ({
+    distance: Number(r.totalDistance) || 0,
+    fuel: Number(r.totalFuel) || 0,
+    cost: Number(r.totalCost) || 0,
+});
+
+// When a saved trip is edited, keep the vehicle totals correct:
+// take the old trip off the vehicle it was counted on, add the new trip to the vehicle it uses now.
+// (Trips saved with "Other" vehicle are stored separately and are not adjusted.)
+async function adjustVehicleTotals(before, after, userId) {
+    const oldId = before.vehicleId ? String(before.vehicleId) : null;
+    const newId = after.vehicleId ? String(after.vehicleId) : null;
+    const oldTrip = tripNumbers(before);
+    const newTrip = tripNumbers(after);
+
+    if (oldId && oldId === newId) {
+        const change = {
+            distance: newTrip.distance - oldTrip.distance,
+            fuel: newTrip.fuel - oldTrip.fuel,
+            cost: newTrip.cost - oldTrip.cost,
+        };
+        if (change.distance || change.fuel || change.cost) {
+            await addToVehicleTotals(oldId, userId, change);
+        }
+        return;
+    }
+    if (oldId) {
+        await addToVehicleTotals(oldId, userId, {
+            distance: -oldTrip.distance,
+            fuel: -oldTrip.fuel,
+            cost: -oldTrip.cost,
+        });
+    }
+    if (newId) await addToVehicleTotals(newId, userId, newTrip);
+}
+
 // Wraps a handler so a thrown error becomes a clean JSON response instead of a crash.
 const handle = (fn) => async (req, res) => {
     try {
@@ -313,8 +370,18 @@ exports.updateRoute = async (req, res) => {
     const errors = validateRouteInput(merged);
     if (errors.length) return res.status(400).json({ message: 'Invalid route data.', errors });
 
-    route.set(await buildRouteData(merged, req.userId));
+        const before = route.toObject();
+    const data = await buildRouteData(merged, req.userId);
+    route.set(data);
     await route.save();
+
+    // The route is saved at this point. A problem with the totals must not fail the request.
+    try {
+        await adjustVehicleTotals(before, data, req.userId);
+    } catch (err) {
+        console.error('[routeController] could not adjust vehicle totals', err);
+    }
+
     res.json(route);
 };
 
