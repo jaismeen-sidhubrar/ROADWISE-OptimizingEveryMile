@@ -171,6 +171,7 @@ function buildWorkingProfile(session) {
         username: session.username || "",
         phone: session.phone || "",
         bio: session.bio || "",
+        homeAddress: session.homeAddress || "",
         profilePic: session.profilePic || "",
         joinedDate: session.joinedDate || new Date().toISOString()
     };
@@ -196,6 +197,7 @@ const emailInput = document.getElementById("email");
 const phoneInput = document.getElementById("phone");
 const bioInput = document.getElementById("bio");
 const bioCount = document.getElementById("bioCount");
+const homeAddressInput = document.getElementById("homeAddress");
 
 const currentPasswordInput = document.getElementById("currentPassword");
 const newPasswordInput = document.getElementById("newPassword");
@@ -289,6 +291,7 @@ function renderForm(user) {
     emailInput.value = user.email || "";
     phoneInput.value = user.phone || "";
     bioInput.value = user.bio || "";
+    homeAddressInput.value = user.homeAddress || "";
 
     bioCount.textContent = String((user.bio || "").length);
 
@@ -524,6 +527,27 @@ function validateForm() {
 
 });
 
+async function geocodeHome(address) {
+    const url =
+        `https://nominatim.openstreetmap.org/search?format=json&limit=1&q=${encodeURIComponent(address)}`;
+
+    let response;
+    try {
+        response = await fetch(url);
+    } catch (error) {
+        throw new Error("Could not reach the address lookup service. Please try again.");
+    }
+    if (!response.ok) {
+        throw new Error("Address lookup failed. Please try again in a moment.");
+    }
+
+    const data = await response.json();
+    if (!data.length) {
+        throw new Error("We couldn't find that address. Try adding the city and state.");
+    }
+    return { lat: Number(data[0].lat), lng: Number(data[0].lon) };
+}
+
 
 /* =========================================================
    SAVE / SUBMIT
@@ -547,6 +571,21 @@ form.addEventListener("submit", async (event) => {
         phone: phoneInput.value.trim(),
         bio: bioInput.value.trim()
     };
+
+        const homeAddress = homeAddressInput.value.trim();
+    if (homeAddress !== (currentUser.homeAddress || "")) {
+        payload.homeAddress = homeAddress;
+        if (homeAddress) {
+            try {
+                const place = await geocodeHome(homeAddress);
+                payload.homeLat = place.lat;
+                payload.homeLng = place.lng;
+            } catch (error) {
+                showToast(error.message, true);
+                return;
+            }
+        }
+    }
 
     if (avatarRemoved) {
         payload.profilePic = "";
