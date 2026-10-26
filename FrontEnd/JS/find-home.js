@@ -191,3 +191,20 @@ async function buildHomeRoute() {
         approximate ? "warn" : "info"
     );
 }
+
+function renderHomeStats() {
+    if (!lastRoute) return;
+
+    const { best } = lastRoute;
+    const mileage = Number(homeVehicleSelect.value) || DEFAULT_MILEAGE;
+    const price = Number(homeFuelPriceInput.value) > 0 ? Number(homeFuelPriceInput.value) : 100;
+
+    const litres = best.distanceKm / mileage;
+
+    document.getElementById("statDistance").textContent = best.distanceKm.toFixed(2) + " km";
+    document.getElementById("statTime").textContent = formatTime(best.durationMin);
+    document.getElementById("statFuel").textContent = litres.toFixed(2) + " L";
+    document.getElementById("statCost").textContent = "₹" + (litres * price).toFixed(2);
+
+    homeStatsBox.hidden = false;
+}
