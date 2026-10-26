@@ -1734,21 +1734,19 @@ function createRouteOptionCard(
         </div>
 
 
-        <div class="route-card-route">
-
-            <div class="route-card-route-title">
-
-                Stop sequence
-
+        ${isRecommended ? `
+        <div class="route-petrol-pumps">
+            <div class="route-petrol-pumps-title">
+                Petrol pumps along this route
             </div>
 
-
-            <div class="route-stop-list"></div>
-
+            <div class="route-petrol-pump-list">
+                <p class="route-pumps-loading">
+                    Petrol pumps will appear here.
+                </p>
+            </div>
         </div>
-
-
-        <div class="route-option-map"></div>
+    ` : ""}
 
 
         <button
@@ -1854,7 +1852,8 @@ function createRouteOptionCard(
 
             displayOptionMap(
                 route,
-                mapId
+                mapId,
+                isRecommended
             );
 
         },
@@ -2083,7 +2082,8 @@ function displayRouteMap(
 
 function displayOptionMap(
     route,
-    mapId
+    mapId,
+    isRecommended=false
 ) {
 
     const mapElement =
@@ -2199,6 +2199,249 @@ function displayOptionMap(
         },
         100
     );
+
+        // Search for petrol pumps only on the recommended route.
+    if (isRecommended) {
+        loadPetrolPumps(route, map);
+    }
+
+}
+
+
+
+
+async function loadPetrolPumps(route, map) {
+    const card = map.getContainer().closest(".route-option-card");
+    const list = card?.querySelector(".route-petrol-pump-list");
+
+    if (!list || route.length < 2) {
+        return;
+    }
+
+    function showMessage(message) {
+        list.replaceChildren();
+
+        const paragraph = document.createElement("p");
+        paragraph.className = "route-pumps-message";
+        paragraph.textContent = message;
+
+        list.appendChild(paragraph);
+    }
+
+    showMessage("Preparing to search for nearby petrol pumps...");
+
+    const latitudes = route.map(point => point.latitude);
+    const longitudes = route.map(point => point.longitude);
+
+    const south = Math.min(...latitudes) - 0.05;
+    const west = Math.min(...longitudes) - 0.05;
+    const north = Math.max(...latitudes) + 0.05;
+    const east = Math.max(...longitudes) + 0.05;
+
+    const query = `
+        [out:json][timeout:25];
+        nwr["amenity"="fuel"](${south},${west},${north},${east});
+        out center tags;
+    `;
+
+    
+    try {
+        const response = await fetch(
+            "https://overpass-api.de/api/interpreter",
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded"
+                },
+                body: "data=" + encodeURIComponent(query)
+            }
+        );
+
+        if (!response.ok) {
+            throw new Error(
+                "Petrol pump API returned status " + response.status
+            );
+        }
+
+        
+const data = await response.json();
+
+const pumps = data.elements
+    .map(element => {
+        const latitude = element.lat ?? element.center?.lat;
+        const longitude = element.lon ?? element.center?.lon;
+
+        if (latitude == null || longitude == null) {
+            return null;
+        }
+
+        return {
+            id: element.type + "-" + element.id,
+            latitude: Number(latitude),
+            longitude: Number(longitude),
+            name:
+                element.tags?.name ||
+                element.tags?.brand ||
+                "Petrol Pump",
+            tags: element.tags || {}
+        };
+    })
+    .filter(Boolean);
+
+    
+        // Estimate each petrol pump's distance from the route.
+        function getRoutePosition(point) {
+            let closestDistance = Infinity;
+            let closestProgress = 0;
+
+            for (let i = 0; i < route.length - 1; i++) {
+                const start = route[i];
+                const end = route[i + 1];
+
+                const averageLatitude =
+                    (start.latitude + end.latitude + point.latitude) / 3;
+
+                const longitudeScale =
+                    111320 * Math.cos(averageLatitude * Math.PI / 180);
+
+                const x1 = start.longitude * longitudeScale;
+                const y1 = start.latitude * 111320;
+                const x2 = end.longitude * longitudeScale;
+                const y2 = end.latitude * 111320;
+                const px = point.longitude * longitudeScale;
+                const py = point.latitude * 111320;
+
+                const dx = x2 - x1;
+                const dy = y2 - y1;
+                const lengthSquared = dx * dx + dy * dy;
+
+                const t = lengthSquared === 0
+                    ? 0
+                    : Math.max(
+                        0,
+                        Math.min(
+                            1,
+                            ((px - x1) * dx + (py - y1) * dy) /
+                            lengthSquared
+                        )
+                    );
+
+                const distance = Math.hypot(
+                    px - (x1 + t * dx),
+                    py - (y1 + t * dy)
+                );
+
+                if (distance < closestDistance) {
+                    closestDistance = distance;
+                    closestProgress = i + t;
+                }
+            }
+
+            return {
+                distance: closestDistance,
+                progress: closestProgress
+            };
+        }
+
+        const nearbyPumps = pumps
+            .map(pump => ({
+                ...pump,
+                ...getRoutePosition(pump)
+            }))
+            .filter(pump => pump.distance <= 3000)
+            .sort((a, b) => a.progress - b.progress);
+
+        // Keep the list manageable.
+        const uniquePumps = [
+            ...new Map(
+                nearbyPumps.map(pump => [pump.id, pump])
+            ).values()
+        ].slice(0, 20);
+
+       
+        console.log("Petrol pumps near route:", uniquePumps);
+        list.replaceChildren();
+
+        if (uniquePumps.length === 0) {
+            showMessage("No petrol pumps found near this route.");
+            return;
+        }
+
+        uniquePumps.forEach((pump, index) => {
+            const number = index + 1;
+
+            const icon = L.divIcon({
+                className: "fuel-pump-marker",
+                html: `
+                    <div class="fuel-pump-marker-inner">
+                        <span>⛽</span>
+                        <b>${number}</b>
+                    </div>
+                `,
+                iconSize: [38, 34],
+                iconAnchor: [19, 17]
+            });
+
+            const marker = L.marker(
+                [pump.latitude, pump.longitude],
+                { icon }
+            ).addTo(map);
+
+            marker.bindPopup(
+                pump.name + " — Petrol Pump " + number
+            );
+            
+            // Create the matching petrol pump card entry.
+            const item = document.createElement("div");
+            item.className = "route-petrol-pump-item";
+
+            const badge = document.createElement("span");
+            badge.className = "route-petrol-pump-number";
+            badge.textContent = "⛽ " + number;
+
+            const details = document.createElement("div");
+            details.className = "route-petrol-pump-details";
+
+            const name = document.createElement("strong");
+            name.textContent = pump.name;
+
+            details.appendChild(name);
+
+            const addressParts = [
+                pump.tags["addr:street"],
+                pump.tags["addr:place"],
+                pump.tags["addr:city"]
+            ].filter(Boolean);
+
+            if (addressParts.length > 0) {
+                const address = document.createElement("small");
+                address.textContent = addressParts.join(", ");
+                details.appendChild(address);
+            }
+
+            item.append(badge, details);
+
+            const card = map.getContainer().closest(".route-option-card");
+            const list = card?.querySelector(".route-petrol-pump-list");
+
+            list?.appendChild(item);
+
+        });
+
+        showMessage(
+            `Found ${uniquePumps.length} petrol pumps near the route.`
+        );
+
+
+
+
+    } catch (error) {
+        console.error("Petrol pump lookup failed:", error);
+
+        showMessage(
+            "Could not load petrol pumps right now. Please try again later."
+        );
+    }
 
 }
 

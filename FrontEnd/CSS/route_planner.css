@@ -408,6 +408,7 @@
     padding: 12px;
 }
 
+
 /* =====================================================
    PAGE MESSAGE (errors, success, "editing route" banner)
 ===================================================== */
@@ -415,10 +416,8 @@
 .page-message {
     padding: 14px 18px;
     margin-bottom: 24px;
-
     font-size: 14px;
     line-height: 1.5;
-
     border-left: 4px solid;
 }
 
@@ -438,4 +437,105 @@
     color: inherit;
     font-weight: 600;
     text-decoration: underline;
+}
+
+/* Petrol pump section on the recommended route */
+.route-petrol-pumps {
+    margin-top: 22px;
+    padding: 18px;
+    background: #f5f8f3;
+    border: 1px solid #dce7d8;
+    border-radius: 14px;
+}
+
+.route-petrol-pumps-title {
+    margin-bottom: 14px;
+    color: #2f6b3f;
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.route-petrol-pump-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-height: 230px;
+    overflow-y: auto;
+}
+
+/* Petrol pump loading and status messages */
+.route-pumps-loading,
+.route-pumps-message {
+    margin: 0;
+    padding: 8px 0;
+    color: #626b60;
+    font-size: 12px;
+    line-height: 1.6;
+}
+
+/* Individual petrol pump entries */
+.route-petrol-pump-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 10px;
+    background: #fff;
+    border: 1px solid #e4e9e1;
+    border-radius: 10px;
+}
+
+.route-petrol-pump-number {
+    flex-shrink: 0;
+    color: #2f6b3f;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.route-petrol-pump-details {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;
+}
+
+.route-petrol-pump-details strong {
+    color: #253126;
+    font-size: 13px;
+    overflow-wrap: anywhere;
+}
+
+.route-petrol-pump-details small {
+    color: #70786e;
+    font-size: 11px;
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+}
+
+/* Numbered petrol pump markers on the map */
+.fuel-pump-marker {
+    background: transparent;
+    border: none;
+}
+
+.fuel-pump-marker-inner {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    width: 38px;
+    height: 32px;
+    background: #fff;
+    border: 1px solid #2f6b3f;
+    border-radius: 18px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+    font-family: Arial, sans-serif;
+}
+
+.fuel-pump-marker-inner span {
+    font-size: 17px;
+}
+
+.fuel-pump-marker-inner b {
+    font-size: 11px;
+    color: #1f4d2b;
 }
