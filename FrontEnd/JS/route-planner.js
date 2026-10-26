@@ -2428,9 +2428,12 @@ const pumps = data.elements
 
         });
 
-        showMessage(
-            `Found ${uniquePumps.length} petrol pumps near the route.`
-        );
+        const successMessage = document.createElement("p");
+successMessage.className = "route-pumps-message";
+successMessage.textContent =
+    `Found ${uniquePumps.length} petrol pumps near the route.`;
+
+list.prepend(successMessage);
 
 
 
