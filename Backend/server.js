@@ -26,7 +26,7 @@ app.use('/api/auth', require('./routes/auth'));
 app.use('/api/vehicles', require('./routes/Vehicle'));
 app.use('/api/other-vehicles', require('./routes/otherVehicles'));
 app.use('/api/routes', require('./routes/routes'));
-app.use('/api/petrol-pumps', require('./routes/petrolPumps'));
+
 
 app.use(notFound);
 app.use(errorHandler);
