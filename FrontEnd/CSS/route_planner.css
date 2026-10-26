@@ -407,3 +407,35 @@
 
     padding: 12px;
 }
+
+/* =====================================================
+   PAGE MESSAGE (errors, success, "editing route" banner)
+===================================================== */
+
+.page-message {
+    padding: 14px 18px;
+    margin-bottom: 24px;
+
+    font-size: 14px;
+    line-height: 1.5;
+
+    border-left: 4px solid;
+}
+
+.page-message.error {
+    background: #f7e4e4;
+    color: #8b2e2e;
+    border-color: #8b2e2e;
+}
+
+.page-message.success {
+    background: var(--green-light);
+    color: var(--black);
+    border-color: var(--green-dark);
+}
+
+.page-message a {
+    color: inherit;
+    font-weight: 600;
+    text-decoration: underline;
+}
