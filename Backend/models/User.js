@@ -9,6 +9,9 @@ const userSchema = new mongoose.Schema(
     phone: { type: String, default: '', trim: true },
     bio: { type: String, default: '' },
     profilePic: { type: String, default: '' },
+    homeAddress: { type: String, default: '', trim: true, maxlength: 200 },
+    homeLat: { type: Number, default: null, min: -90, max: 90 },
+    homeLng: { type: Number, default: null, min: -180, max: 180 }
   },
   { timestamps: true, versionKey: false }
 );
