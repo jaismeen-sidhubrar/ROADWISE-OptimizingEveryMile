@@ -121,3 +121,73 @@ function locateAndRoute() {
         { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
     );
 }
+
+/* ---------- routing ---------- */
+
+async function fetchRoadRoutes(from, to) {
+    const url =
+        `https://router.project-osrm.org/route/v1/driving/` +
+        `${from.lng},${from.lat};${to.lng},${to.lat}` +
+        `?alternatives=true&overview=full&geometries=geojson`;
+
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), 10000);
+
+    try {
+        const response = await fetch(url, { signal: controller.signal });
+        if (!response.ok) throw new Error("Routing service error");
+        const data = await response.json();
+        if (data.code !== "Ok" || !data.routes || !data.routes.length) {
+            throw new Error("No road route found");
+        }
+        return data.routes.map((r) => ({
+            distanceKm: r.distance / 1000,
+            durationMin: r.duration / 60,
+            coords: r.geometry.coordinates.map(([lng, lat]) => [lat, lng])
+        }));
+    } finally {
+        clearTimeout(timer);
+    }
+}
+
+async function buildHomeRoute() {
+    const home = { lat: Number(homeUser.homeLat), lng: Number(homeUser.homeLng) };
+
+    if (haversineKm(currentPos, home) < 0.1) {
+        showHomeStatus("You're already at home. 🏡");
+        homeStatsBox.hidden = true;
+        drawHomeMap(home, [], null);
+        return;
+    }
+
+    let options;
+    let approximate = false;
+
+    try {
+        options = await fetchRoadRoutes(currentPos, home);
+    } catch (error) {
+        approximate = true;
+        options = [{
+            distanceKm: haversineKm(currentPos, home),
+            durationMin: null,
+            coords: [[currentPos.lat, currentPos.lng], [home.lat, home.lng]]
+        }];
+    }
+
+    // The shortest road route (by distance) is the one we recommend.
+    options.sort((a, b) => a.distanceKm - b.distanceKm);
+    const best = options[0];
+
+    lastRoute = { best, approximate };
+    drawHomeMap(home, options.slice(1), best);
+    renderHomeStats();
+
+    showHomeStatus(
+        approximate
+            ? "Road routing is unavailable right now, so this is a straight-line estimate."
+            : options.length > 1
+                ? "Showing the shortest of " + (options.length) + " road routes home."
+                : "Showing the best road route home.",
+        approximate ? "warn" : "info"
+    );
+}
