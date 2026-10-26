@@ -34,6 +34,39 @@ exports.addStats = async (req, res) => {
   res.json(vehicle);
 };
 
+
+// Edits a vehicle's name and/or mileage. Running totals are left untouched.
+exports.updateVehicle = async (req, res) => {
+  const { name, mileage } = req.body || {};
+  const update = {};
+
+  if (name !== undefined) {
+    if (typeof name !== 'string' || !name.trim()) {
+      return res.status(400).json({ message: 'Vehicle name cannot be empty.' });
+    }
+    update.name = name.trim();
+  }
+  if (mileage !== undefined) {
+    const value = Number(mileage);
+    if (!Number.isFinite(value) || value < 0.1) {
+      return res.status(400).json({ message: 'Mileage must be a number of at least 0.1.' });
+    }
+    update.mileage = value;
+  }
+  if (!Object.keys(update).length) {
+    return res.status(400).json({ message: 'Nothing to update.' });
+  }
+
+  const vehicle = await Vehicle.findOneAndUpdate(
+    { _id: req.params.id, user: req.userId },
+    { $set: update },
+    { returnDocument: 'after', runValidators: true }
+  );
+  if (!vehicle) return res.status(404).json({ message: 'Vehicle not found.' });
+  res.json(vehicle);
+};
+
+
 exports.deleteVehicle = async (req, res) => {
   const vehicle = await Vehicle.findOneAndDelete({ _id: req.params.id, user: req.userId });
   if (!vehicle) return res.status(404).json({ message: 'vehicle not found.' });

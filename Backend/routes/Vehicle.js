@@ -5,6 +5,7 @@ const c = require('../controllers/vehicleController');
 router.use(auth);
 router.get('/', c.getVehicles);
 router.post('/', c.addVehicle);
+router.put('/:id', c.updateVehicle);
 router.patch('/:id/stats', c.addStats);
 router.delete('/:id', c.deleteVehicle);
 
