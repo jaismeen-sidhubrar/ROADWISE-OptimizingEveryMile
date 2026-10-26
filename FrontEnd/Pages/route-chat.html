@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trip Assistant | RoadWise</title>
+    <link rel="icon" type="image/png" href="../Assets/Images/logo.png">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <link rel="stylesheet" href="../CSS/index.css">
+    <link rel="stylesheet" href="../CSS/route-chat.css">
+</head>
+
+<body>
+
+    <div id="navbar-container"></div>
+
+    <section class="about-section" style="padding-top: 160px; min-height: 100vh;">
+        <div class="section-container">
+
+            <div class="section-top">
+                <span class="section-number">05</span>
+                <div class="section-line"></div>
+                <span class="section-small-text">TRIP ASSISTANT</span>
+            </div>
+
+            <div class="users-heading">
+                <div>
+                    <div class="eyebrow"><span class="eyebrow-dot"></span>PLACES ALONG YOUR ROUTE</div>
+                    <h2>Trip <span>Assistant</span></h2>
+                </div>
+                <p>Pick one of your saved routes and ask for famous places to stop at on the way.</p>
+            </div>
+
+            <div class="chat-shell">
+
+                <!-- Route picker -->
+                <div class="chat-routebar">
+                    <label for="chatRouteSelect">SAVED ROUTE</label>
+                    <select id="chatRouteSelect">
+                        <option value="">Loading your routes…</option>
+                    </select>
+                </div>
+
+                <!-- Messages -->
+                <div class="chat-messages" id="chatMessages" aria-live="polite">
+                    <div class="chat-msg bot">
+                        <div class="chat-bubble">
+                            Hi! Choose a saved route above, then ask me something like
+                            <em>"suggest 5 famous places on this route"</em>.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick prompts -->
+                <div class="chat-chips" id="chatChips">
+                    <button type="button" data-q="Suggest 5 famous places along this route">5 famous places</button>
+                    <button type="button" data-q="Suggest 4 historical places along this route">Historical</button>
+                    <button type="button" data-q="Suggest 4 temple places along this route">Temples</button>
+                    <button type="button" data-q="Suggest 4 nature places along this route">Nature</button>
+                </div>
+
+                <!-- Input -->
+                <form class="chat-input" id="chatForm" autocomplete="off">
+                    <input type="text" id="chatInput" placeholder="Ask for places along your route…" maxlength="300">
+                    <button type="submit" id="chatSend" class="primary-btn">Send <span>→</span></button>
+                </form>
+
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="footer-bottom">
+            <span>© 2026 RoadWise. All rights reserved.</span>
+            <span>ROUTE SMARTER</span>
+        </div>
+    </footer>
+
+    <script src="../JS/config.js"></script>
+    <script src="../JS/api.js"></script>
+    <script src="../JS/route-chat.js"></script>
+    <script src="../JS/navbar.js"></script>
+</body>
+
+</html>
