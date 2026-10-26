@@ -87,3 +87,37 @@ async function loadHomeVehicles() {
         /* keep the default option */
     }
 }
+
+/* ---------- live location ---------- */
+
+function locateAndRoute() {
+    if (!("geolocation" in navigator)) {
+        showHomeStatus("Your browser doesn't support location access.", "error");
+        return;
+    }
+
+    showHomeStatus("Getting your live location…");
+    locateBtn.disabled = true;
+
+    navigator.geolocation.getCurrentPosition(
+        async (position) => {
+            currentPos = {
+                lat: position.coords.latitude,
+                lng: position.coords.longitude
+            };
+            showHomeStatus("Location found. Finding the shortest route home…");
+            await buildHomeRoute();
+            locateBtn.disabled = false;
+        },
+        (error) => {
+            const messages = {
+                1: "Location permission was denied. Allow location access in your browser settings and press “Refresh my location”.",
+                2: "Your location couldn't be determined. Check that GPS or Wi-Fi is on and try again.",
+                3: "Getting your location took too long. Please try again."
+            };
+            showHomeStatus(messages[error.code] || "Could not get your location.", "error");
+            locateBtn.disabled = false;
+        },
+        { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
+    );
+}
