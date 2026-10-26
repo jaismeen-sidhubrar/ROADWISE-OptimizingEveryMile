@@ -2248,7 +2248,7 @@ const query = `
 
     try {
         const response = await fetch(
-            "https://overpass.kumi.systems/api/interpreter",
+            "https://overpass.private.coffee/api/interpreter",
             {
                 method: "POST",
                 headers: {
