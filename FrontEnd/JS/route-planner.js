@@ -1852,7 +1852,8 @@ function createRouteOptionCard(
 
             displayOptionMap(
                 route,
-                mapId
+                mapId,
+                isRecommended
             );
 
         },
@@ -2081,7 +2082,8 @@ function displayRouteMap(
 
 function displayOptionMap(
     route,
-    mapId
+    mapId,
+    isRecommended=false
 ) {
 
     const mapElement =
