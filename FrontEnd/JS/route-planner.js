@@ -2204,6 +2204,28 @@ function displayOptionMap(
 
 
 
+async function loadPetrolPumps(route, map) {
+    const card = map.getContainer().closest(".route-option-card");
+    const list = card?.querySelector(".route-petrol-pump-list");
+
+    if (!list || route.length < 2) {
+        return;
+    }
+
+    function showMessage(message) {
+        list.replaceChildren();
+
+        const paragraph = document.createElement("p");
+        paragraph.className = "route-pumps-message";
+        paragraph.textContent = message;
+
+        list.appendChild(paragraph);
+    }
+
+    showMessage("Preparing to search for nearby petrol pumps...");
+}
+
+
 /* =========================================================
    GET SELECTED VEHICLE NAME
 ========================================================= */
