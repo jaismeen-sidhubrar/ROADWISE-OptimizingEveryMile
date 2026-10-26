@@ -429,3 +429,58 @@
     flex-direction: column;
     gap: 10px;
 }
+
+
+/* Petrol pump list and loading messages */
+.route-pumps-loading,
+.route-pumps-message {
+    margin: 0;
+    padding: 8px 0;
+    color: #626b60;
+    font-size: 12px;
+    line-height: 1.6;
+}
+
+.route-petrol-pump-list {
+    max-height: 230px;
+    overflow-y: auto;
+}
+
+/* Individual petrol pump entries */
+.route-petrol-pump-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 10px;
+    background: #fff;
+    border: 1px solid #e4e9e1;
+    border-radius: 10px;
+}
+
+/* Number displayed beside each petrol pump */
+.route-petrol-pump-number {
+    flex-shrink: 0;
+    color: #2f6b3f;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.route-petrol-pump-details {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;
+}
+
+.route-petrol-pump-details strong {
+    color: #253126;
+    font-size: 13px;
+    overflow-wrap: anywhere;
+}
+
+.route-petrol-pump-details small {
+    color: #70786e;
+    font-size: 11px;
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+}
