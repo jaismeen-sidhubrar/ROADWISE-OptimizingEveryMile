@@ -407,3 +407,25 @@
 
     padding: 12px;
 }
+
+/* Petrol pump section on the recommended route */
+.route-petrol-pumps {
+    margin-top: 22px;
+    padding: 18px;
+    background: #f5f8f3;
+    border: 1px solid #dce7d8;
+    border-radius: 14px;
+}
+
+.route-petrol-pumps-title {
+    margin-bottom: 14px;
+    color: #2f6b3f;
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.route-petrol-pump-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
