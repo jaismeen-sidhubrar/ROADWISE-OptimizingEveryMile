@@ -1,374 +1,221 @@
-# 🚗 ROADWISE
+# 🚗 ROADWISE — Optimizing Every Mile
 
-### Optimizing Every Mile
+**Smart Routes • Fuel Efficiency • Cost Optimization**
 
-<p align="center">
-  <strong>Smart Routes • Fuel Efficiency • Cost Optimization</strong>
-</p>
+ROADWISE is a route-planning and travel-cost optimization project designed to help users plan journeys, manage vehicles, estimate fuel consumption, and understand expected travel expenses.
 
-<p align="center">
-  <a href="https://roadwise-six.vercel.app/">🌐 Live Demo</a>
-  &nbsp;&nbsp;•&nbsp;&nbsp;
-</p>
-
----
-
-## 🌱 Drive Smarter. Spend Less.
-
-**ROADWISE** is a vehicle route and fuel cost optimization platform designed to help users make smarter travel decisions.
-
-Instead of simply finding a route from one location to another, ROADWISE focuses on the bigger picture — **distance, vehicle efficiency, fuel consumption, and overall travel cost**.
-
-> **Every journey has a cost. ROADWISE helps you optimize it.**
-
----
-
-## 🎯 Why ROADWISE?
-
-Traditional route planning primarily focuses on reaching the destination.
-
-But an efficient journey is about more than distance.
-
-* 🚗 Different vehicles have different fuel efficiencies.
-* ⛽ Longer routes can significantly increase fuel consumption.
-* 💰 Fuel expenses can become a major part of travel costs.
-* 🗺️ Choosing the right route can make every journey more economical.
-
-**ROADWISE brings these factors together to make route planning more practical and cost-conscious.**
-
----
+**Live Demo:** [ROADWISE on Vercel](https://roadwise-six.vercel.app/)
 
 ## ✨ Key Features
 
-### 🗺️ Smart Route Planning
+- **Smart Route Planning:** Plan journeys between locations and explore efficient routes.
+- **Vehicle-Aware Optimization:** Use vehicle details when estimating journey efficiency.
+- **Fuel Consumption Estimation:** Estimate the fuel required for a journey.
+- **Fuel Cost Calculation:** Understand expected fuel expenses before travelling.
+- **Journey Insights:** Review route, fuel usage, distance, and estimated cost information.
+- **Route History:** Revisit previously planned journeys.
+- **My Vehicles:** Add and manage vehicles using details such as vehicle type, fuel type, and mileage.
+- **Personalized Dashboard:** Access saved vehicles, recent journeys, route history, and travel insights.
+- **Responsive Interface:** Use the application across different screen sizes.
+- **Backend APIs:** A Node.js and Express backend provides API routes for authentication, vehicles, journeys, and petrol-pump-related functionality.
 
-Plan journeys between locations and explore efficient travel routes.
+## 🛠️ Technology Stack
 
-### 🚗 Vehicle-Aware Optimization
+### Frontend
+- HTML5
+- CSS3
+- JavaScript
+- Leaflet for map integration
+- OpenStreetMap and location-search services
 
-Take the selected vehicle into consideration when estimating journey efficiency.
+### Backend
+- Node.js
+- Express.js
+- MongoDB
+- Mongoose
+- JSON Web Token (JWT) for authentication
+- bcryptjs for password hashing
+- dotenv for environment configuration
+- CORS for cross-origin requests
 
-### ⛽ Fuel Consumption Estimation
+### Development and Deployment
+- Git and GitHub
+- VS Code
+- Nodemon for backend development
+- Vercel for the frontend demo
 
-Estimate the fuel required for a journey based on distance and vehicle efficiency.
+## 📸 Product Showcase
 
-### 💰 Fuel Cost Calculation
+The screenshots below illustrate the ROADWISE user interface. Images are stored inside `FrontEnd/Assets/Images/`.
 
-Understand the expected fuel expense before starting your journey.
+### 1. Landing Experience
 
-### 📊 Journey Insights
+![ROADWISE Landing Page](./FrontEnd/Assets/Images/landing.png)
 
-Get meaningful information about your route, fuel usage, and estimated travel cost.
+### 2. Personalized Dashboard
 
-### 🕘 Route History
-Keep track of previously planned journeys and revisit route, distance, fuel, and cost information.
+![ROADWISE Personalized Dashboard](./FrontEnd/Assets/Images/personalized_dashboard.png)
 
-### 🚘 My Vehicles
-Add and manage personal vehicles with details such as vehicle type, fuel type, and mileage for more personalized calculations.
+### 3. My Vehicles
 
-### 📱 Responsive Interface
+![ROADWISE My Vehicles](./FrontEnd/Assets/Images/my_vehicles.png)
 
-Designed to provide a clean and accessible experience across different screen sizes.
+### 4. Route Planning
 
----
+![ROADWISE Route Planning](./FrontEnd/Assets/Images/finding_location.png)
 
-## 🚘 Personalized Travel
+![ROADWISE Find Route](./FrontEnd/Assets/Images/find_route.png)
 
-ROADWISE is designed around your actual vehicles and journeys.
+### 5. Vehicle Selection
 
-## 📊 Personalized Dashboard
+![ROADWISE Vehicle Selection](./FrontEnd/Assets/Images/select_vehicle.png)
 
-Your ROADWISE dashboard brings your travel information together in one place.
+### 6. Optimization Results
 
-Users can quickly access:
+![ROADWISE Optimization Results](./FrontEnd/Assets/Images/results.png)
 
-- 🚗 **My Vehicles** — View and manage saved vehicles
-- 🕘 **Route History** — Revisit previous journeys
-- ⛽ **Fuel Insights** — Track estimated fuel consumption
-- 💰 **Travel Costs** — Monitor journey expenses
-- 📍 **Recent Journeys** — Quickly access recently planned routes
+### 7. Route History
 
-> **One dashboard. Every journey. Smarter decisions.**
+![ROADWISE Route History](./FrontEnd/Assets/Images/route_history.png)
 
-### 🕘 Route History
-
-View previously planned routes and their journey details in one place.
-
-Users can revisit:
-- 📍 Previous routes
-- 📏 Journey distance
-- ⛽ Fuel consumption
-- 💰 Estimated travel cost
-
-### 🚗 My Vehicles
-
-Add your own vehicles and use their information when planning journeys.
-
-You can manage details such as:
-- Vehicle name
-- Vehicle type
-- Fuel type
-- Mileage / fuel efficiency
-
-This allows ROADWISE to provide more personalized fuel and cost estimates.
-
-### 📊 Personalized Dashboard
-A personalized overview of your journeys, saved vehicles, route history, fuel usage, and travel costs — all in one place.
-
-## ⚙️ How ROADWISE Works
-
-```text
-       📍 ENTER JOURNEY
-              │
-              ▼
-       🚗 SELECT VEHICLE
-              │
-              ▼
-       🗺️ PLAN YOUR ROUTE
-              │
-              ▼
-       📏 CALCULATE DISTANCE
-              │
-              ▼
-       ⛽ ESTIMATE FUEL
-              │
-              ▼
-       💰 CALCULATE COST
-              │
-              ▼
-       📊 VIEW RESULTS
-              │
-       ┌──────┼──────┐
-       ▼      ▼      ▼
-  🕘 HISTORY 🚘 VEHICLES 📊 DASHBOARD
-```
-
----
-
-# 📸 Product Showcase
-
-## 01 — Landing Experience
-
-<p align="center">
-  <img src="./Assets/Images/landing.png" width="90%" alt="ROADWISE Landing Page">
-</p>
-
-> A clean starting point for planning a smarter journey.
-
----
-
-## 02 — Personalized Dashboard
-
-<p align="center">
-  <img src="./Assets/Images/personalized_dashboard.png" width="90%" alt="ROADWISE Personalized Dashboard">
-</p>
-
-> Your journeys, vehicles, fuel insights, and travel costs — organized in one personalized dashboard.
-
----
-
-## 03 — My Vehicles
-
-<p align="center">
-  <img src="./Assets/Images/my_vehicles.png" width="90%" alt="ROADWISE My Vehicles">
-</p>
-
-> Add and manage your vehicles to personalize fuel and cost calculations.
-
----
-
-
-## 04 — Route Planning
-
-<p align="center">
-  <img src="./Assets/Images/finding_location.png" width="90%" alt="ROADWISE Route Planning">
-</p>
-
-<p align="center">
-  <img src="./Assets/Images/find_route.png" width="90%" alt="ROADWISE Route Planning">
-</p>
-
-> Enter your journey details and plan your route efficiently.
-
----
-
-## 05 — Vehicle Selection
-
-<p align="center">
-  <img src="./Assets/Images/select_vehicle.png" width="90%" alt="ROADWISE Vehicle Selection">
-</p>
-
-> Select the vehicle to make fuel and cost calculations more relevant to the journey.
-
----
-
-## 06 — Optimization Results
-
-<p align="center">
-  <img src="./Assets/Images/results.png" width="90%" alt="ROADWISE Optimization Results">
-</p>
-
-> View the journey information, estimated fuel consumption, and travel cost.
-
----
-
-## 07 — Route History
-<p align="center">
-  <img src="./Assets/Images/route_history.png" width="90%" alt="ROADWISE Route History">
-</p>
-
-> Keep track of previous journeys and revisit important route and cost information.
-
----
-
-
-# 🛠️ Technology Stack
-
-<p align="center">
-
-**Frontend**
-
-`HTML5` • `CSS3` • `JavaScript`
-
-**Deployment**
-
-`Vercel`
-
-</p>
-
----
-
-# 📁 Project Structure
+## 📁 Project Structure
 
 ```text
 ROADWISE-OptimizingEveryMile/
-│
-├── Assets/
-│   └── Images/
-│
-├── CSS/
-        index.css
-        my-vehicle.css
-        profile.css
-        route_planner.css
-        route-history.css
-│
-├── JS/
-        dashboard.js
-        index.js
-        my-vehicle.js
-        navbar.js
-        profile.js
-        route_history.js
-        route-planner.js
-│
-├── Pages/
-        dashboard.html
-        my-vehicle.html
-        navbar.html
-        profile.html
-        route_history.html
-        route-planner.html
-│
-├── index.html
-│
+├── Backend/
+│   ├── config/
+│   ├── controllers/
+│   ├── middleware/
+│   ├── models/
+│   ├── routes/
+│   ├── .env                  # Local secrets; do not commit
+│   ├── package.json
+│   ├── package-lock.json
+│   └── server.js
+├── FrontEnd/
+│   ├── Assets/
+│   │   └── Images/
+│   ├── CSS/
+│   ├── JS/
+│   ├── Pages/
+│   └── index.html
+├── .gitignore
 └── README.md
 ```
 
----
+## 🚀 Getting Started
 
-# 🚀 Getting Started
+### Prerequisites
 
-## 1. Clone the Repository
+Install the following before running the project:
+
+- [Node.js and npm](https://nodejs.org/)
+- A MongoDB database, such as MongoDB Atlas
+- Git
+- A modern web browser
+
+### 1. Clone the Repository
 
 ```bash
 git clone https://github.com/jaismeen-sidhubrar/ROADWISE-OptimizingEveryMile.git
-```
-
-## 2. Navigate to the Project
-
-```bash
 cd ROADWISE-OptimizingEveryMile
 ```
 
-## 3. Run the Project
+### 2. Configure the Backend
 
-Open `index.html` in your browser.
+Open a terminal in the repository root and navigate to the backend:
 
-For the best development experience, use **VS Code with Live Server** or another local development server.
+```bash
+cd Backend
+npm install
+```
 
----
+Create a `.env` file inside the `Backend/` directory. Add your own configuration values:
 
-# 🌐 Live Demo
+```env
+PORT=5000
+MONGO_URI=your_mongodb_connection_string
+JWT_SECRET=your_long_random_secret
+FRONTEND_URL=http://127.0.0.1:5500
+```
 
-Experience ROADWISE directly:
+Replace the example values with your actual configuration. Never commit real database credentials, tokens, or secrets to GitHub.
 
-<p align="center">
+`FRONTEND_URL` should contain the origin used by your frontend. If you use a different local development address or a deployed frontend, configure the corresponding origin. If multiple origins are needed, use comma-separated values supported by the backend.
 
-### 🚗 [Launch ROADWISE](https://roadwise-six.vercel.app/)
+### 3. Start the Backend
 
-</p>
+For development with automatic restarts:
 
----
+```bash
+npm run dev
+```
 
-# 🔮 Future Scope
+Or start the server normally:
 
-ROADWISE can be extended into a more comprehensive intelligent mobility platform.
+```bash
+npm start
+```
 
-### 🚦 Real-Time Traffic
+The backend uses port `5000` by default unless `PORT` is configured differently.
 
-Integrate live traffic information to improve route recommendations.
+You can check the health endpoint at:
 
-### ⛽ Dynamic Fuel Prices
+```text
+http://localhost:5000/api/health
+```
 
-Use current fuel prices to provide more accurate cost estimates.
+A successful health response should return:
 
-### ⚡ Electric Vehicle Support
+```json
+{
+  "ok": true
+}
+```
 
-Extend the platform to include EV range and charging requirements.
+The health endpoint checks that the server is responding; it does not by itself confirm that every API or database operation is working.
 
-### 🧠 Advanced Route Optimization
+### 4. Run the Frontend
 
-Introduce additional parameters such as traffic, tolls, road conditions, and travel time.
+Open a separate terminal at the repository root and start a local static server for the `FrontEnd/` directory.
 
-### 📊 Journey History
+For example, if you use the VS Code Live Server extension, open `FrontEnd/index.html` and select **Open with Live Server**.
 
-Allow users to save previous journeys and analyze their travel patterns.
+Make sure the frontend's API requests point to the backend address being used in your environment. If the frontend uses a different API configuration, update it to match your setup.
 
-### 👤 Personalized Recommendations
+## 🔌 Backend API Overview
 
-Provide recommendations based on individual driving habits and vehicle usage.
+The backend registers the following route groups:
 
----
+| Route prefix | Purpose |
+|---|---|
+| `/api/health` | Server health check |
+| `/api/auth` | Authentication |
+| `/api/vehicles` | Vehicle-related operations |
+| `/api/other-vehicles` | Additional vehicle operations |
+| `/api/routes` | Route-related operations |
+| `/api/petrol-pumps` | Petrol-pump-related operations |
 
-# 🌍 Our Vision
+These are route prefixes. The exact endpoints, supported HTTP methods, required request bodies, and response formats depend on the individual route handlers.
 
-> **Make every journey smarter, more efficient, and more economical.**
+You can test API requests using [Postman](https://www.postman.com/) or [Thunder Client](https://www.thunderclient.com/).
 
-ROADWISE aims to move beyond traditional navigation by connecting **route planning with real-world travel costs**.
+## 🌱 Our Vision
+
+> Make every journey smarter, more efficient, and more economical.
+
+ROADWISE connects route planning with vehicle information and estimated travel costs to help users make more informed travel decisions.
 
 Because optimizing a journey isn't only about getting there.
 
 **It's about optimizing every mile.**
 
----
-
-# 👩‍💻 Team
+## 👥 Team
 
 Developed with passion for smarter and more sustainable mobility.
 
 **ROADWISE — Optimizing Every Mile**
 
----
-
 ## 📄 License
 
-This project is developed for educational and project purposes.
-
----
-
-<p align="center">
-  <strong>🚗 ROADWISE</strong>
-  <br>
-  <sub>Optimizing Every Mile</sub>
-</p>
+This project is developed for educational and project purposes. Refer to the repository for applicable licensing information.
