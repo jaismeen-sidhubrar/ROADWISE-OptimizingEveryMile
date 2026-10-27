@@ -50,7 +50,7 @@ The screenshots below illustrate the ROADWISE user interface. Images are stored 
 
 ### 1. Landing Experience
 
-![ROADWISE Landing Page](https://raw.githubusercontent.com/jaismeen-sidhubrar/ROADWISE-OptimizingEveryMile/main/FrontEnd/Assets/Images/landing.png)
+![ROADWISE Landing Page] (./FrontEnd/Assets/Images/landing.png)
 
 ### 2. Personalized Dashboard
 
